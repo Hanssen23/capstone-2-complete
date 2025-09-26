@@ -1,0 +1,101 @@
+/* Profile Card Styles */
+.profile-card {
+    @apply bg-white rounded-xl shadow-lg border border-gray-200 p-8;
+}
+
+.profile-card .form-input {
+    @apply w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors;
+}
+
+.profile-card .form-input:focus {
+    @apply ring-2 ring-blue-500 border-transparent;
+}
+
+.profile-card .form-label {
+    @apply block text-sm font-medium text-gray-700 mb-2;
+}
+
+.profile-card .form-help {
+    @apply text-xs text-gray-500 mt-1;
+}
+
+.profile-card .readonly-field {
+    @apply w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg text-gray-700;
+}
+
+.profile-card .btn-primary {
+    @apply px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center;
+}
+
+.profile-card .btn-secondary {
+    @apply px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors;
+}
+
+.profile-card .status-badge {
+    @apply inline-flex items-center px-3 py-1 text-sm font-medium rounded-full;
+}
+
+.profile-card .status-badge.active {
+    @apply bg-green-100 text-green-800;
+}
+
+.profile-card .status-badge.inactive {
+    @apply bg-red-100 text-red-800;
+}
+
+.profile-card .icon-wrapper {
+    @apply w-20 h-20 bg-blue-600 rounded-full flex items-center justify-center;
+}
+
+.profile-card .section-divider {
+    @apply pt-4 border-t border-gray-200;
+}
+
+.profile-card .action-bar {
+    @apply flex items-center justify-between pt-6 border-t border-gray-200;
+}
+
+/* Form validation styles */
+.profile-card .form-input.error {
+    @apply border-red-300 ring-red-500 focus:ring-red-500 focus:border-red-500;
+}
+
+.profile-card .error-message {
+    @apply text-sm text-red-600 mt-1;
+}
+
+.profile-card .success-message {
+    @apply text-sm text-green-600 mt-1;
+}
+
+/* Loading states */
+.profile-card .loading {
+    @apply opacity-75 pointer-events-none;
+}
+
+.profile-card .spinner {
+    @apply animate-spin -ml-1 mr-3 h-5 w-5 text-white;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .profile-card {
+        @apply p-4;
+    }
+    
+    .profile-card .icon-wrapper {
+        @apply w-16 h-16;
+    }
+    
+    .profile-card .action-bar {
+        @apply flex-col space-y-4 items-stretch;
+    }
+    
+    .profile-card .action-bar > div:first-child {
+        @apply text-center;
+    }
+    
+    .profile-card .action-bar > div:last-child {
+        @apply flex flex-col space-y-2;
+    }
+}

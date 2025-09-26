@@ -35,14 +35,17 @@ class DashboardController extends Controller
         // Get memberships expiring this week (from multiple sources)
         $expiringMembershipsCount = Member::expiringThisWeek()->count();
         
+        // Get memberships expiring this month (30 days)
+        $expiringMembershipsThisMonth = Member::expiringSoon(30)->count();
+        
         // Also get count from payments for verification
         $expiringPaymentsCount = Payment::expiringThisWeek()->count();
         
         // Get recent RFID logs
         $recentRfidLogs = RfidLog::latest('timestamp')->take(10)->get();
         
-        // Get failed RFID attempts today
-        $failedRfidToday = RfidLog::failed()->today()->count();
+        // Get expired memberships today
+        $expiredMembershipsToday = Member::expired()->count();
         
         // Get unknown cards today
         $unknownCardsToday = RfidLog::unknownCards()->today()->count();
@@ -55,9 +58,10 @@ class DashboardController extends Controller
             'thisMonthRevenue',
             'pendingPaymentsCount',
             'expiringMembershipsCount',
+            'expiringMembershipsThisMonth',
             'expiringPaymentsCount',
             'recentRfidLogs',
-            'failedRfidToday',
+            'expiredMembershipsToday',
             'unknownCardsToday'
         ));
     }
@@ -66,13 +70,23 @@ class DashboardController extends Controller
     {
         // Real-time stats for AJAX updates
         $currentActiveMembersCount = ActiveSession::active()->count();
+        $totalActiveMembersCount = Member::active()->count();
         $todayAttendance = Attendance::today()->count();
-        $failedRfidToday = RfidLog::failed()->today()->count();
+        $thisWeekAttendance = Attendance::thisWeek()->count();
+        $expiringMembershipsCount = Member::expiringThisWeek()->count();
+        $expiringMembershipsThisMonth = Member::expiringSoon(30)->count();
+        $expiredMembershipsToday = Member::expired()->count();
+        $unknownCardsToday = RfidLog::unknownCards()->today()->count();
         
         return response()->json([
             'current_active_members' => $currentActiveMembersCount,
+            'total_active_members' => $totalActiveMembersCount,
             'today_attendance' => $todayAttendance,
-            'failed_rfid_today' => $failedRfidToday,
+            'this_week_attendance' => $thisWeekAttendance,
+            'expiring_memberships' => $expiringMembershipsCount,
+            'expiring_memberships_this_month' => $expiringMembershipsThisMonth,
+            'expired_memberships_today' => $expiredMembershipsToday,
+            'unknown_cards_today' => $unknownCardsToday,
             'last_updated' => now()->format('H:i:s'),
         ]);
     }

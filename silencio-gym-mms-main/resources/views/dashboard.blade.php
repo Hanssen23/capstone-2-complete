@@ -1,3 +1,5 @@
+
+
 <x-layout>
     <x-nav></x-nav>
     <div class="flex-1 bg-gray-100">
@@ -58,41 +60,13 @@
                 </div>
             </div>
 
-            <!-- RFID System Status -->
-            <div class="mb-8">
-                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                    <div class="flex items-center justify-between mb-4">
-                        <h2 class="text-xl font-semibold text-gray-900">RFID System Status</h2>
-                        <div class="flex items-center gap-2">
-                            <div id="rfid-status-indicator" class="w-3 h-3 rounded-full bg-red-500"></div>
-                            <span id="rfid-status" class="text-sm font-medium text-gray-700">Stopped</span>
-                        </div>
-                    </div>
-                    <div class="flex flex-wrap gap-4">
-                        <button onclick="startRfidReader()" class="inline-flex items-center px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
-                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1m4 0h1m-6 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                            </svg>
-                            Start RFID Reader
-                        </button>
-                        <button onclick="stopRfidReader()" class="inline-flex items-center px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors">
-                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 10l2 2 4-4"></path>
-                            </svg>
-                            Stop RFID Reader
-                        </button>
-                    </div>
-                </div>
-            </div>
-
             <!-- Analytics & Reports Section -->
             <div class="mb-8">
                 <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
                     <h2 class="text-2xl font-bold text-gray-900 mb-6">Analytics & Reports</h2>
                     
                     <!-- Performance Metrics Grid -->
-                    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                             <div class="bg-white border border-gray-200 rounded-lg p-4">
                                 <div class="flex items-center justify-between">
                                     <div>
@@ -124,25 +98,10 @@
 
                         <div class="bg-white border border-gray-200 rounded-lg p-4">
                             <div class="flex items-center justify-between">
-                                <div>
-                                    <p class="text-sm font-medium text-gray-600">Pending</p>
-                                    <p class="text-2xl font-bold text-gray-900">{{ $pendingPaymentsCount }}</p>
-                                    <p class="text-xs text-gray-500">Payments</p>
-                                </div>
-                                <div class="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center">
-                                    <svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
-                                        </svg>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="bg-white border border-gray-200 rounded-lg p-4">
-                            <div class="flex items-center justify-between">
                                         <div>
                                     <p class="text-sm font-medium text-gray-600">Expiring</p>
                                     <p class="text-2xl font-bold text-gray-900">{{ $expiringMembershipsCount }}</p>
-                                    <p class="text-xs text-gray-500">This week (Members: {{ $expiringMembershipsCount }}, Payments: {{ $expiringPaymentsCount }})</p>
+                                    <p class="text-xs text-gray-500">This week: {{ $expiringMembershipsCount }}, This month: {{ $expiringMembershipsThisMonth }}</p>
                                     </div>
                                     <div class="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
                                         <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -157,64 +116,256 @@
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
                         <!-- Weekly Attendance Chart -->
                         <div class="bg-white border border-gray-200 rounded-lg p-6">
-                            <h3 class="text-lg font-semibold text-gray-900 mb-4">Weekly Attendance Trend</h3>
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="text-lg font-semibold text-gray-900">Weekly Attendance Trend</h3>
+                                <div class="flex items-center gap-2">
+                                    <!-- Calendar-style date picker -->
+                                    <div class="relative">
+                                        <button onclick="toggleAttendanceCalendar()" class="flex items-center gap-2 px-3 py-2 text-sm border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                            </svg>
+                                            <span id="attendanceDateText">Last 7 days</span>
+                                        </button>
+                                        <div id="attendanceCalendar" class="absolute right-0 mt-2 w-80 bg-white border border-gray-200 rounded-lg shadow-lg z-10 hidden">
+                                            <div class="p-4">
+                                                <!-- Calendar Header -->
+                                                <div class="flex items-center justify-between mb-4">
+                                                    <button onclick="navigateAttendanceMonth(-1)" class="p-2 hover:bg-gray-100 rounded-full">
+                                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                                                        </svg>
+                                                    </button>
+                                                    <div class="flex items-center gap-2">
+                                                        <span id="attendanceCalendarMonth" class="text-lg font-semibold text-gray-900">May</span>
+                                                        <span id="attendanceCalendarYear" class="text-lg font-semibold text-gray-900">2024</span>
+                                                    </div>
+                                                    <button onclick="navigateAttendanceMonth(1)" class="p-2 hover:bg-gray-100 rounded-full">
+                                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                                                        </svg>
+                                                    </button>
+                                                </div>
+                                                
+                                                <!-- Calendar Grid -->
+                                                <div class="calendar-header">
+                                                    <div class="calendar-header-day">Su</div>
+                                                    <div class="calendar-header-day">Mo</div>
+                                                    <div class="calendar-header-day">Tu</div>
+                                                    <div class="calendar-header-day">We</div>
+                                                    <div class="calendar-header-day">Th</div>
+                                                    <div class="calendar-header-day">Fr</div>
+                                                    <div class="calendar-header-day">Sa</div>
+                                                </div>
+                                                
+                                                <div id="attendanceCalendarDays" class="calendar-grid">
+                                                    <!-- Calendar days will be populated by JavaScript -->
+                                                </div>
+                                                
+                                                <!-- Quick Actions -->
+                                                <div class="mt-4 pt-4 border-t border-gray-200">
+                                                    <div class="grid grid-cols-3 gap-2">
+                                                        <button onclick="selectAttendanceQuickPeriod(7)" class="px-3 py-2 text-xs bg-blue-100 text-blue-700 rounded hover:bg-blue-200">Last 7 days</button>
+                                                        <button onclick="selectAttendanceQuickPeriod(14)" class="px-3 py-2 text-xs bg-green-100 text-green-700 rounded hover:bg-green-200">Last 14 days</button>
+                                                        <button onclick="selectAttendanceQuickPeriod(30)" class="px-3 py-2 text-xs bg-purple-100 text-purple-700 rounded hover:bg-purple-200">Last 30 days</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <button onclick="refreshAttendanceChart()" class="text-gray-500 hover:text-gray-700 transition-colors" title="Refresh">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
                             <div class="h-64">
                                 <canvas id="weeklyAttendanceChart"></canvas>
+                    </div>
+                            <div class="mt-2 text-sm text-gray-500 text-center">
+                                <span id="attendanceTotal">Total: 0</span> check-ins
                     </div>
                 </div>
 
                         <!-- Monthly Revenue Chart -->
                         <div class="bg-white border border-gray-200 rounded-lg p-6">
-                            <h3 class="text-lg font-semibold text-gray-900 mb-4">Monthly Revenue Trend</h3>
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="text-lg font-semibold text-gray-900">Monthly Revenue Trend</h3>
+                                <div class="flex items-center gap-2">
+                                    <!-- Calendar-style date picker -->
+                                    <div class="relative">
+                                        <button onclick="toggleRevenueCalendar()" class="flex items-center gap-2 px-3 py-2 text-sm border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-green-500">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                            </svg>
+                                            <span id="revenueDateText">May 2024</span>
+                                        </button>
+                                        <div id="revenueCalendar" class="absolute right-0 mt-2 w-80 bg-white border border-gray-200 rounded-lg shadow-lg z-10 hidden">
+                                            <div class="p-4">
+                                                <!-- Calendar Header -->
+                                                <div class="flex items-center justify-between mb-4">
+                                                    <button onclick="navigateRevenueMonth(-1)" class="p-2 hover:bg-gray-100 rounded-full">
+                                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                                                        </svg>
+                                                    </button>
+                                                    <div class="flex items-center gap-2">
+                                                        <span id="revenueCalendarMonth" class="text-lg font-semibold text-gray-900">May</span>
+                                                        <span id="revenueCalendarYear" class="text-lg font-semibold text-gray-900">2024</span>
+                                                    </div>
+                                                    <button onclick="navigateRevenueMonth(1)" class="p-2 hover:bg-gray-100 rounded-full">
+                                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                                                        </svg>
+                                                    </button>
+                                                </div>
+                                                
+                                                <!-- Calendar Grid -->
+                                                <div class="calendar-header">
+                                                    <div class="calendar-header-day">Su</div>
+                                                    <div class="calendar-header-day">Mo</div>
+                                                    <div class="calendar-header-day">Tu</div>
+                                                    <div class="calendar-header-day">We</div>
+                                                    <div class="calendar-header-day">Th</div>
+                                                    <div class="calendar-header-day">Fr</div>
+                                                    <div class="calendar-header-day">Sa</div>
+                                                </div>
+                                                
+                                                <div id="revenueCalendarDays" class="calendar-grid">
+                                                    <!-- Calendar days will be populated by JavaScript -->
+                                                </div>
+                                                
+                                                <!-- Quick Actions -->
+                                                <div class="mt-4 pt-4 border-t border-gray-200">
+                                                    <div class="grid grid-cols-3 gap-2">
+                                                        <button onclick="selectRevenueQuickPeriod('current')" class="px-3 py-2 text-xs bg-green-100 text-green-700 rounded hover:bg-green-200">Current Month</button>
+                                                        <button onclick="selectRevenueQuickPeriod('previous')" class="px-3 py-2 text-xs bg-blue-100 text-blue-700 rounded hover:bg-blue-200">Previous Month</button>
+                                                        <button onclick="selectRevenueQuickPeriod('year')" class="px-3 py-2 text-xs bg-purple-100 text-purple-700 rounded hover:bg-purple-200">This Year</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <button onclick="refreshRevenueChart()" class="text-gray-500 hover:text-gray-700 transition-colors" title="Refresh">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
                             <div class="h-64">
                                 <canvas id="monthlyRevenueChart"></canvas>
+                            </div>
+                            <div class="mt-2 text-sm text-gray-500 text-center">
+                                <span id="revenueTotal">Total: ₱0</span>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+
         </div>
     </div>
 
     <!-- Chart.js CDN -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
+    <!-- Calendar Styles -->
+    <style>
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 2px;
+        }
+        
+        .calendar-day {
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 32px;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+        }
+        
+        .calendar-day:hover:not(.inactive) {
+            background-color: #f3f4f6;
+        }
+        
+        .calendar-day.selected {
+            background-color: #fbbf24;
+            font-weight: 600;
+        }
+        
+        .calendar-day.today {
+            background-color: #dbeafe;
+        }
+        
+        .calendar-day.inactive {
+            color: #9ca3af;
+            cursor: default;
+        }
+        
+        .calendar-header {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 2px;
+            margin-bottom: 8px;
+        }
+        
+        .calendar-header-day {
+            text-align: center;
+            font-weight: 500;
+            color: #6b7280;
+            padding: 8px 0;
+        }
+        
+        @media (max-width: 640px) {
+            .calendar-day {
+                min-height: 28px;
+                font-size: 0.875rem;
+            }
+            
+            .calendar-header-day {
+                font-size: 0.75rem;
+                padding: 6px 0;
+            }
+    </style>
+
     <script>
+        let weeklyChart = null;
+        let revenueChart = null;
+        let refreshInterval = null;
+        
+        // Calendar state
+        let currentAttendancePeriod = 7;
+        let currentRevenueDate = new Date();
+        let attendanceCalendarVisible = false;
+        let revenueCalendarVisible = false;
+
         // Initialize charts when DOM is loaded
         document.addEventListener('DOMContentLoaded', function() {
             initializeCharts();
+            initializeCalendars();
+            loadRealTimeData();
             
-            // Auto-refresh dashboard stats every 30 seconds
-            setInterval(function() {
-                fetch('{{ route("dashboard.stats") }}')
-                    .then(response => response.json())
-                    .then(data => {
-                        // Update current active members count
-                        const currentActiveElement = document.getElementById('current-active-members-count');
-                        if (currentActiveElement) {
-                            currentActiveElement.textContent = data.current_active_members;
-                        }
-                        
-                        // Update today's attendance
-                        const todayAttendanceElement = document.getElementById('today-attendance-count');
-                        if (todayAttendanceElement) {
-                            todayAttendanceElement.textContent = data.today_attendance;
-                        }
-                    })
-                    .catch(error => console.error('Error updating stats:', error));
-            }, 30000);
+            // Auto-refresh dashboard stats every 1 second for immediate updates
+            refreshInterval = setInterval(function() {
+                loadRealTimeData();
+            }, 1000);
         });
 
         function initializeCharts() {
             // Weekly Attendance Chart
             const weeklyCtx = document.getElementById('weeklyAttendanceChart').getContext('2d');
-            new Chart(weeklyCtx, {
+            weeklyChart = new Chart(weeklyCtx, {
                 type: 'bar',
                 data: {
-                    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                    labels: [],
                     datasets: [{
                         label: 'Attendance',
-                        data: [12, 19, 15, 25, 22, 30, 28],
+                        data: [],
                         backgroundColor: 'rgba(59, 130, 246, 0.8)',
                         borderColor: 'rgba(59, 130, 246, 1)',
                         borderWidth: 1
@@ -228,6 +379,9 @@
                             beginAtZero: true,
                             grid: {
                                 color: 'rgba(0, 0, 0, 0.1)'
+                            },
+                            ticks: {
+                                stepSize: 1
                             }
                         },
                         x: {
@@ -247,19 +401,23 @@
                                 }
                             }
                         }
+                    },
+                    animation: {
+                        duration: 1000,
+                        easing: 'easeInOutQuart'
                     }
                 }
             });
 
             // Monthly Revenue Chart
             const revenueCtx = document.getElementById('monthlyRevenueChart').getContext('2d');
-            new Chart(revenueCtx, {
+            revenueChart = new Chart(revenueCtx, {
                 type: 'bar',
                 data: {
-                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                    labels: [],
                     datasets: [{
                         label: 'Revenue (₱)',
-                        data: [15000, 18000, 22000, 19000, 25000, 28000],
+                        data: [],
                         backgroundColor: 'rgba(34, 197, 94, 0.8)',
                         borderColor: 'rgba(34, 197, 94, 1)',
                         borderWidth: 1
@@ -297,19 +455,390 @@
                                 }
                             }
                         }
+                    },
+                    animation: {
+                        duration: 1000,
+                        easing: 'easeInOutQuart'
                     }
                 }
             });
         }
 
-        function startRfidReader() {
-            // RFID start functionality
-            console.log('Starting RFID reader...');
+        function loadRealTimeData() {
+            // Load weekly attendance data
+            fetch(`{{ route("analytics.weekly-attendance") }}?days=${currentAttendancePeriod}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (weeklyChart) {
+                        weeklyChart.data.labels = data.data.map(item => item.day);
+                        weeklyChart.data.datasets[0].data = data.data.map(item => item.count);
+                        weeklyChart.update('active');
+                    }
+                    // Update total
+                    document.getElementById('attendanceTotal').textContent = `Total: ${data.total}`;
+                })
+                .catch(error => console.error('Error loading weekly attendance:', error));
+
+            // Load monthly revenue data
+            const revenueMonth = currentRevenueDate.getMonth() + 1;
+            const revenueYear = currentRevenueDate.getFullYear();
+            fetch(`{{ route("analytics.monthly-revenue") }}?month=${revenueMonth}&year=${revenueYear}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (revenueChart) {
+                        revenueChart.data.labels = data.data.map(item => item.day);
+                        revenueChart.data.datasets[0].data = data.data.map(item => item.revenue);
+                        revenueChart.update('active');
+                    }
+                    // Update total
+                    document.getElementById('revenueTotal').textContent = `Total: ₱${data.total.toLocaleString()}`;
+                })
+                .catch(error => console.error('Error loading monthly revenue:', error));
+
+            // Load dashboard stats
+            fetch('{{ route("analytics.dashboard-stats") }}')
+                .then(response => response.json())
+                .then(data => {
+                    // Update current active members count
+                    const currentActiveElement = document.getElementById('current-active-members-count');
+                    if (currentActiveElement) {
+                        currentActiveElement.textContent = data.current_active_members;
+                    }
+                    
+                    // Update today's attendance
+                    const todayAttendanceElement = document.getElementById('today-attendance-count');
+                    if (todayAttendanceElement) {
+                        todayAttendanceElement.textContent = data.today_attendance;
+                    }
+
+                    // Update this week's attendance
+                    const thisWeekElement = document.querySelector('.grid .bg-white:nth-child(2) .text-2xl');
+                    if (thisWeekElement) {
+                        thisWeekElement.textContent = data.this_week_attendance;
+                    }
+
+                    // Update expiring memberships
+                    const expiringElement = document.querySelector('.grid .bg-white:nth-child(3) .text-2xl');
+                    const expiringSubtitle = document.querySelector('.grid .bg-white:nth-child(3) .text-xs');
+                    if (expiringElement) {
+                        expiringElement.textContent = data.expiring_memberships;
+                    }
+                    if (expiringSubtitle) {
+                        expiringSubtitle.textContent = `This week: ${data.expiring_memberships}, This month: ${data.expiring_memberships_this_month}`;
+                    }
+
+                    // Update total members
+                    const totalMembersElement = document.querySelector('.grid .bg-white:nth-child(1) .text-2xl');
+                    if (totalMembersElement) {
+                        totalMembersElement.textContent = data.total_active_members;
+                    }
+
+                    // Update monthly revenue
+                    const monthlyRevenueElement = document.querySelector('.bg-gradient-to-br.from-yellow-50 .text-3xl');
+                    if (monthlyRevenueElement) {
+                        monthlyRevenueElement.textContent = '₱' + data.this_month_revenue.toLocaleString();
+                    }
+                })
+                .catch(error => console.error('Error updating stats:', error));
         }
 
-        function stopRfidReader() {
-            // RFID stop functionality
-            console.log('Stopping RFID reader...');
+        // Calendar initialization
+        function initializeCalendars() {
+            updateAttendanceDateText();
+            updateRevenueDateText();
+            generateAttendanceCalendar();
+            generateRevenueCalendar();
         }
+
+        // Calendar generation functions
+        function generateAttendanceCalendar() {
+            const container = document.getElementById('attendanceCalendarDays');
+            const currentDate = new Date();
+            const year = currentDate.getFullYear();
+            const month = currentDate.getMonth();
+            
+            // Update calendar header
+            document.getElementById('attendanceCalendarMonth').textContent = getMonthName(month);
+            document.getElementById('attendanceCalendarYear').textContent = year;
+            
+            // Generate calendar days
+            const firstDay = new Date(year, month, 1);
+            const lastDay = new Date(year, month + 1, 0);
+            const daysInMonth = lastDay.getDate();
+            const startingDay = firstDay.getDay(); // 0 = Sunday, 1 = Monday, etc.
+            
+            let html = '';
+            
+            // Previous month's trailing days
+            const prevMonth = new Date(year, month - 1, 0);
+            const prevMonthDays = prevMonth.getDate();
+            for (let i = startingDay - 1; i >= 0; i--) {
+                const day = prevMonthDays - i;
+                html += `<div class="calendar-day inactive">${day}</div>`;
+            }
+            
+            // Current month's days
+            for (let day = 1; day <= daysInMonth; day++) {
+                const isToday = day === currentDate.getDate() && month === currentDate.getMonth() && year === currentDate.getFullYear();
+                const isSelected = day === 27; // Example selected day
+                const classes = ['calendar-day'];
+                
+                if (isSelected) classes.push('selected');
+                if (isToday) classes.push('today');
+                
+                html += `<div class="${classes.join(' ')}" onclick="selectAttendanceDate(${day})">${day}</div>`;
+            }
+            
+            // Next month's leading days
+            const totalCells = 42; // 6 rows × 7 columns
+            const usedCells = startingDay + daysInMonth;
+            const remainingDays = totalCells - usedCells;
+            
+            for (let day = 1; day <= remainingDays; day++) {
+                html += `<div class="calendar-day inactive">${day}</div>`;
+            }
+            
+            container.innerHTML = html;
+        }
+
+        function generateRevenueCalendar() {
+            const container = document.getElementById('revenueCalendarDays');
+            const year = currentRevenueDate.getFullYear();
+            const month = currentRevenueDate.getMonth();
+            
+            // Update calendar header
+            document.getElementById('revenueCalendarMonth').textContent = getMonthName(month);
+            document.getElementById('revenueCalendarYear').textContent = year;
+            
+            // Generate calendar days
+            const firstDay = new Date(year, month, 1);
+            const lastDay = new Date(year, month + 1, 0);
+            const daysInMonth = lastDay.getDate();
+            const startingDay = firstDay.getDay(); // 0 = Sunday, 1 = Monday, etc.
+            
+            let html = '';
+            
+            // Previous month's trailing days
+            const prevMonth = new Date(year, month - 1, 0);
+            const prevMonthDays = prevMonth.getDate();
+            for (let i = startingDay - 1; i >= 0; i--) {
+                const day = prevMonthDays - i;
+                html += `<div class="calendar-day inactive">${day}</div>`;
+            }
+            
+            // Current month's days
+            for (let day = 1; day <= daysInMonth; day++) {
+                const isToday = day === new Date().getDate() && month === new Date().getMonth() && year === new Date().getFullYear();
+                const isSelected = day === 27; // Example selected day
+                const classes = ['calendar-day'];
+                
+                if (isSelected) classes.push('selected');
+                if (isToday) classes.push('today');
+                
+                html += `<div class="${classes.join(' ')}" onclick="selectRevenueDate(${day})">${day}</div>`;
+            }
+            
+            // Next month's leading days
+            const totalCells = 42; // 6 rows × 7 columns
+            const usedCells = startingDay + daysInMonth;
+            const remainingDays = totalCells - usedCells;
+            
+            for (let day = 1; day <= remainingDays; day++) {
+                html += `<div class="calendar-day inactive">${day}</div>`;
+            }
+            
+            container.innerHTML = html;
+        }
+
+        // Calendar toggle functions
+        function toggleAttendanceCalendar() {
+            const calendar = document.getElementById('attendanceCalendar');
+            attendanceCalendarVisible = !attendanceCalendarVisible;
+            
+            if (attendanceCalendarVisible) {
+                calendar.classList.remove('hidden');
+                document.getElementById('revenueCalendar').classList.add('hidden');
+                revenueCalendarVisible = false;
+            } else {
+                calendar.classList.add('hidden');
+            }
+        }
+
+        function toggleRevenueCalendar() {
+            const calendar = document.getElementById('revenueCalendar');
+            revenueCalendarVisible = !revenueCalendarVisible;
+            
+            if (revenueCalendarVisible) {
+                calendar.classList.remove('hidden');
+                document.getElementById('attendanceCalendar').classList.add('hidden');
+                attendanceCalendarVisible = false;
+            } else {
+                calendar.classList.add('hidden');
+            }
+        }
+
+        // Calendar navigation
+        function navigateAttendanceMonth(direction) {
+            const currentDate = new Date();
+            currentDate.setMonth(currentDate.getMonth() + direction);
+            generateAttendanceCalendar();
+        }
+
+        function navigateRevenueMonth(direction) {
+            currentRevenueDate.setMonth(currentRevenueDate.getMonth() + direction);
+            generateRevenueCalendar();
+            updateRevenueDateText();
+            refreshRevenueChart();
+        }
+
+        // Date selection functions
+        function selectAttendanceDate(day) {
+            // Update selected date styling
+            const calendarDays = document.querySelectorAll('#attendanceCalendarDays .calendar-day');
+            calendarDays.forEach(dayEl => {
+                dayEl.classList.remove('selected');
+            });
+            
+            // Highlight selected day
+            const selectedDay = Array.from(calendarDays).find(dayEl => 
+                dayEl.textContent.trim() === day.toString() && !dayEl.classList.contains('inactive')
+            );
+            if (selectedDay) {
+                selectedDay.classList.add('selected');
+            }
+            
+            // Close calendar and refresh chart
+            document.getElementById('attendanceCalendar').classList.add('hidden');
+            attendanceCalendarVisible = false;
+            refreshAttendanceChart();
+        }
+
+        function selectRevenueDate(day) {
+            // Update selected date styling
+            const calendarDays = document.querySelectorAll('#revenueCalendarDays .calendar-day');
+            calendarDays.forEach(dayEl => {
+                dayEl.classList.remove('selected');
+            });
+            
+            // Highlight selected day
+            const selectedDay = Array.from(calendarDays).find(dayEl => 
+                dayEl.textContent.trim() === day.toString() && !dayEl.classList.contains('inactive')
+            );
+            if (selectedDay) {
+                selectedDay.classList.add('selected');
+            }
+            
+            // Close calendar and refresh chart
+            document.getElementById('revenueCalendar').classList.add('hidden');
+            revenueCalendarVisible = false;
+            refreshRevenueChart();
+        }
+
+        // Quick period selection
+        function selectAttendanceQuickPeriod(days) {
+            currentAttendancePeriod = days;
+            updateAttendanceDateText();
+            document.getElementById('attendanceCalendar').classList.add('hidden');
+            attendanceCalendarVisible = false;
+            refreshAttendanceChart();
+        }
+
+        function selectRevenueQuickPeriod(period) {
+            const currentDate = new Date();
+            
+            switch (period) {
+                case 'current':
+                    currentRevenueDate = new Date();
+                    break;
+                case 'previous':
+                    currentRevenueDate = new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1);
+                    break;
+                case 'year':
+                    currentRevenueDate = new Date(currentDate.getFullYear(), 0, 1);
+                    break;
+            }
+            
+            updateRevenueDateText();
+            generateRevenueCalendar();
+            document.getElementById('revenueCalendar').classList.add('hidden');
+            revenueCalendarVisible = false;
+            refreshRevenueChart();
+        }
+
+        // Text update functions
+        function updateAttendanceDateText() {
+            const periodText = currentAttendancePeriod === 7 ? 'Last 7 days' : 
+                              currentAttendancePeriod === 14 ? 'Last 14 days' : 'Last 30 days';
+            document.getElementById('attendanceDateText').textContent = periodText;
+        }
+
+        function updateRevenueDateText() {
+            const monthName = getMonthName(currentRevenueDate.getMonth());
+            const year = currentRevenueDate.getFullYear();
+            document.getElementById('revenueDateText').textContent = `${monthName} ${year}`;
+        }
+
+        // Helper functions
+        function getMonthName(monthIndex) {
+            const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
+                              'July', 'August', 'September', 'October', 'November', 'December'];
+            return monthNames[monthIndex];
+        }
+
+        // Refresh functions
+        function refreshAttendanceChart() {
+            fetch(`{{ route("analytics.weekly-attendance") }}?days=${currentAttendancePeriod}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (weeklyChart) {
+                        weeklyChart.data.labels = data.data.map(item => item.day);
+                        weeklyChart.data.datasets[0].data = data.data.map(item => item.count);
+                        weeklyChart.update('active');
+                    }
+                    document.getElementById('attendanceTotal').textContent = `Total: ${data.total}`;
+                })
+                .catch(error => console.error('Error refreshing attendance chart:', error));
+        }
+
+        function refreshRevenueChart() {
+            const month = currentRevenueDate.getMonth() + 1;
+            const year = currentRevenueDate.getFullYear();
+            fetch(`{{ route("analytics.monthly-revenue") }}?month=${month}&year=${year}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (revenueChart) {
+                        revenueChart.data.labels = data.data.map(item => item.day);
+                        revenueChart.data.datasets[0].data = data.data.map(item => item.revenue);
+                        revenueChart.update('active');
+                    }
+                    document.getElementById('revenueTotal').textContent = `Total: ₱${data.total.toLocaleString()}`;
+                })
+                .catch(error => console.error('Error refreshing revenue chart:', error));
+        }
+
+        // Clean up interval when page is unloaded
+        window.addEventListener('beforeunload', function() {
+            if (refreshInterval) {
+                clearInterval(refreshInterval);
+            }
+        });
+
+        // Close calendars when clicking outside
+        document.addEventListener('click', function(event) {
+            const attendanceCalendar = document.getElementById('attendanceCalendar');
+            const revenueCalendar = document.getElementById('revenueCalendar');
+            
+            if (!event.target.closest('#attendanceCalendar') && !event.target.closest('button[onclick="toggleAttendanceCalendar()"]')) {
+                attendanceCalendar.classList.add('hidden');
+                attendanceCalendarVisible = false;
+            }
+            
+            if (!event.target.closest('#revenueCalendar') && !event.target.closest('button[onclick="toggleRevenueCalendar()"]')) {
+                revenueCalendar.classList.add('hidden');
+                revenueCalendarVisible = false;
+            }
+        });
+
+
     </script>
 </x-layout>

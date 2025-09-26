@@ -179,7 +179,7 @@ class ACR122UReader:
                         card_present = False
                         last_uid = None
                     
-                    time.sleep(0.5)  # Small delay
+                    time.sleep(0.05)  # Ultra-fast response for immediate detection
                     
                 except Exception as e:
                     # Silent error handling

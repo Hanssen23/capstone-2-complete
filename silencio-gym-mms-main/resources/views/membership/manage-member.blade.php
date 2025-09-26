@@ -1,132 +1,236 @@
 <x-layout>
     <x-nav></x-nav>
-    <div class="flex-1 bg-gray-100">
+    <div class="flex-1 bg-white">
         <x-topbar>Member Plan Management</x-topbar>
 
-        <div class="bg-gray-100 min-h-screen p-6">
+        <div class="bg-white min-h-screen p-6">
             <!-- Member Selection -->
             <div class="mb-8">
-                <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-8">
-                    <h2 class="text-3xl font-bold text-gray-900 mb-8">Select Member</h2>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="bg-white rounded-lg border p-8" style="border-color: #E5E7EB; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                    <h2 class="text-3xl font-bold mb-8" style="color: #1E40AF;">Select Member</h2>
+                    
+                    <!-- Search Bar -->
+                    <div class="mb-8">
+                        <div class="relative">
+                            <input type="text" id="memberSearch" placeholder="Search by name, email, or member number..." 
+                                   class="w-full px-3 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-base" 
+                                   style="border-color: #E5E7EB; color: #000000;">
+                        </div>
+                    </div>
+
+                    <!-- Member Results -->
+                    <div id="memberResults" class="space-y-4">
+                        @foreach($members as $member)
+                        <div class="member-card bg-white border rounded-lg p-6 cursor-pointer transition-all duration-200 hover:shadow-md" 
+                             style="border-color: #E5E7EB;" 
+                             data-member='@json($member)'
+                             onclick="selectMember(this)">
+                            <div class="flex items-center justify-between">
+                                <div class="flex-1">
+                                    <div class="flex items-center gap-4 mb-2">
+                                        <h3 class="text-lg font-semibold" style="color: #000000;">{{ $member->full_name }}</h3>
+                                        @php
+                                            $currentPlan = $member->currentMembershipPeriod ? $member->currentMembershipPeriod->plan_type : null;
+                                            $isActive = $member->currentMembershipPeriod && $member->currentMembershipPeriod->is_active;
+                                            $durationType = $member->currentMembershipPeriod ? $member->currentMembershipPeriod->duration_type : null;
+                                            $hasPayments = $member->payments()->where('status', 'completed')->exists();
+                                            $planFromPayments = $member->payments()->where('status', 'completed')->latest()->first();
+                                        @endphp
+                                        
+                                        @if($currentPlan && $isActive)
+                                            @php
+                                                $normalizedPlan = strtolower($currentPlan);
+                                                $planColors = [
+                                                    'basic' => '#059669',
+                                                    'vip' => '#F59E0B', 
+                                                    'premium' => '#F59E0B'
+                                                ];
+                                                $planColor = $planColors[$normalizedPlan] ?? '#059669';
+                                                
+                                                $badgeText = ucfirst($currentPlan);
+                                                if ($durationType) {
+                                                    $badgeText .= ' + ' . ucfirst($durationType);
+                                                }
+                                            @endphp
+                                            <span class="inline-flex px-3 py-1 text-xs font-semibold rounded-full text-white" 
+                                                  style="background-color: {{ $planColor }};">
+                                                {{ $badgeText }}
+                                            </span>
+                                        @elseif($hasPayments && $planFromPayments)
+                                            @php
+                                                // Show plan from latest payment if no active membership period
+                                                $paymentPlan = $planFromPayments->plan_type;
+                                                $paymentDuration = $planFromPayments->duration_type;
+                                                $normalizedPlan = strtolower($paymentPlan);
+                                                $planColors = [
+                                                    'basic' => '#059669',
+                                                    'vip' => '#F59E0B', 
+                                                    'premium' => '#F59E0B'
+                                                ];
+                                                $planColor = $planColors[$normalizedPlan] ?? '#059669';
+                                                
+                                                $badgeText = ucfirst($paymentPlan);
+                                                if ($paymentDuration) {
+                                                    $badgeText .= ' + ' . ucfirst($paymentDuration);
+                                                }
+                                            @endphp
+                                            <span class="inline-flex px-3 py-1 text-xs font-semibold rounded-full text-white" 
+                                                  style="background-color: {{ $planColor }};">
+                                                {{ $badgeText }}
+                                            </span>
+                                        @else
+                                            <span class="inline-flex px-3 py-1 text-xs font-semibold rounded-full text-gray-600 bg-gray-200">
+                                                Not Subscribed
+                                            </span>
+                                        @endif
+                                    </div>
+                                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm" style="color: #6B7280;">
+                                        <div>
+                                            <span class="font-medium">Member #:</span> {{ $member->member_number }}
+                                        </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-3">Search Member</label>
-                            <input type="text" id="memberSearch" placeholder="Search by name, email, or member number..." class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors">
+                                            <span class="font-medium">Email:</span> {{ $member->email }}
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-3">Or Select from List</label>
-                            <select id="memberSelect" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors">
-                                <option value="">Choose a member...</option>
-                                @foreach($members as $member)
-                                <option value="{{ $member->id }}" data-member='@json($member)'>
-                                    {{ $member->full_name }} ({{ $member->member_number }})
-                                </option>
-                                @endforeach
-                            </select>
+                                            <span class="font-medium">Phone:</span> {{ $member->mobile_number }}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="ml-4">
+                                    <button class="px-4 py-2 border rounded-lg font-medium transition-colors" 
+                                            style="border-color: #2563EB; color: #2563EB;" 
+                                            onmouseover="this.style.backgroundColor='#2563EB'; this.style.color='#FFFFFF'" 
+                                            onmouseout="this.style.backgroundColor='transparent'; this.style.color='#2563EB'">
+                                        Select
+                                    </button>
+                                </div>
+                            </div>
                         </div>
+                        @endforeach
                     </div>
                 </div>
             </div>
 
             <!-- Plan Selection and Payment Form -->
             <div id="planSelectionForm" class="hidden">
-                <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-8 mb-8">
-                    <h2 class="text-3xl font-bold text-gray-900 mb-8">Plan Selection & Payment</h2>
+                <div class="bg-white rounded-lg border p-8 mb-8" style="border-color: #E5E7EB; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                    <h2 class="text-3xl font-bold mb-8" style="color: #1E40AF;">Plan Selection & Payment</h2>
                     
-                    <!-- Selected Member Info -->
-                    <div id="selectedMemberInfo" class="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-8">
-                        <h3 class="text-xl font-semibold text-blue-900 mb-4">Selected Member</h3>
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                            <div class="flex items-center">
-                                <span class="text-sm text-blue-600 font-medium">Name:</span>
-                                <span id="memberName" class="ml-3 font-semibold text-blue-900"></span>
+                    <!-- Selected Member Card -->
+                    <div id="selectedMemberInfo" class="bg-white border rounded-lg p-6 mb-8" style="border-color: #059669; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                        <h3 class="text-xl font-semibold mb-4" style="color: #1E40AF;">Selected Member</h3>
+                        <div class="flex items-center gap-6">
+                            <div class="flex-1">
+                                <div class="text-lg font-semibold" style="color: #000000;" id="memberName"></div>
+                                <div class="text-sm" style="color: #6B7280;" id="memberNumber"></div>
                             </div>
-                            <div class="flex items-center">
-                                <span class="text-sm text-blue-600 font-medium">Member #:</span>
-                                <span id="memberNumber" class="ml-3 font-semibold text-blue-900"></span>
-                            </div>
-                            <div class="flex items-center">
-                                <span class="text-sm text-blue-600 font-medium">Email:</span>
-                                <span id="memberEmail" class="ml-3 font-semibold text-blue-900"></span>
-                            </div>
+                            <div class="text-sm" style="color: #6B7280;" id="memberEmail"></div>
                         </div>
                     </div>
 
-                    <!-- Plan Configuration -->
+                    <!-- Plan Selection -->
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
                         <div>
-                            <h3 class="text-xl font-semibold text-gray-900 mb-6">Plan Configuration</h3>
+                            <h3 class="text-xl font-semibold mb-6" style="color: #1E40AF;">Plan Options</h3>
                             
-                            <!-- Plan Type Selection -->
-                            <div class="mb-8">
-                                <label class="block text-sm font-medium text-gray-700 mb-4">Plan Type</label>
-                                <div class="space-y-4">
+                            <!-- Plan Cards -->
+                            <div class="space-y-4 mb-8">
                                     @foreach(config('membership.plan_types') as $key => $plan)
-                                    <label class="flex items-center p-4 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
-                                        <input type="radio" name="plan_type" value="{{ $key }}" class="mr-4 text-blue-600 focus:ring-blue-500" required>
+                                <div class="plan-card bg-white border rounded-lg p-6 cursor-pointer transition-all duration-200 hover:shadow-md" 
+                                     style="border-color: #E5E7EB;" 
+                                     data-plan="{{ $key }}"
+                                     onclick="selectPlan('{{ $key }}')">
+                                    <div class="flex items-center justify-between">
                                         <div class="flex-1">
-                                            <div class="text-lg font-semibold text-gray-900 mb-1">{{ $plan['name'] }}</div>
-                                            <div class="text-sm text-gray-600">{{ $plan['description'] }}</div>
+                                            <div class="flex items-center gap-3 mb-2">
+                                                <h4 class="text-lg font-bold" style="color: #000000;">{{ $plan['name'] }}</h4>
+                                                @if($key === 'basic')
+                                                <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full text-white" 
+                                                      style="background-color: #059669;">
+                                                    Basic
+                                                </span>
+                                                @elseif($key === 'vip' || $key === 'premium')
+                                                <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full text-white" 
+                                                      style="background-color: #F59E0B;">
+                                                    {{ $key === 'vip' ? 'VIP' : 'Premium' }}
+                                                </span>
+                                                @endif
+                                            </div>
+                                            <p class="text-sm mb-3" style="color: #6B7280;">{{ $plan['description'] }}</p>
+                                            <div class="text-lg font-bold" style="color: #000000;">₱{{ number_format($plan['base_price'], 2) }}/month</div>
                                         </div>
-                                        <div class="text-right">
-                                            <div class="font-bold text-blue-600 text-lg">₱{{ number_format($plan['base_price'], 2) }}/month</div>
+                                        <div class="ml-4">
+                                            <button class="select-plan-btn px-4 py-2 border rounded-lg font-medium transition-colors" 
+                                                    style="border-color: #2563EB; color: #2563EB;" 
+                                                    onmouseover="this.style.backgroundColor='#2563EB'; this.style.color='#FFFFFF'" 
+                                                    onmouseout="this.style.backgroundColor='transparent'; this.style.color='#2563EB'">
+                                                Select
+                                            </button>
                                         </div>
-                                    </label>
-                                    @endforeach
+                                    </div>
                                 </div>
+                                @endforeach
                             </div>
 
                             <!-- Duration Selection -->
                             <div class="mb-8">
-                                <label class="block text-sm font-medium text-gray-700 mb-4">Duration</label>
-                                <div class="grid grid-cols-2 gap-4">
+                                <h4 class="text-lg font-semibold mb-4" style="color: #1E40AF;">Duration</h4>
+                                <div class="flex gap-2">
                                     @foreach(config('membership.duration_types') as $key => $duration)
-                                    <label class="flex items-center p-4 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
-                                        <input type="radio" name="duration_type" value="{{ $key }}" class="mr-3 text-blue-600 focus:ring-blue-500" required>
-                                        <div class="flex-1">
-                                            <div class="font-semibold text-gray-900">{{ $duration['name'] }}</div>
-                                            <div class="text-sm text-gray-600">{{ $duration['days'] }} days</div>
-                                        </div>
-                                    </label>
+                                    <button class="duration-btn px-4 py-2 border rounded-lg font-medium transition-colors" 
+                                            style="border-color: #E5E7EB; color: #6B7280;" 
+                                            data-duration="{{ $key }}"
+                                            onclick="selectDuration('{{ $key }}')"
+                                            onmouseover="if(!this.classList.contains('selected')) this.style.backgroundColor='#F3F4F6'" 
+                                            onmouseout="if(!this.classList.contains('selected')) this.style.backgroundColor='transparent'">
+                                        {{ $duration['name'] }}
+                                    </button>
                                     @endforeach
                                 </div>
                             </div>
 
-                            <!-- Start Date Selection -->
+                            <!-- Start Date -->
                             <div class="mb-8">
-                                <label class="block text-sm font-medium text-gray-700 mb-3">Membership Start Date</label>
-                                <input type="date" id="startDate" name="start_date" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors" required>
+                                <label class="block text-sm font-medium mb-3" style="color: #6B7280;">Membership Start Date</label>
+                                <input type="date" id="startDate" name="start_date" 
+                                       class="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors" 
+                                       style="border-color: #E5E7EB;" required>
                             </div>
                         </div>
 
                         <div>
-                            <h3 class="text-xl font-semibold text-gray-900 mb-6">Price Calculation & Payment</h3>
+                            <h3 class="text-xl font-semibold mb-6" style="color: #1E40AF;">Payment Details</h3>
                             
-                            <!-- Price Display -->
-                            <div id="priceCalculation" class="bg-gray-50 border border-gray-200 rounded-lg p-8 mb-8">
-                                <div class="text-center">
-                                    <div class="text-4xl font-bold text-blue-600 mb-3" id="totalPrice">₱0.00</div>
-                                    <div class="text-lg text-gray-600" id="priceBreakdown">Select plan and duration</div>
-                                </div>
+                            <!-- Price Calculation -->
+                            <div id="priceCalculation" class="bg-gray-50 border rounded-lg p-8 mb-8 text-center" style="border-color: #E5E7EB;">
+                                <div class="text-4xl font-bold mb-3" style="color: #000000;" id="totalPrice">₱0.00</div>
+                                <div class="text-lg" style="color: #6B7280;" id="priceBreakdown">Select plan and duration</div>
                             </div>
 
-                            <!-- Payment Details -->
+                            <!-- Payment Form -->
                             <div class="space-y-6">
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-3">Payment Amount</label>
-                                    <input type="number" id="paymentAmount" name="amount" step="0.01" min="0" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors bg-gray-50" readonly>
+                                    <label class="block text-sm font-medium mb-3" style="color: #6B7280;">Payment Amount</label>
+                                    <input type="number" id="paymentAmount" name="amount" step="0.01" min="0" 
+                                           class="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors bg-gray-50" 
+                                           style="border-color: #E5E7EB;" readonly>
                                 </div>
                                 
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-3">Notes (Optional)</label>
-                                    <textarea name="notes" rows="4" placeholder="Any additional notes about this payment..." class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors resize-none"></textarea>
+                                    <label class="block text-sm font-medium mb-3" style="color: #6B7280;">Notes (Optional)</label>
+                                    <textarea name="notes" rows="4" placeholder="Any additional notes about this payment..." 
+                                              class="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors resize-none" 
+                                              style="border-color: #E5E7EB;"></textarea>
                                 </div>
 
-                                <!-- Confirmation Button -->
-                                <button id="confirmPaymentBtn" onclick="confirmPayment()" class="w-full py-4 bg-green-600 text-white font-semibold text-lg rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-sm" disabled>
-                                    <svg class="w-6 h-6 inline mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                    </svg>
+                                <!-- Confirm Payment Button -->
+                                <button id="confirmPaymentBtn" onclick="confirmPayment()" 
+                                        class="w-full py-4 text-white font-semibold text-lg rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-sm flex items-center justify-center gap-3" 
+                                        style="background-color: #059669;" 
+                                        onmouseover="this.style.backgroundColor='#047857'" 
+                                        onmouseout="this.style.backgroundColor='#059669'" 
+                                        disabled>
+                                    <span class="text-xl">💳</span>
                                     Confirm Payment & Activate Membership
                                 </button>
                             </div>
@@ -137,23 +241,25 @@
 
             <!-- Success Message -->
             <div id="successMessage" class="hidden">
-                <div class="bg-green-50 border border-green-200 rounded-lg p-12 text-center">
-                    <svg class="w-20 h-20 text-green-600 mx-auto mb-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                    </svg>
-                    <h3 class="text-3xl font-bold text-green-900 mb-4">Payment Successful!</h3>
-                    <p class="text-green-700 text-lg mb-8">Membership has been activated successfully.</p>
+                <div class="bg-white border rounded-lg p-12 text-center" style="border-color: #059669; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                    <div class="text-6xl mb-6">✅</div>
+                    <h3 class="text-3xl font-bold mb-4" style="color: #059669;">Payment Successful!</h3>
+                    <p class="text-lg mb-8" style="color: #6B7280;">Membership has been activated successfully.</p>
                     <div class="flex justify-center space-x-6">
-                        <button onclick="resetForm()" class="inline-flex items-center px-8 py-4 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors shadow-sm">
-                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
-                            </svg>
+                        <button onclick="resetForm()" 
+                                class="inline-flex items-center px-8 py-4 text-white rounded-lg transition-colors shadow-sm" 
+                                style="background-color: #059669;" 
+                                onmouseover="this.style.backgroundColor='#047857'" 
+                                onmouseout="this.style.backgroundColor='#059669'">
+                            <span class="text-xl mr-2">➕</span>
                             Process Another Payment
                         </button>
-                        <a href="{{ route('membership.payments') }}" class="inline-flex items-center px-8 py-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-sm">
-                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                            </svg>
+                        <a href="{{ route('membership.payments') }}" 
+                           class="inline-flex items-center px-8 py-4 text-white rounded-lg transition-colors shadow-sm" 
+                           style="background-color: #2563EB;" 
+                           onmouseover="this.style.backgroundColor='#1D4ED8'" 
+                           onmouseout="this.style.backgroundColor='#2563EB'">
+                            <span class="text-xl mr-2">👁️</span>
                             View All Payments
                         </a>
                     </div>
@@ -170,55 +276,85 @@
         // Set default start date to today
         document.getElementById('startDate').value = new Date().toISOString().split('T')[0];
 
-        // Member selection handling
-        document.getElementById('memberSelect').addEventListener('change', function() {
-            const selectedOption = this.options[this.selectedIndex];
-            if (selectedOption.value) {
-                selectedMember = JSON.parse(selectedOption.dataset.member);
-                displayMemberInfo();
-                showPlanSelectionForm();
-            } else {
-                hidePlanSelectionForm();
-            }
-        });
-
         // Member search functionality
         document.getElementById('memberSearch').addEventListener('input', function() {
             const searchTerm = this.value.toLowerCase();
-            const options = document.getElementById('memberSelect').options;
+            const memberCards = document.querySelectorAll('.member-card');
             
-            for (let i = 1; i < options.length; i++) {
-                const option = options[i];
-                const memberData = JSON.parse(option.dataset.member);
+            memberCards.forEach(card => {
+                const memberData = JSON.parse(card.dataset.member);
                 const searchText = `${memberData.full_name} ${memberData.email} ${memberData.member_number}`.toLowerCase();
                 
                 if (searchText.includes(searchTerm)) {
-                    option.style.display = '';
+                    card.style.display = '';
                 } else {
-                    option.style.display = 'none';
+                    card.style.display = 'none';
                 }
-            }
-        });
-
-        // Plan type selection
-        document.querySelectorAll('input[name="plan_type"]').forEach(radio => {
-            radio.addEventListener('change', function() {
-                selectedPlanType = this.value;
-                updatePriceCalculation();
             });
         });
+
+        // Member selection
+        function selectMember(cardElement) {
+            // Remove previous selection
+            document.querySelectorAll('.member-card').forEach(card => {
+                card.style.borderColor = '#E5E7EB';
+            });
+            
+            // Highlight selected member
+            cardElement.style.borderColor = '#059669';
+            
+            selectedMember = JSON.parse(cardElement.dataset.member);
+            displayMemberInfo();
+            showPlanSelectionForm();
+        }
+
+        // Plan selection
+        function selectPlan(planType) {
+            // Remove previous selection
+            document.querySelectorAll('.plan-card').forEach(card => {
+                card.style.borderColor = '#E5E7EB';
+                const btn = card.querySelector('.select-plan-btn');
+                btn.style.backgroundColor = 'transparent';
+                btn.style.color = '#2563EB';
+                btn.textContent = 'Select';
+            });
+            
+            // Highlight selected plan
+            const selectedCard = document.querySelector(`[data-plan="${planType}"]`);
+            selectedCard.style.borderColor = '#059669';
+            const btn = selectedCard.querySelector('.select-plan-btn');
+            btn.style.backgroundColor = '#059669';
+            btn.style.color = '#FFFFFF';
+            btn.textContent = 'Selected';
+            
+            selectedPlanType = planType;
+            updatePriceCalculation();
+        }
 
         // Duration selection
-        document.querySelectorAll('input[name="duration_type"]').forEach(radio => {
-            radio.addEventListener('change', function() {
-                selectedDurationType = this.value;
-                updatePriceCalculation();
+        function selectDuration(durationType) {
+            // Remove previous selection
+            document.querySelectorAll('.duration-btn').forEach(btn => {
+                btn.style.backgroundColor = 'transparent';
+                btn.style.color = '#6B7280';
+                btn.style.borderColor = '#E5E7EB';
+                btn.classList.remove('selected');
             });
-        });
+            
+            // Highlight selected duration
+            const selectedBtn = document.querySelector(`[data-duration="${durationType}"]`);
+            selectedBtn.style.backgroundColor = '#1E40AF';
+            selectedBtn.style.color = '#FFFFFF';
+            selectedBtn.style.borderColor = '#1E40AF';
+            selectedBtn.classList.add('selected');
+            
+            selectedDurationType = durationType;
+            updatePriceCalculation();
+        }
 
         function displayMemberInfo() {
             document.getElementById('memberName').textContent = selectedMember.full_name;
-            document.getElementById('memberNumber').textContent = selectedMember.member_number;
+            document.getElementById('memberNumber').textContent = `Member #: ${selectedMember.member_number}`;
             document.getElementById('memberEmail').textContent = selectedMember.email;
         }
 
@@ -299,12 +435,30 @@
 
         function resetForm() {
             // Reset form
-            document.getElementById('memberSelect').value = '';
             document.getElementById('memberSearch').value = '';
-            document.querySelectorAll('input[name="plan_type"]').forEach(radio => radio.checked = false);
-            document.querySelectorAll('input[name="duration_type"]').forEach(radio => radio.checked = false);
             document.getElementById('startDate').value = new Date().toISOString().split('T')[0];
             document.querySelector('textarea[name="notes"]').value = '';
+            
+            // Reset member selection
+            document.querySelectorAll('.member-card').forEach(card => {
+                card.style.borderColor = '#E5E7EB';
+            });
+            
+            // Reset plan selection
+            document.querySelectorAll('.plan-card').forEach(card => {
+                card.style.borderColor = '#E5E7EB';
+                const btn = card.querySelector('.select-plan-btn');
+                btn.style.backgroundColor = 'transparent';
+                btn.style.color = '#2563EB';
+                btn.textContent = 'Select';
+            });
+            
+            // Reset duration selection
+            document.querySelectorAll('.duration-btn').forEach(btn => {
+                btn.style.backgroundColor = 'transparent';
+                btn.style.color = '#6B7280';
+                btn.style.borderColor = '#E5E7EB';
+            });
             
             // Reset display
             selectedMember = null;

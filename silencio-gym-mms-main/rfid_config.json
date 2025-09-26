@@ -6,8 +6,8 @@
     },
     "reader": {
         "device_id": "acr122u_main",
-        "read_delay": 0.5,
-        "duplicate_prevention_seconds": 2
+        "read_delay": 0.05,
+        "duplicate_prevention_seconds": 0.5
     },
     "feedback": {
         "success_sound": true,

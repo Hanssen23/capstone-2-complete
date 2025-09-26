@@ -27,7 +27,11 @@ class MemberController extends Controller
 
         // Filter by membership type if provided and valid
         if (in_array($selectedMembership, ['basic', 'premium', 'vip'])) {
-            $membersQuery->where('membership', $selectedMembership);
+            $membersQuery->whereHas('currentMembershipPeriod', function ($query) use ($selectedMembership) {
+                $query->where('plan_type', $selectedMembership)
+                      ->where('status', 'active')
+                      ->where('expiration_date', '>', now());
+            });
         }
 
         // Search filter (name, email, member_number, uid, mobile)
@@ -46,7 +50,12 @@ class MemberController extends Controller
             ->orderBy('created_at', 'desc')
             ->paginate(20)
             ->withQueryString();
-
+        
+        // Check if this is an employee request
+        if (request()->is('employee/*')) {
+            return view('employee.members', compact('members', 'selectedMembership', 'search'));
+        }
+        
         return view('members.list', compact('members', 'selectedMembership', 'search'));
     }
 
@@ -55,6 +64,11 @@ class MemberController extends Controller
      */
     public function create()
     {
+        // Check if this is an employee request
+        if (request()->is('employee/*')) {
+            return view('employee.members.create');
+        }
+        
         return view('members.create');
     }
 
@@ -64,26 +78,36 @@ class MemberController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'uid' => 'required|string|unique:members,uid',
-            'member_number' => 'required|string|unique:members,member_number',
-            'membership' => 'required|in:basic,premium,vip',
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
             'mobile_number' => 'required|string|max:20',
             'email' => 'required|email|unique:members,email',
         ]);
 
+        // Get an available UID from the pool
+        $availableUid = Member::getAvailableUid();
+        
+        if (!$availableUid) {
+            $redirectRoute = request()->is('employee/*') ? 'employee.members.index' : 'members.index';
+            return redirect()->route($redirectRoute)
+                ->with('error', 'No UIDs available in the pool. Please contact administrator.');
+        }
+
         $member = Member::create([
-            'uid' => $request->uid,
-            'member_number' => $request->member_number,
-            'membership' => $request->membership,
+            'uid' => $availableUid,
+            'member_number' => Member::generateMemberNumber(),
+            'membership' => null, // No plan assigned initially
+            'subscription_status' => 'not_subscribed',
             'first_name' => $request->first_name,
             'last_name' => $request->last_name,
             'mobile_number' => $request->mobile_number,
             'email' => $request->email,
+            'status' => 'active',
+            'role' => 'member',
         ]);
 
-        return redirect()->route('members.index')
+        $redirectRoute = request()->is('employee/*') ? 'employee.members.index' : 'members.index';
+        return redirect()->route($redirectRoute)
             ->with('success', 'Member created successfully!');
     }
 
@@ -93,6 +117,12 @@ class MemberController extends Controller
     public function show(string $id)
     {
         $member = Member::findOrFail($id);
+        
+        // Check if this is an employee request
+        if (request()->is('employee/*')) {
+            return view('employee.members.show', compact('member'));
+        }
+        
         return view('members.show', compact('member'));
     }
 
@@ -102,6 +132,12 @@ class MemberController extends Controller
     public function edit(string $id)
     {
         $member = Member::findOrFail($id);
+        
+        // Check if this is an employee request
+        if (request()->is('employee/*')) {
+            return view('employee.members.edit', compact('member'));
+        }
+        
         return view('members.edit', compact('member'));
     }
 
@@ -112,27 +148,41 @@ class MemberController extends Controller
     {
         $member = Member::findOrFail($id);
 
-        $request->validate([
-            'uid' => 'required|string|unique:members,uid,' . $id,
-            'member_number' => 'required|string|unique:members,member_number,' . $id,
-            'membership' => 'required|in:basic,premium,vip',
-            'first_name' => 'required|string|max:255',
-            'last_name' => 'required|string|max:255',
-            'mobile_number' => 'required|string|max:20',
-            'email' => 'required|email|unique:members,email,' . $id,
-        ]);
+        // Check if this is an employee request
+        if (request()->is('employee/*')) {
+            // Employee can only edit name fields
+            $request->validate([
+                'first_name' => 'required|string|max:255',
+                'last_name' => 'required|string|max:255',
+            ]);
 
-        $member->update([
-            'uid' => $request->uid,
-            'member_number' => $request->member_number,
-            'membership' => $request->membership,
-            'first_name' => $request->first_name,
-            'last_name' => $request->last_name,
-            'mobile_number' => $request->mobile_number,
-            'email' => $request->email,
-        ]);
+            $member->update([
+                'first_name' => $request->first_name,
+                'last_name' => $request->last_name,
+            ]);
+        } else {
+            // Admin can edit all fields
+            $request->validate([
+                'uid' => 'required|string|unique:members,uid,' . $id,
+                'member_number' => 'required|string|unique:members,member_number,' . $id,
+                'first_name' => 'required|string|max:255',
+                'last_name' => 'required|string|max:255',
+                // Email and mobile_number are not validated as they cannot be updated
+                // membership is not validated as it's automatically set during payment processing
+            ]);
 
-        return redirect()->route('members.index')
+            $member->update([
+                'uid' => $request->uid,
+                'member_number' => $request->member_number,
+                'first_name' => $request->first_name,
+                'last_name' => $request->last_name,
+                // Email and mobile_number are not updated for security reasons
+                // membership is not updated as it's automatically set during payment processing
+            ]);
+        }
+
+        $redirectRoute = request()->is('employee/*') ? 'employee.members.index' : 'members.index';
+        return redirect()->route($redirectRoute)
             ->with('success', 'Member updated successfully!');
     }
 
@@ -142,9 +192,16 @@ class MemberController extends Controller
     public function destroy(string $id)
     {
         $member = Member::findOrFail($id);
+        
+        // Return the UID to the pool before deleting the member
+        if ($member->uid) {
+            Member::returnUidToPool($member->uid);
+        }
+        
         $member->delete();
 
-        return redirect()->route('members.index')
+        $redirectRoute = request()->is('employee/*') ? 'employee.members.index' : 'members.index';
+        return redirect()->route($redirectRoute)
             ->with('success', 'Member deleted successfully!');
     }
 
@@ -188,7 +245,7 @@ class MemberController extends Controller
             ->paginate(5)
             ->withQueryString();
 
-        return view('members.profile', compact(
+        return view('employee.members.profile', compact(
             'member', 
             'membershipPeriods', 
             'currentMembership', 
@@ -210,6 +267,31 @@ class MemberController extends Controller
             ->orderBy('start_date', 'desc')
             ->paginate(10);
 
-        return view('members.membership-history', compact('member', 'membershipPeriods'));
+        return view('employee.members.membership-history', compact('member', 'membershipPeriods'));
+    }
+
+    /**
+     * Update member UID
+     */
+    public function updateUid(Request $request, string $id)
+    {
+        $member = Member::findOrFail($id);
+        
+        $request->validate([
+            'uid' => 'required|string|unique:members,uid,' . $id,
+        ]);
+
+        $oldUid = $member->uid;
+        $member->update(['uid' => $request->input('uid')]);
+
+        return response()->json([
+            'success' => true,
+            'message' => "UID updated from {$oldUid} to {$request->input('uid')}",
+            'member' => [
+                'id' => $member->id,
+                'name' => $member->first_name . ' ' . $member->last_name,
+                'uid' => $member->uid,
+            ]
+        ]);
     }
 }

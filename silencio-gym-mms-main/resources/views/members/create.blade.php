@@ -44,34 +44,31 @@
                 <form method="POST" action="{{ route('members.store') }}" class="space-y-6">
                     @csrf
                     
-                    <!-- Member Number Field -->
-                    <div>
-                        <label for="member_number" class="block text-sm font-medium text-gray-300 mb-2">Member Number</label>
-                        <input type="text" id="member_number" name="member_number" required 
-                               class="w-full px-4 py-2 border border-gray-600 bg-gray-800 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-red-600 focus:border-red-600 transition-colors duration-200 placeholder-gray-400"
-                               placeholder="Enter member number"
-                               value="{{ old('member_number') }}">
+                    <!-- Auto-generated fields info -->
+                    <div class="bg-blue-900/20 border border-blue-700 rounded-lg p-4">
+                        <div class="flex items-center gap-2">
+                            <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            <p class="text-sm text-blue-300">
+                                Member Number and UID will be automatically generated
+                            </p>
+                        </div>
                     </div>
 
-                    <!-- UID Field -->
-                    <div>
-                        <label for="uid" class="block text-sm font-medium text-gray-300 mb-2">UID</label>
-                        <input type="text" id="uid" name="uid" required 
-                               class="w-full px-4 py-2 border border-gray-600 bg-gray-800 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-red-600 focus:border-red-600 transition-colors duration-200 placeholder-gray-400"
-                               placeholder="Enter UID"
-                               value="{{ old('uid') }}">
-                    </div>
-
-                    <!-- Membership Field -->
-                    <div>
-                        <label for="membership" class="block text-sm font-medium text-gray-300 mb-2">Membership</label>
-                        <select id="membership" name="membership" required 
-                                class="w-full px-4 py-2 border border-gray-600 bg-gray-800 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-red-600 focus:border-red-600 transition-colors duration-200">
-                            <option value="" class="bg-gray-900">Select Membership Type</option>
-                            <option class="bg-gray-900" value="basic" {{ old('membership') == 'basic' ? 'selected' : '' }}>Basic</option>
-                            <option class="bg-gray-900" value="premium" {{ old('membership') == 'premium' ? 'selected' : '' }}>Premium</option>
-                            <option class="bg-gray-900" value="vip" {{ old('membership') == 'vip' ? 'selected' : '' }}>VIP</option>
-                        </select>
+                    <!-- Subscription Info -->
+                    <div class="bg-yellow-900/20 border border-yellow-700 rounded-lg p-4">
+                        <div class="flex items-center gap-2">
+                            <svg class="w-5 h-5 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                            </svg>
+                            <div>
+                                <p class="text-sm font-medium text-yellow-300">No Subscription Plan Assigned</p>
+                                <p class="text-xs text-yellow-200 mt-1">
+                                    Members will need to select and pay for a plan after registration to access paid features.
+                                </p>
+                            </div>
+                        </div>
                     </div>
 
                     <!-- First Name Field -->

@@ -24,6 +24,12 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'start.rfid' => \App\Http\Middleware\StartRfidReader::class,
             'error.handler' => \App\Http\Middleware\ErrorHandler::class,
+            'admin.only' => \App\Http\Middleware\AdminOnly::class,
+            'employee.only' => \App\Http\Middleware\EmployeeOnly::class,
+            'member.only' => \App\Http\Middleware\MemberOnly::class,
+            'prevent.back' => \App\Http\Middleware\PreventBackHistory::class,
+            'prevent.member.admin' => \App\Http\Middleware\PreventMemberAdminAccess::class,
+            'ensure.session' => \App\Http\Middleware\EnsureSessionPersistence::class,
         ]);
         
         // Apply error handler globally

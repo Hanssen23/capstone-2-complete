@@ -20,6 +20,11 @@ class MembershipController extends Controller
         $planTypes = config('membership.plan_types');
         $durationTypes = config('membership.duration_types');
         
+        // Check if this is an employee request
+        if (request()->is('employee/*')) {
+            return view('employee.membership-plans-full', compact('plans', 'planTypes', 'durationTypes'));
+        }
+        
         return view('membership.plans.index', compact('plans', 'planTypes', 'durationTypes'));
     }
 
@@ -28,9 +33,14 @@ class MembershipController extends Controller
      */
     public function manageMember()
     {
-        $members = Member::all();
+        $members = Member::with('currentMembershipPeriod')->get();
         $planTypes = config('membership.plan_types');
         $durationTypes = config('membership.duration_types');
+        
+        // Check if this is an employee request
+        if (request()->is('employee/*')) {
+            return view('membership.manage-member', compact('members', 'planTypes', 'durationTypes'));
+        }
         
         return view('membership.manage-member', compact('members', 'planTypes', 'durationTypes'));
     }
@@ -119,8 +129,11 @@ class MembershipController extends Controller
             $member->update([
                 'current_membership_period_id' => $membershipPeriod->id,
                 'membership_starts_at' => $startDate,
+                'membership_expires_at' => $expirationDate,
                 'current_plan_type' => $request->plan_type,
                 'current_duration_type' => $request->duration_type,
+                'membership' => $request->plan_type, // Set membership type automatically
+                'subscription_status' => 'active',
                 'status' => 'active',
             ]);
 
@@ -147,10 +160,6 @@ class MembershipController extends Controller
         $query = Payment::with('member');
 
         // Apply filters
-        if ($request->filled('status') && $request->status !== '') {
-            $query->where('status', $request->status);
-        }
-
         if ($request->filled('plan_type') && $request->plan_type !== '') {
             $query->where('plan_type', $request->plan_type);
         }
@@ -169,6 +178,11 @@ class MembershipController extends Controller
         }
 
         $payments = $query->orderBy('payment_date', 'desc')->paginate(20);
+
+        // Check if this is an employee request
+        if (request()->is('employee/*')) {
+            return view('employee.payments', compact('payments'));
+        }
 
         return view('membership.payments.index', compact('payments'));
     }
@@ -192,10 +206,6 @@ class MembershipController extends Controller
             ]);
 
         // Apply the same filters as the payments page
-        if ($request->filled('status') && $request->status !== '') {
-            $query->where('status', $request->status);
-        }
-
         if ($request->filled('plan_type') && $request->plan_type !== '') {
             $query->where('plan_type', $request->plan_type);
         }
@@ -340,8 +350,10 @@ class MembershipController extends Controller
             $member->update([
                 'current_membership_period_id' => $membershipPeriod->id,
                 'membership_starts_at' => $payment->membership_start_date,
+                'membership_expires_at' => $payment->membership_expiration_date,
                 'current_plan_type' => $payment->plan_type,
                 'current_duration_type' => $payment->duration_type,
+                'subscription_status' => 'active',
                 'status' => 'active',
             ]);
         }
@@ -364,8 +376,10 @@ class MembershipController extends Controller
                 $member->update([
                     'current_membership_period_id' => null,
                     'membership_starts_at' => null,
+                    'membership_expires_at' => null,
                     'current_plan_type' => null,
                     'current_duration_type' => null,
+                    'subscription_status' => 'cancelled',
                     'status' => 'inactive',
                 ]);
             }

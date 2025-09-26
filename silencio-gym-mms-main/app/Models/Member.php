@@ -3,22 +3,28 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Carbon\Carbon;
 
-class Member extends Model
+class Member extends Authenticatable
 {
+    use Notifiable;
     protected $fillable = [
         'uid',
         'member_number',
         'membership',
+        'subscription_status',
         'first_name',
         'last_name',
         'mobile_number',
         'email',
+        'password',
         'status',
+        'role',
         'current_membership_period_id',
         'membership_starts_at',
         'membership_expires_at',
@@ -30,6 +36,21 @@ class Member extends Model
         'membership_starts_at' => 'date',
         'membership_expires_at' => 'date',
     ];
+
+    /**
+     * Boot the model
+     */
+    protected static function boot()
+    {
+        parent::boot();
+        
+        // Return UID to pool when member is deleted
+        static::deleting(function ($member) {
+            if ($member->uid) {
+                \App\Models\UidPool::returnUid($member->uid);
+            }
+        });
+    }
 
     public function currentMembershipPeriod(): BelongsTo
     {
@@ -58,13 +79,119 @@ class Member extends Model
 
     public function getIsActiveAttribute(): bool
     {
-    return $this->status === 'active' && 
-           ($this->membership_expires_at === null || Carbon::parse($this->membership_expires_at)->isFuture());
+        return $this->status === 'active' && 
+               ($this->membership_expires_at === null || Carbon::parse($this->membership_expires_at)->isFuture());
     }
 
     public function getIsExpiredAttribute(): bool
     {
-    return $this->membership_expires_at !== null && Carbon::parse($this->membership_expires_at)->isPast();
+        return $this->membership_expires_at !== null && Carbon::parse($this->membership_expires_at)->isPast();
+    }
+
+    public function getFullNameAttribute(): string
+    {
+        return trim($this->first_name . ' ' . $this->last_name);
+    }
+
+    /**
+     * Generate the next sequential member number
+     */
+    public static function generateMemberNumber(): string
+    {
+        // Get the highest existing member number
+        $lastMember = self::where('member_number', 'like', 'MEM%')
+            ->orderByRaw('CAST(SUBSTRING(member_number, 4) AS UNSIGNED) DESC')
+            ->first();
+
+        if ($lastMember) {
+            // Extract the number part and increment
+            $lastNumber = (int) substr($lastMember->member_number, 3);
+            $nextNumber = $lastNumber + 1;
+        } else {
+            // Start from MEM001 if no members exist
+            $nextNumber = 1;
+        }
+
+        return 'MEM' . str_pad($nextNumber, 3, '0', STR_PAD_LEFT);
+    }
+
+    /**
+     * Get an available UID from the pool
+     */
+    public static function getAvailableUid(): ?string
+    {
+        return \App\Models\UidPool::getAvailableUid();
+    }
+
+    /**
+     * Return a UID to the pool
+     */
+    public static function returnUidToPool(string $uid): bool
+    {
+        return \App\Models\UidPool::returnUid($uid);
+    }
+
+    /**
+     * Check if member has an active subscription
+     */
+    public function hasActiveSubscription(): bool
+    {
+        return $this->subscription_status === 'active' && 
+               $this->current_plan_type !== null &&
+               ($this->membership_expires_at === null || Carbon::parse($this->membership_expires_at)->isFuture());
+    }
+
+    /**
+     * Check if member is subscribed (has any plan)
+     */
+    public function isSubscribed(): bool
+    {
+        return $this->subscription_status !== 'not_subscribed' && 
+               $this->current_plan_type !== null;
+    }
+
+    /**
+     * Get display name for subscription status
+     */
+    public function getSubscriptionStatusDisplayAttribute(): string
+    {
+        if (!$this->isSubscribed()) {
+            return 'Not Subscribed';
+        }
+
+        return match($this->subscription_status) {
+            'pending' => 'Pending Payment',
+            'active' => 'Active',
+            'expired' => 'Expired',
+            'cancelled' => 'Cancelled',
+            default => 'Not Subscribed'
+        };
+    }
+
+    /**
+     * Get display name for plan type
+     */
+    public function getPlanTypeDisplayAttribute(): string
+    {
+        if (!$this->isSubscribed()) {
+            return 'Not Subscribed';
+        }
+
+        return ucfirst($this->current_plan_type ?? 'Not Subscribed');
+    }
+
+    /**
+     * Get display name for membership (legacy field)
+     */
+    public function getMembershipDisplayAttribute(): string
+    {
+        // If member has an active subscription, show the plan type
+        if ($this->hasActiveSubscription()) {
+            return ucfirst($this->current_plan_type);
+        }
+        
+        // Otherwise show the basic membership field or "Not Subscribed"
+        return $this->membership ? ucfirst($this->membership) : 'Not Subscribed';
     }
 
     public function getDaysUntilExpirationAttribute(): int
@@ -72,7 +199,15 @@ class Member extends Model
         if ($this->membership_expires_at === null) {
             return -1; // No expiration
         }
-        return max(0, Carbon::now()->diffInDays(Carbon::parse($this->membership_expires_at), false));
+        $expiresAt = Carbon::parse($this->membership_expires_at);
+        $daysLeft = $expiresAt->diffInDays(Carbon::now(), false);
+        
+        // If membership is expired, return 0
+        if ($this->is_expired) {
+            return 0;
+        }
+        
+        return max(0, (int) $daysLeft);
     }
 
     public function getMembershipStatusAttribute(): string
@@ -153,10 +288,56 @@ class Member extends Model
     }
 
     /**
-     * Get the member's full name.
+     * Check if the member has admin role
      */
-    public function getFullNameAttribute(): string
+    public function isAdmin(): bool
     {
-        return "{$this->first_name} {$this->last_name}";
+        return $this->role === 'admin';
+    }
+
+    /**
+     * Check if the member has member role
+     */
+    public function isMember(): bool
+    {
+        return $this->role === 'member';
+    }
+
+    /**
+     * Check if member is currently in the gym (has active RFID session)
+     */
+    public function isInGym(): bool
+    {
+        return $this->activeSessions()
+            ->where('status', 'active')
+            ->whereNull('check_out_time')
+            ->exists();
+    }
+
+    /**
+     * Get current gym session if member is in gym
+     */
+    public function getCurrentGymSession()
+    {
+        return $this->activeSessions()
+            ->where('status', 'active')
+            ->whereNull('check_out_time')
+            ->first();
+    }
+
+    /**
+     * Get gym presence status
+     */
+    public function getGymPresenceStatusAttribute(): string
+    {
+        return $this->isInGym() ? 'In Gym' : 'Not in Gym';
+    }
+
+    /**
+     * Get online status based on RFID check-in, not web session
+     */
+    public function getOnlineStatusAttribute(): string
+    {
+        return $this->isInGym() ? 'Online' : 'Offline';
     }
 }

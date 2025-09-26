@@ -3,7 +3,7 @@
         <div class="flex items-center justify-center w-450 h-250 rounded-lg shadow-lg overflow-hidden">
             <div class="flex flex-col flex-1 justify-center items-center gap-5">
                 <h1 class="text-5xl font-bold">Silencio System</h1>
-                <h2 class="text-[16px] text-gray-500">Log in to manage your memberships.</h2>
+                <h2 class="text-[16px] text-gray-500">Log in to continue</h2>
                 
                 @if ($errors->any())
                     <div class="w-full max-w-sm bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
@@ -12,6 +12,18 @@
                                 <li>{{ $error }}</li>
                             @endforeach
                         </ul>
+                    </div>
+                @endif
+
+                @if (session('success'))
+                    <div class="w-full max-w-sm bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg">
+                        <p class="text-sm">{{ session('success') }}</p>
+                    </div>
+                @endif
+
+                @if (session('error'))
+                    <div class="w-full max-w-sm bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+                        <p class="text-sm">{{ session('error') }}</p>
                     </div>
                 @endif
                 
@@ -26,6 +38,7 @@
                         <input type="password" id="password" name="password" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required />
                     </div>
                     <div class="flex items-start mb-5">
+                        <a href="{{ route('member.register') }}" class="text-sm text-blue-600 hover:underline mr-4">Sign up</a>
                         <div class="flex items-center h-5">
                             <input id="remember" name="remember" type="checkbox" value="1" class="w-4 h-4 border border-gray-300 rounded-sm bg-gray-50 focus:ring-3 focus:ring-blue-300" />
                         </div>

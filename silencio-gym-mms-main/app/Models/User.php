@@ -19,8 +19,13 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name',
+        'first_name',
+        'last_name',
         'email',
+        'mobile_number',
         'password',
+        'role',
+        'email_verified_at',
     ];
 
     /**
@@ -44,5 +49,30 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    /**
+     * Check if the user is an admin
+     */
+    public function isAdmin(): bool
+    {
+        return $this->role === 'admin';
+    }
+
+
+    /**
+     * Check if the user is a member
+     */
+    public function isMember(): bool
+    {
+        return $this->role === 'member';
+    }
+
+    /**
+     * Check if the user is an employee
+     */
+    public function isEmployee(): bool
+    {
+        return $this->role === 'employee';
     }
 }

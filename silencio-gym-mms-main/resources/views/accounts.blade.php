@@ -57,15 +57,6 @@
                                    class="w-full px-3 py-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                    style="border-color: #E5E7EB; background-color: #F9FAFB; color: #000000; font-size: 1rem;"
                                    placeholder="Enter password">
-                            <div id="password-strength" class="mt-1">
-                                <div class="flex space-x-1">
-                                    <div class="h-1 w-full bg-gray-200 rounded"></div>
-                                    <div class="h-1 w-full bg-gray-200 rounded"></div>
-                                    <div class="h-1 w-full bg-gray-200 rounded"></div>
-                                    <div class="h-1 w-full bg-gray-200 rounded"></div>
-                                </div>
-                                <div id="password-strength-text" class="text-xs text-gray-500 mt-1"></div>
-                            </div>
                             <div id="password-error" class="text-red-500 text-sm mt-1 hidden"></div>
                         </div>
                         

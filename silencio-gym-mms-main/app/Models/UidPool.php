@@ -56,7 +56,7 @@ class UidPool extends Model
     /**
      * Generate new UIDs when pool is empty
      */
-    public static function generateNewUids(int $count = 10): void
+    public static function generateNewUids(int $count = 50): void
     {
         $newUids = [];
         
@@ -64,21 +64,27 @@ class UidPool extends Model
             // Generate a random 8-character hex UID
             $uid = strtoupper(substr(md5(uniqid(rand(), true)), 0, 8));
             
-            // Ensure it's unique
-            while (self::where('uid', $uid)->exists()) {
+            // Ensure it's unique in both UID pool and members table
+            while (self::where('uid', $uid)->exists() || 
+                   \App\Models\Member::where('uid', $uid)->exists()) {
                 $uid = strtoupper(substr(md5(uniqid(rand(), true)), 0, 8));
             }
             
             $newUids[] = $uid;
         }
         
-        // Insert new UIDs
+        // Insert new UIDs in batch for better performance
+        $uidData = [];
         foreach ($newUids as $uid) {
-            self::create([
+            $uidData[] = [
                 'uid' => $uid,
                 'status' => 'available',
-            ]);
+                'created_at' => now(),
+                'updated_at' => now(),
+            ];
         }
+        
+        self::insert($uidData);
     }
 
     /**

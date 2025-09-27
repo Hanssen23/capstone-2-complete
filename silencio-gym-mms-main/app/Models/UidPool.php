@@ -36,7 +36,49 @@ class UidPool extends Model
             return $uidPool->uid;
         }
         
+        // If no UIDs available, try to generate some new ones
+        self::generateNewUids();
+        
+        // Try again after generating new UIDs
+        $uidPool = self::where('status', 'available')->first();
+        if ($uidPool) {
+            $uidPool->update([
+                'status' => 'assigned',
+                'assigned_at' => now(),
+            ]);
+            
+            return $uidPool->uid;
+        }
+        
         return null;
+    }
+
+    /**
+     * Generate new UIDs when pool is empty
+     */
+    public static function generateNewUids(int $count = 10): void
+    {
+        $newUids = [];
+        
+        for ($i = 0; $i < $count; $i++) {
+            // Generate a random 8-character hex UID
+            $uid = strtoupper(substr(md5(uniqid(rand(), true)), 0, 8));
+            
+            // Ensure it's unique
+            while (self::where('uid', $uid)->exists()) {
+                $uid = strtoupper(substr(md5(uniqid(rand(), true)), 0, 8));
+            }
+            
+            $newUids[] = $uid;
+        }
+        
+        // Insert new UIDs
+        foreach ($newUids as $uid) {
+            self::create([
+                'uid' => $uid,
+                'status' => 'available',
+            ]);
+        }
     }
 
     /**

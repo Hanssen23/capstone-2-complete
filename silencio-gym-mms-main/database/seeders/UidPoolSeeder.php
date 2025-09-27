@@ -23,17 +23,35 @@ class UidPoolSeeder extends Seeder
             'F665785F',
             'E6258C40',
             'B688164E',
+            // Additional UIDs to prevent pool exhaustion
+            'C1234567',
+            'D2345678',
+            'E3456789',
+            'F4567890',
+            'A5678901',
+            'B6789012',
+            'C7890123',
+            'D8901234',
+            'E9012345',
+            'F0123456',
         ];
 
+        $addedCount = 0;
         foreach ($uids as $uid) {
-            DB::table('uid_pool')->insert([
-                'uid' => $uid,
-                'status' => 'available',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
+            // Check if UID already exists
+            $exists = DB::table('uid_pool')->where('uid', $uid)->exists();
+            
+            if (!$exists) {
+                DB::table('uid_pool')->insert([
+                    'uid' => $uid,
+                    'status' => 'available',
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+                $addedCount++;
+            }
         }
 
-        $this->command->info('UID Pool seeded with ' . count($uids) . ' UIDs');
+        $this->command->info('UID Pool seeded with ' . $addedCount . ' new UIDs (total: ' . count($uids) . ' UIDs available)');
     }
 }

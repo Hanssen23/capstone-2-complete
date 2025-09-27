@@ -47,21 +47,27 @@ class MemberAuthController extends Controller
                 return redirect()->back()->with('error', 'No UIDs available in the pool. Please contact administrator.')->withInput();
             }
 
-            $payload = [
-                'uid' => $availableUid,
-                'member_number' => Member::generateMemberNumber(),
-                'membership' => null, // No plan assigned initially
-                'subscription_status' => 'not_subscribed',
-                'first_name' => $validated['first_name'],
-                'last_name' => $validated['last_name'],
-                'mobile_number' => $mobileNumber,
-                'email' => $validated['email'],
-                'password' => Hash::make($validated['password']),
-                'status' => 'active',
-                'role' => 'member', // Explicitly assign member role
-            ];
-            
-            $member = Member::create($payload);
+            try {
+                $payload = [
+                    'uid' => $availableUid,
+                    'member_number' => Member::generateMemberNumber(),
+                    'membership' => null, // No plan assigned initially
+                    'subscription_status' => 'not_subscribed',
+                    'first_name' => $validated['first_name'],
+                    'last_name' => $validated['last_name'],
+                    'mobile_number' => $mobileNumber,
+                    'email' => $validated['email'],
+                    'password' => Hash::make($validated['password']),
+                    'status' => 'active',
+                    'role' => 'member', // Explicitly assign member role
+                ];
+                
+                $member = Member::create($payload);
+            } catch (\Exception $e) {
+                // If member creation fails, return the UID to the pool
+                Member::returnUidToPool($availableUid);
+                throw $e; // Re-throw the exception to be caught by outer catch block
+            }
 
             // Do NOT auto-login after registration for security
             // Redirect to login page with success message

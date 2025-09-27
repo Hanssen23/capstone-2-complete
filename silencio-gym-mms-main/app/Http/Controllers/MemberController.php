@@ -127,7 +127,13 @@ class MemberController extends Controller
             $memberData['password'] = Hash::make($request->password);
         }
 
-        $member = Member::create($memberData);
+        try {
+            $member = Member::create($memberData);
+        } catch (\Exception $e) {
+            // If member creation fails, return the UID to the pool
+            Member::returnUidToPool($availableUid);
+            throw $e; // Re-throw the exception
+        }
 
         $redirectRoute = request()->is('employee/*') ? 'employee.members.index' : 'members.index';
         return redirect()->route($redirectRoute)

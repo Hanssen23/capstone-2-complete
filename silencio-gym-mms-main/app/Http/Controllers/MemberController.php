@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Member;
 use App\Models\MembershipPeriod;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
 class MemberController extends Controller
@@ -82,7 +83,19 @@ class MemberController extends Controller
             'last_name' => 'required|string|max:255',
             'mobile_number' => 'required|string|max:20',
             'email' => 'required|email|unique:members,email',
+            'password' => 'nullable|string|min:6|confirmed',
+            'role' => 'nullable|in:member,admin,employee',
         ]);
+
+        // Restrict role creation based on user type
+        $requestedRole = $request->role ?? 'member';
+        if (request()->is('employee/*')) {
+            // Employees can only create member accounts
+            $requestedRole = 'member';
+        } elseif (auth()->user()->role !== 'admin') {
+            // Only admins can create admin/employee accounts
+            $requestedRole = 'member';
+        }
 
         // Get an available UID from the pool
         $availableUid = Member::getAvailableUid();
@@ -93,18 +106,28 @@ class MemberController extends Controller
                 ->with('error', 'No UIDs available in the pool. Please contact administrator.');
         }
 
-        $member = Member::create([
+        // Clean mobile number (remove spaces and add +63 prefix)
+        $mobileNumber = '+63' . preg_replace('/\D/', '', $request->mobile_number);
+
+        $memberData = [
             'uid' => $availableUid,
             'member_number' => Member::generateMemberNumber(),
             'membership' => null, // No plan assigned initially
             'subscription_status' => 'not_subscribed',
             'first_name' => $request->first_name,
             'last_name' => $request->last_name,
-            'mobile_number' => $request->mobile_number,
+            'mobile_number' => $mobileNumber,
             'email' => $request->email,
             'status' => 'active',
-            'role' => 'member',
-        ]);
+            'role' => $requestedRole, // Use the restricted role
+        ];
+
+        // Add password if provided (for admin-created accounts)
+        if ($request->password) {
+            $memberData['password'] = Hash::make($request->password);
+        }
+
+        $member = Member::create($memberData);
 
         $redirectRoute = request()->is('employee/*') ? 'employee.members.index' : 'members.index';
         return redirect()->route($redirectRoute)

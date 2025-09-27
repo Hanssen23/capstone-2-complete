@@ -107,6 +107,35 @@
                                value="{{ old('email') }}">
                     </div>
 
+                    <!-- Password Field (Optional for employee-created accounts) -->
+                    <div>
+                        <label for="password" class="block text-sm font-medium text-gray-700 mb-2">Password (Optional)</label>
+                        <input type="password" id="password" name="password" 
+                               class="w-full px-4 py-2 border border-gray-300 bg-white text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200 placeholder-gray-400"
+                               placeholder="Leave blank to let user set password later"
+                               value="{{ old('password') }}">
+                        <p class="text-xs text-gray-500 mt-1">If provided, user can login immediately. If left blank, user will need to set password later.</p>
+                    </div>
+
+                    <!-- Password Confirmation Field -->
+                    <div>
+                        <label for="password_confirmation" class="block text-sm font-medium text-gray-700 mb-2">Confirm Password</label>
+                        <input type="password" id="password_confirmation" name="password_confirmation" 
+                               class="w-full px-4 py-2 border border-gray-300 bg-white text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200 placeholder-gray-400"
+                               placeholder="Confirm password"
+                               value="{{ old('password_confirmation') }}">
+                    </div>
+
+                    <!-- Role Field (Employee can only create members) -->
+                    <div>
+                        <label for="role" class="block text-sm font-medium text-gray-700 mb-2">User Role</label>
+                        <select id="role" name="role" 
+                                class="w-full px-4 py-2 border border-gray-300 bg-white text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200">
+                            <option value="member" {{ old('role') == 'member' ? 'selected' : '' }}>Member</option>
+                        </select>
+                        <p class="text-xs text-gray-500 mt-1">Employees can only create member accounts.</p>
+                    </div>
+
                     <!-- Submit and Cancel Buttons -->
                     <div class="flex items-center gap-4 pt-4">
                         <button type="submit" 

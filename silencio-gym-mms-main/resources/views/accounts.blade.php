@@ -86,6 +86,7 @@
                                 <option value="">Select user type</option>
                                 <option value="admin">Admin</option>
                                 <option value="employee">Employee</option>
+                                <option value="member">Member</option>
                             </select>
                             <div id="role-error" class="text-red-500 text-sm mt-1 hidden"></div>
                         </div>

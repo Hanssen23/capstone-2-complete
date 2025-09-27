@@ -131,7 +131,7 @@ class AccountController extends Controller
             'email' => 'required|string|email|max:255|unique:users',
             'mobile_number' => 'nullable|string|regex:/^9\d{2}\s\d{3}\s\d{4}$/',
             'password' => 'required|string|min:8|confirmed',
-            'role' => 'required|in:admin,employee',
+            'role' => 'required|in:admin,employee,member',
         ], [
             'first_name.required' => 'First name is required',
             'last_name.required' => 'Last name is required',

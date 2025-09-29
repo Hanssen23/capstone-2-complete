@@ -4,12 +4,12 @@
         <x-topbar>All Memberships</x-topbar>
 
         <!-- Main Content -->
-        <div class="p-6">
+        <div class="p-4 sm:p-6">
             @if(session('success'))
-                <div class="mb-6 p-4 bg-white border rounded-lg" style="border-color: #059669; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                <div class="mb-4 sm:mb-6 p-3 sm:p-4 bg-white border rounded-lg" style="border-color: #059669; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
                     <div class="flex">
                         <div class="flex-shrink-0">
-                            <span class="text-xl">✅</span>
+                            <span class="text-lg sm:text-xl">✅</span>
                         </div>
                         <div class="ml-3">
                             <p class="text-sm font-medium" style="color: #059669;">{{ session('success') }}</p>
@@ -19,48 +19,48 @@
             @endif
             
             <!-- Header Section -->
-            <div class="bg-white rounded-lg border p-8 mb-6" style="border-color: #E5E7EB; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
-                <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
+            <div class="bg-white rounded-lg border p-4 sm:p-6 lg:p-8 mb-4 sm:mb-6" style="border-color: #E5E7EB; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 sm:gap-6">
                     <div>
-                        <h1 class="text-3xl font-bold mb-2" style="color: #1E40AF;">All Memberships</h1>
-                        <p class="text-lg" style="color: #6B7280;">Manage member accounts and memberships</p>
+                        <h1 class="text-2xl sm:text-3xl font-bold mb-2" style="color: #1E40AF;">All Memberships</h1>
+                        <p class="text-base sm:text-lg" style="color: #6B7280;">Manage member accounts and memberships</p>
                     </div>
                     <a href="{{ route('members.create') }}" 
-                       class="px-6 py-3 text-white rounded-lg font-medium transition-colors duration-200 flex items-center gap-2" 
+                       class="w-full sm:w-auto px-4 sm:px-6 py-3 text-white rounded-lg font-medium transition-colors duration-200 flex items-center justify-center gap-2" 
                        style="background-color: #2563EB;" 
                        onmouseover="this.style.backgroundColor='#1D4ED8'" 
                        onmouseout="this.style.backgroundColor='#2563EB'">
-                        <span class="text-xl">➕</span>
+                        <span class="text-lg sm:text-xl">➕</span>
                             Add Member
                     </a>
                 </div>
                 
                 <!-- Filter Pills -->
-                <div class="mt-6">
-                    <div class="flex flex-wrap gap-3">
+                <div class="mt-4 sm:mt-6">
+                    <div class="flex flex-wrap gap-2 sm:gap-3">
                         <a href="{{ route('members.index') }}" 
-                           class="px-4 py-2 rounded-full text-sm font-medium transition-colors {{ empty($selectedMembership) ? 'text-white' : 'text-gray-600' }}" 
+                           class="px-3 sm:px-4 py-2 rounded-full text-xs sm:text-sm font-medium transition-colors min-h-[44px] flex items-center justify-center {{ empty($selectedMembership) ? 'text-white' : 'text-gray-600' }}" 
                            style="background-color: {{ empty($selectedMembership) ? '#1E40AF' : '#F3F4F6' }};"
                            onmouseover="this.style.backgroundColor='{{ empty($selectedMembership) ? '#1E40AF' : '#E5E7EB' }}'" 
                            onmouseout="this.style.backgroundColor='{{ empty($selectedMembership) ? '#1E40AF' : '#F3F4F6' }}'">
                             All
                         </a>
                         <a href="{{ route('members.index', ['membership' => 'basic']) }}" 
-                           class="px-4 py-2 rounded-full text-sm font-medium transition-colors {{ ($selectedMembership ?? '') === 'basic' ? 'text-white' : 'text-gray-600' }}" 
+                           class="px-3 sm:px-4 py-2 rounded-full text-xs sm:text-sm font-medium transition-colors min-h-[44px] flex items-center justify-center {{ ($selectedMembership ?? '') === 'basic' ? 'text-white' : 'text-gray-600' }}" 
                            style="background-color: {{ ($selectedMembership ?? '') === 'basic' ? '#1E40AF' : '#F3F4F6' }};"
                            onmouseover="this.style.backgroundColor='{{ ($selectedMembership ?? '') === 'basic' ? '#1E40AF' : '#E5E7EB' }}'" 
                            onmouseout="this.style.backgroundColor='{{ ($selectedMembership ?? '') === 'basic' ? '#1E40AF' : '#F3F4F6' }}'">
                             Basic
                         </a>
                         <a href="{{ route('members.index', ['membership' => 'vip']) }}" 
-                           class="px-4 py-2 rounded-full text-sm font-medium transition-colors {{ ($selectedMembership ?? '') === 'vip' ? 'text-white' : 'text-gray-600' }}" 
+                           class="px-3 sm:px-4 py-2 rounded-full text-xs sm:text-sm font-medium transition-colors min-h-[44px] flex items-center justify-center {{ ($selectedMembership ?? '') === 'vip' ? 'text-white' : 'text-gray-600' }}" 
                            style="background-color: {{ ($selectedMembership ?? '') === 'vip' ? '#1E40AF' : '#F3F4F6' }};"
                            onmouseover="this.style.backgroundColor='{{ ($selectedMembership ?? '') === 'vip' ? '#1E40AF' : '#E5E7EB' }}'" 
                            onmouseout="this.style.backgroundColor='{{ ($selectedMembership ?? '') === 'vip' ? '#1E40AF' : '#F3F4F6' }}'">
                             VIP
                         </a>
                         <a href="{{ route('members.index', ['membership' => 'premium']) }}" 
-                           class="px-4 py-2 rounded-full text-sm font-medium transition-colors {{ ($selectedMembership ?? '') === 'premium' ? 'text-white' : 'text-gray-600' }}" 
+                           class="px-3 sm:px-4 py-2 rounded-full text-xs sm:text-sm font-medium transition-colors min-h-[44px] flex items-center justify-center {{ ($selectedMembership ?? '') === 'premium' ? 'text-white' : 'text-gray-600' }}" 
                            style="background-color: {{ ($selectedMembership ?? '') === 'premium' ? '#1E40AF' : '#F3F4F6' }};"
                            onmouseover="this.style.backgroundColor='{{ ($selectedMembership ?? '') === 'premium' ? '#1E40AF' : '#E5E7EB' }}'" 
                            onmouseout="this.style.backgroundColor='{{ ($selectedMembership ?? '') === 'premium' ? '#1E40AF' : '#F3F4F6' }}'">
@@ -70,44 +70,56 @@
                 </div>
                 
                 <!-- Search Bar -->
-                <div class="mt-6">
-                    <form method="GET" action="{{ route('members.index') }}" class="w-full max-w-md">
+                <div class="mt-4 sm:mt-6">
+                    <form method="GET" action="{{ route('members.index') }}" class="w-full max-w-full sm:max-w-md">
                         <div class="relative">
                             <input name="search" value="{{ $search ?? '' }}" type="text" 
                                    placeholder="Search by name, email, or member number..." 
-                                   class="w-full px-3 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-base" 
+                                   class="w-full px-3 sm:px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-sm sm:text-base min-h-[44px]" 
                                    style="border-color: #E5E7EB; color: #000000;">
-                                @if(!empty($selectedMembership))
-                                    <input type="hidden" name="membership" value="{{ $selectedMembership }}">
-                                @endif
-                            </div>
-                        </form>
+                            <button type="submit" class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center">
+                                <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                                </svg>
+                            </button>
+                            @if(!empty($selectedMembership))
+                                <input type="hidden" name="membership" value="{{ $selectedMembership }}">
+                            @endif
+                        </div>
+                    </form>
                 </div>
             </div>
 
             <!-- Members Table -->
             <div class="bg-white rounded-lg border overflow-hidden" style="border-color: #E5E7EB; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
                 <div class="overflow-x-auto">
-                    <table class="min-w-full divide-y" style="border-color: #E5E7EB;">
+                    <table class="min-w-full divide-y" style="border-color: #E5E7EB; min-width: 800px;">
                         <thead style="background-color: #1E40AF;">
                             <tr>
-                                <th class="px-6 py-4 text-left text-xs font-bold text-white uppercase tracking-wider">UID</th>
-                                <th class="px-6 py-4 text-left text-xs font-bold text-white uppercase tracking-wider">MEMBER NUMBER</th>
-                                <th class="px-6 py-4 text-left text-xs font-bold text-white uppercase tracking-wider">PLAN</th>
-                                <th class="px-6 py-4 text-left text-xs font-bold text-white uppercase tracking-wider">NAME</th>
-                                <th class="px-6 py-4 text-left text-xs font-bold text-white uppercase tracking-wider">EMAIL</th>
-                                <th class="px-6 py-4 text-left text-xs font-bold text-white uppercase tracking-wider">PHONE</th>
-                                <th class="px-6 py-4 text-left text-xs font-bold text-white uppercase tracking-wider">ACTIONS</th>
+                                <th class="px-2 sm:px-3 lg:px-6 py-2 sm:py-3 lg:py-4 text-left text-xs sm:text-sm font-bold text-white uppercase tracking-wider">UID</th>
+                                <th class="px-2 sm:px-3 lg:px-6 py-2 sm:py-3 lg:py-4 text-left text-xs sm:text-sm font-bold text-white uppercase tracking-wider hidden sm:table-cell">MEMBER NUMBER</th>
+                                <th class="px-2 sm:px-3 lg:px-6 py-2 sm:py-3 lg:py-4 text-left text-xs sm:text-sm font-bold text-white uppercase tracking-wider">MEMBERSHIP</th>
+                                <th class="px-2 sm:px-3 lg:px-6 py-2 sm:py-3 lg:py-4 text-left text-xs sm:text-sm font-bold text-white uppercase tracking-wider">FULL NAME</th>
+                                <th class="px-2 sm:px-3 lg:px-6 py-2 sm:py-3 lg:py-4 text-left text-xs sm:text-sm font-bold text-white uppercase tracking-wider hidden md:table-cell">MOBILE NUMBER</th>
+                                <th class="px-2 sm:px-3 lg:px-6 py-2 sm:py-3 lg:py-4 text-left text-xs sm:text-sm font-bold text-white uppercase tracking-wider hidden sm:table-cell">EMAIL</th>
+                                <th class="px-2 sm:px-3 lg:px-6 py-2 sm:py-3 lg:py-4 text-left text-xs sm:text-sm font-bold text-white uppercase tracking-wider">ACTIONS</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y" style="background-color: #FFFFFF; border-color: #E5E7EB;">
                             @forelse($members as $member)
                             <tr class="hover:bg-gray-50" style="background-color: {{ $loop->even ? '#F9FAFB' : '#FFFFFF' }};">
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium" style="color: #000000;">
-                                    <span class="truncate block max-w-24" title="{{ $member->uid }}">{{ Str::limit($member->uid, 8) }}</span>
+                                <!-- UID Column -->
+                                <td class="px-2 sm:px-3 lg:px-6 py-2 sm:py-3 lg:py-4 whitespace-nowrap text-xs sm:text-sm font-medium" style="color: #000000;">
+                                    {{ $member->uid }}
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm" style="color: #000000;">{{ $member->member_number }}</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                
+                                <!-- MEMBER NUMBER Column -->
+                                <td class="px-2 sm:px-3 lg:px-6 py-2 sm:py-3 lg:py-4 whitespace-nowrap text-xs sm:text-sm hidden sm:table-cell" style="color: #000000;">
+                                    MEM{{ str_pad($member->id, 3, '0', STR_PAD_LEFT) }}
+                                </td>
+                                
+                                <!-- MEMBERSHIP Column -->
+                                <td class="px-2 sm:px-3 lg:px-6 py-2 sm:py-3 lg:py-4 whitespace-nowrap text-xs sm:text-sm">
                                     @php
                                         $currentPlan = $member->currentMembershipPeriod ? $member->currentMembershipPeriod->plan_type : null;
                                         $isActive = $member->currentMembershipPeriod && $member->currentMembershipPeriod->is_active;
@@ -129,9 +141,6 @@
                                             
                                             // Create combined text for the badge
                                             $badgeText = ucfirst($currentPlan);
-                                            if ($durationType) {
-                                                $badgeText .= ' + ' . ucfirst($durationType);
-                                            }
                                         @endphp
                                         <span class="inline-flex px-3 py-1 text-xs font-semibold rounded-full text-white" 
                                               style="background-color: {{ $planColor }};">
@@ -152,9 +161,6 @@
                                             
                                             // Create combined text for the badge
                                             $badgeText = ucfirst($paymentPlan);
-                                            if ($paymentDuration) {
-                                                $badgeText .= ' + ' . ucfirst($paymentDuration);
-                                            }
                                         @endphp
                                         <span class="inline-flex px-3 py-1 text-xs font-semibold rounded-full text-white" 
                                               style="background-color: {{ $planColor }};">
@@ -166,35 +172,38 @@
                                         </span>
                                     @endif
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium" style="color: #000000;">{{ $member->full_name }}</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm" style="color: #6B7280;">
-                                    <span class="truncate block max-w-32" title="{{ $member->email }}">{{ Str::limit($member->email, 20) }}</span>
+                                
+                                <!-- FULL NAME Column -->
+                                <td class="px-2 sm:px-3 lg:px-6 py-2 sm:py-3 lg:py-4 whitespace-nowrap text-xs sm:text-sm font-medium" style="color: #000000;">
+                                    {{ $member->first_name }} {{ $member->last_name }}
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm" style="color: #6B7280;">
-                                    {{ $member->mobile_number }}
+                                
+                                <!-- MOBILE NUMBER Column -->
+                                <td class="px-2 sm:px-3 lg:px-6 py-2 sm:py-3 lg:py-4 whitespace-nowrap text-xs sm:text-sm hidden md:table-cell" style="color: #000000;">
+                                    {{ $member->mobile_number ? '+63 ' . $member->mobile_number : 'N/A' }}
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                
+                                <!-- EMAIL Column -->
+                                <td class="px-2 sm:px-3 lg:px-6 py-2 sm:py-3 lg:py-4 whitespace-nowrap text-xs sm:text-sm hidden sm:table-cell" style="color: #000000;">
+                                    {{ $member->email }}
+                                </td>
+                                <td class="px-2 sm:px-3 lg:px-6 py-2 sm:py-3 lg:py-4 whitespace-nowrap text-xs sm:text-sm font-medium">
                                     <div class="flex items-center gap-2">
-                                        <a href="{{ route('members.profile', $member->id) }}" class="p-2 text-blue-600 hover:text-blue-500 hover:bg-blue-50 rounded-lg transition-colors duration-200" title="View Profile">
-                                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <a href="{{ route('members.profile', $member->id) }}" class="text-yellow-600 hover:text-yellow-900 transition-colors duration-200" title="View Profile">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
                                             </svg>
                                         </a>
-                                        <a href="{{ route('members.edit', $member->id) }}" class="p-2 text-gray-600 hover:text-gray-500 hover:bg-gray-50 rounded-lg transition-colors duration-200" title="Edit">
-                                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <a href="{{ route('members.edit', $member->id) }}" class="text-red-600 hover:text-red-900 transition-colors duration-200" title="Edit Member">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
                                             </svg>
                                         </a>
-                                        <button type="button" onclick="deleteMember('{{ $member->id }}', '{{ $member->first_name }} {{ $member->last_name }}')" 
-                                                class="p-2 text-white rounded-lg transition-colors duration-200" 
-                                                title="Delete" 
-                                                style="background-color: #DC2626; border: 2px solid #E5E7EB; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);" 
-                                                onmouseover="this.style.backgroundColor='#B91C1C'" 
-                                                onmouseout="this.style.backgroundColor='#DC2626'">
-                                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                                                </svg>
-                                            </button>
+                                        <button onclick="deleteMember({{ $member->id }}, '{{ $member->first_name }} {{ $member->last_name }}')" class="text-red-600 hover:text-red-900 transition-colors duration-200" title="Delete Member">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                            </svg>
+                                        </button>
                                     </div>
                                 </td>
                             </tr>
@@ -223,16 +232,16 @@
                 
                 <!-- Pagination -->
                 @if($members->hasPages())
-                <div class="bg-white px-6 py-4 border-t" style="border-color: #E5E7EB;">
+                <div class="bg-white px-2 sm:px-4 lg:px-6 py-2 sm:py-3 lg:py-4 border-t" style="border-color: #E5E7EB;">
                     <div class="flex items-center justify-between">
                         <div class="flex-1 flex justify-between sm:hidden">
                             @if($members->onFirstPage())
-                                <span class="relative inline-flex items-center px-4 py-2 border text-sm font-medium rounded-md" style="border-color: #E5E7EB; color: #6B7280;">
+                                <span class="relative inline-flex items-center px-2 sm:px-4 py-2 border text-xs sm:text-sm font-medium rounded-md" style="border-color: #E5E7EB; color: #6B7280;">
                                     Previous
                                 </span>
                             @else
                                 <a href="{{ $members->previousPageUrl() }}" 
-                                   class="relative inline-flex items-center px-4 py-2 border text-sm font-medium rounded-md transition-colors" 
+                                   class="relative inline-flex items-center px-2 sm:px-4 py-2 border text-xs sm:text-sm font-medium rounded-md transition-colors" 
                                    style="border-color: #E5E7EB; color: #6B7280;" 
                                    onmouseover="this.style.backgroundColor='#F3F4F6'" 
                                    onmouseout="this.style.backgroundColor='transparent'">
@@ -242,21 +251,21 @@
 
                             @if($members->hasMorePages())
                                 <a href="{{ $members->nextPageUrl() }}" 
-                                   class="ml-3 relative inline-flex items-center px-4 py-2 border text-sm font-medium rounded-md transition-colors" 
+                                   class="ml-3 relative inline-flex items-center px-2 sm:px-4 py-2 border text-xs sm:text-sm font-medium rounded-md transition-colors" 
                                    style="border-color: #E5E7EB; color: #6B7280;" 
                                    onmouseover="this.style.backgroundColor='#F3F4F6'" 
                                    onmouseout="this.style.backgroundColor='transparent'">
                                     Next
                                 </a>
                             @else
-                                <span class="ml-3 relative inline-flex items-center px-4 py-2 border text-sm font-medium rounded-md" style="border-color: #E5E7EB; color: #6B7280;">
+                                <span class="ml-3 relative inline-flex items-center px-2 sm:px-4 py-2 border text-xs sm:text-sm font-medium rounded-md" style="border-color: #E5E7EB; color: #6B7280;">
                                     Next
                                 </span>
                             @endif
                         </div>
                         <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
                             <div>
-                                <p class="text-sm" style="color: #6B7280;">
+                                <p class="text-xs sm:text-sm" style="color: #6B7280;">
                                     Showing
                                     <span class="font-medium" style="color: #000000;">{{ $members->firstItem() }}</span>
                                     to
@@ -278,29 +287,27 @@
     </div>
 
     <!-- Member Delete Confirmation Modal -->
-    <div id="memberDeleteConfirmModal" class="fixed inset-0 bg-black bg-opacity-40 backdrop-blur-sm hidden z-50">
-        <div class="flex items-center justify-center min-h-screen p-4">
-            <div class="bg-white rounded-xl max-w-md w-full mx-4 transform transition-all duration-300 scale-95 opacity-0" 
-                 id="memberDeleteConfirmModalContent"
-                 style="border: 2px solid #E5E7EB; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);">
-                <div class="p-8 text-center">
-                    <div class="mb-6">
-                        <div class="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                            <svg class="w-10 h-10 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
-                            </svg>
-                        </div>
-                        <h3 class="text-2xl font-bold text-gray-900 mb-3">Are you sure you want to delete this member?</h3>
-                        <p id="memberDeleteConfirmMessage" class="text-gray-600 text-lg">This action cannot be undone.</p>
+    <div id="memberDeleteConfirmModal" class="fixed inset-0 flex items-center justify-center p-2 sm:p-4 hidden z-50">
+        <div class="bg-white rounded-xl shadow-lg max-w-md w-full transform transition-all duration-300 scale-95 opacity-0 border border-gray-200" 
+             id="memberDeleteConfirmModalContent"
+             style="box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);">
+            <div class="p-4 sm:p-6 text-center">
+                <div class="mb-4 sm:mb-6">
+                    <div class="w-12 h-12 sm:w-16 sm:h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4">
+                        <svg class="w-6 h-6 sm:w-8 sm:h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                        </svg>
                     </div>
-                    <div class="flex justify-center space-x-4">
-                        <button onclick="cancelMemberDelete()" class="px-8 py-3 bg-orange-100 border-2 border-orange-200 text-orange-800 rounded-lg hover:bg-orange-200 transition-all duration-200 font-semibold shadow-md hover:shadow-lg">
-                            Cancel
-                        </button>
-                        <button onclick="confirmMemberDelete()" class="px-8 py-3 bg-green-100 border-2 border-green-200 text-green-800 rounded-lg hover:bg-green-200 transition-all duration-200 font-semibold shadow-md hover:shadow-lg">
-                            Confirm
-                        </button>
-                    </div>
+                    <h3 class="text-base sm:text-lg font-semibold text-gray-900 mb-2">Are you sure you want to delete this member?</h3>
+                    <p id="memberDeleteConfirmMessage" class="text-sm sm:text-base text-gray-600">This action cannot be undone.</p>
+                </div>
+                <div class="flex flex-col sm:flex-row justify-center gap-3 pt-4" style="background-color: #F9FAFB;">
+                    <button onclick="cancelMemberDelete()" class="w-full sm:w-auto px-4 sm:px-6 py-2 bg-gray-100 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-200 transition-all duration-200 font-medium">
+                        Cancel
+                    </button>
+                    <button onclick="confirmMemberDelete()" class="w-full sm:w-auto px-4 sm:px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-all duration-200 font-medium">
+                        Delete
+                    </button>
                 </div>
             </div>
         </div>

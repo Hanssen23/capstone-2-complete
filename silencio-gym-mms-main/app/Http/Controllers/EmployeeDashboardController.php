@@ -26,8 +26,8 @@ class EmployeeDashboardController extends Controller
         // Get this week's attendance
         $thisWeekAttendance = Attendance::thisWeek()->count();
         
-        // Get this month's revenue
-        $thisMonthRevenue = Payment::completed()->thisMonth()->sum('amount');
+        // Get this week's revenue
+        $thisWeekRevenue = Payment::completed()->thisWeek()->sum('amount');
         
         // Get pending payments count
         $pendingPaymentsCount = Payment::pending()->count();
@@ -35,8 +35,8 @@ class EmployeeDashboardController extends Controller
         // Get memberships expiring this week (from multiple sources)
         $expiringMembershipsCount = Member::expiringThisWeek()->count();
         
-        // Get memberships expiring this month (30 days)
-        $expiringMembershipsThisMonth = Member::expiringSoon(30)->count();
+        // Get memberships expiring this week
+        $expiringMembershipsThisWeek = Member::expiringThisWeek()->count();
         
         // Also get count from payments for verification
         $expiringPaymentsCount = Payment::expiringThisWeek()->count();
@@ -55,10 +55,10 @@ class EmployeeDashboardController extends Controller
             'totalActiveMembersCount',
             'todayAttendance',
             'thisWeekAttendance',
-            'thisMonthRevenue',
+            'thisWeekRevenue',
             'pendingPaymentsCount',
             'expiringMembershipsCount',
-            'expiringMembershipsThisMonth',
+            'expiringMembershipsThisWeek',
             'expiringPaymentsCount',
             'recentRfidLogs',
             'expiredMembershipsToday',
@@ -80,8 +80,8 @@ class EmployeeDashboardController extends Controller
         // Get this week's attendance
         $thisWeekAttendance = Attendance::thisWeek()->count();
         
-        // Get this month's revenue
-        $thisMonthRevenue = Payment::completed()->thisMonth()->sum('amount');
+        // Get this week's revenue
+        $thisWeekRevenue = Payment::completed()->thisWeek()->sum('amount');
         
         // Get pending payments count
         $pendingPaymentsCount = Payment::pending()->count();
@@ -89,8 +89,8 @@ class EmployeeDashboardController extends Controller
         // Get memberships expiring this week
         $expiringMembershipsCount = Member::expiringThisWeek()->count();
         
-        // Get memberships expiring this month (30 days)
-        $expiringMembershipsThisMonth = Member::expiringSoon(30)->count();
+        // Get memberships expiring this week
+        $expiringMembershipsThisWeek = Member::expiringThisWeek()->count();
         
         // Get expired memberships today
         $expiredMembershipsToday = Member::expired()->count();
@@ -103,10 +103,10 @@ class EmployeeDashboardController extends Controller
             'totalActiveMembersCount' => $totalActiveMembersCount,
             'todayAttendance' => $todayAttendance,
             'thisWeekAttendance' => $thisWeekAttendance,
-            'thisMonthRevenue' => $thisMonthRevenue,
+            'thisWeekRevenue' => $thisWeekRevenue,
             'pendingPaymentsCount' => $pendingPaymentsCount,
             'expiringMembershipsCount' => $expiringMembershipsCount,
-            'expiringMembershipsThisMonth' => $expiringMembershipsThisMonth,
+            'expiringMembershipsThisWeek' => $expiringMembershipsThisWeek,
             'expiredMembershipsToday' => $expiredMembershipsToday,
             'unknownCardsToday' => $unknownCardsToday,
         ]);

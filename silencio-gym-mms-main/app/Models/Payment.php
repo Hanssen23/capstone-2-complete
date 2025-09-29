@@ -54,6 +54,14 @@ class Payment extends Model
         return $query->where('status', 'failed');
     }
 
+    public function scopeThisWeek($query)
+    {
+        return $query->whereBetween('payment_date', [
+            now()->startOfWeek(),
+            now()->endOfWeek()
+        ]);
+    }
+
     public function scopeThisMonth($query)
     {
         return $query->whereMonth('payment_date', now()->month);

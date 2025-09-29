@@ -3,88 +3,92 @@
     <div class="flex-1 bg-white">
         <x-topbar>All Payments</x-topbar>
 
-        <div class="bg-white min-h-screen p-6">
+        <div class="bg-white min-h-screen p-4 sm:p-6">
             <!-- Header with Quick Actions -->
-            <div class="mb-8">
-                <div class="bg-white rounded-lg shadow-sm border p-8" style="border-color: #E5E7EB; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
-                    <div class="flex items-center justify-between mb-8">
+            <div class="mb-6 sm:mb-8">
+                <div class="bg-white rounded-lg shadow-sm border p-4 sm:p-6 lg:p-8" style="border-color: #E5E7EB; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                    <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-6 sm:mb-8 gap-4">
                         <div>
-                            <h2 class="text-3xl font-bold" style="color: #1E40AF;">Payment Records</h2>
-                            <p class="text-lg mt-2" style="color: #6B7280;">View and manage all payment transactions</p>
+                            <h2 class="text-2xl sm:text-3xl font-bold" style="color: #1E40AF;">Payment Records</h2>
+                            <p class="text-base sm:text-lg mt-2" style="color: #6B7280;">View and manage all payment transactions</p>
                         </div>
-                        <div class="flex space-x-4">
-                            <a href="{{ route('membership.manage-member') }}" class="inline-flex items-center px-6 py-3 text-white rounded-lg transition-colors shadow-sm" style="background-color: #2563EB;" onmouseover="this.style.backgroundColor='#1D4ED8'" onmouseout="this.style.backgroundColor='#2563EB'">
-                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="flex flex-col sm:flex-row gap-2 sm:gap-4">
+                            <a href="{{ route('membership.manage-member') }}" class="inline-flex items-center justify-center px-4 sm:px-6 py-3 text-white rounded-lg transition-colors shadow-sm min-h-[44px] w-full sm:w-auto" style="background-color: #2563EB;" onmouseover="this.style.backgroundColor='#1D4ED8'" onmouseout="this.style.backgroundColor='#2563EB'">
+                                <svg class="w-4 h-4 sm:w-5 sm:h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
                                 </svg>
-                                New Payment
+                                <span class="text-sm sm:text-base">New Payment</span>
                             </a>
-                            <a href="{{ route('membership.plans.index') }}" class="inline-flex items-center px-6 py-3 text-white rounded-lg transition-colors shadow-sm" style="background-color: #6B7280;" onmouseover="this.style.backgroundColor='#4B5563'" onmouseout="this.style.backgroundColor='#6B7280'">
-                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <a href="{{ route('membership.plans.index') }}" class="inline-flex items-center justify-center px-4 sm:px-6 py-3 text-white rounded-lg transition-colors shadow-sm min-h-[44px] w-full sm:w-auto" style="background-color: #6B7280;" onmouseover="this.style.backgroundColor='#4B5563'" onmouseout="this.style.backgroundColor='#6B7280'">
+                                <svg class="w-4 h-4 sm:w-5 sm:h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
                                 </svg>
-                                Manage Plans
+                                <span class="text-sm sm:text-base">Manage Plans</span>
                             </a>
-                            <a href="{{ route('membership.payments.export_csv', request()->query()) }}" class="inline-flex items-center px-6 py-3 text-white rounded-lg transition-colors shadow-sm" style="background-color: #059669;" onmouseover="this.style.backgroundColor='#047857'" onmouseout="this.style.backgroundColor='#059669'">
-                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <a href="{{ route('membership.payments.export_csv', request()->query()) }}" class="inline-flex items-center justify-center px-4 sm:px-6 py-3 text-white rounded-lg transition-colors shadow-sm min-h-[44px] w-full sm:w-auto" style="background-color: #059669;" onmouseover="this.style.backgroundColor='#047857'" onmouseout="this.style.backgroundColor='#059669'">
+                                <svg class="w-4 h-4 sm:w-5 sm:h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                                 </svg>
-                                Export CSV
+                                <span class="text-sm sm:text-base">Export CSV</span>
                             </a>
                         </div>
                     </div>
 
                     <!-- Summary Cards -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div class="bg-white border rounded-lg p-6 hover:shadow-lg transition-shadow" style="border-color: #059669; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+                        <div class="bg-white border rounded-lg p-4 sm:p-6 hover:shadow-lg transition-shadow" style="border-color: #059669; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
                             <div class="flex items-center">
-                                <div class="w-14 h-14 rounded-full flex items-center justify-center mr-4" style="background-color: #059669;">
-                                    <span class="text-2xl">✅</span>
+                                <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-full flex items-center justify-center mr-3 sm:mr-4" style="background-color: #059669;">
+                                    <span class="text-xl sm:text-2xl">✅</span>
                                 </div>
                                 <div>
-                                    <p class="text-sm font-medium" style="color: #059669;">Completed</p>
-                                    <p class="text-3xl font-bold" style="color: #000000;">{{ $payments->where('status', 'completed')->count() }}</p>
+                                    <p class="text-xs sm:text-sm font-medium" style="color: #059669;">Completed</p>
+                                    <p class="text-2xl sm:text-3xl font-bold" style="color: #000000;">{{ $payments->where('status', 'completed')->count() }}</p>
                                 </div>
                             </div>
                         </div>
                         
-                        <div class="bg-white border rounded-lg p-6 hover:shadow-lg transition-shadow" style="border-color: #059669; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                        <div class="bg-white border rounded-lg p-4 sm:p-6 hover:shadow-lg transition-shadow" style="border-color: #059669; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
                             <div class="flex items-center">
-                                <div class="w-14 h-14 rounded-full flex items-center justify-center mr-4" style="background-color: #059669;">
-                                    <span class="text-2xl font-bold" style="color: #FFFFFF;">₱</span>
+                                <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-full flex items-center justify-center mr-3 sm:mr-4" style="background-color: #059669;">
+                                    <span class="text-xl sm:text-2xl font-bold" style="color: #FFFFFF;">₱</span>
                                 </div>
                                 <div>
-                                    <p class="text-sm font-medium" style="color: #059669;">Total Revenue</p>
-                                    <p class="text-3xl font-bold" style="color: #000000;">₱{{ number_format($payments->where('status', 'completed')->sum('amount'), 2) }}</p>
+                                    <p class="text-xs sm:text-sm font-medium" style="color: #059669;">Total Revenue</p>
+                                    <p class="text-2xl sm:text-3xl font-bold" style="color: #000000;">₱{{ number_format($payments->where('status', 'completed')->sum('amount'), 2) }}</p>
                                 </div>
                             </div>
                         </div>
                     </div>
                     
                     <!-- Payment Printing Features Info -->
-                    <div class="mt-8 p-6 bg-blue-50 border border-blue-200 rounded-lg">
-                        <div class="flex items-start">
+                    <div class="mt-6 sm:mt-8 p-4 sm:p-6 bg-blue-50 border border-blue-200 rounded-lg">
+                        <div class="flex flex-col sm:flex-row items-start gap-3 sm:gap-0">
                             <div class="flex-shrink-0">
-                                <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg class="w-5 h-5 sm:w-6 sm:h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                 </svg>
                             </div>
-                            <div class="ml-3">
-                                <h3 class="text-lg font-semibold text-blue-900 mb-2">Payment Printing Features</h3>
-                                <div class="text-blue-800 space-y-2">
-                                    <p class="flex items-center">
-                                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <div class="flex-1">
+                                <h3 class="text-base sm:text-lg font-semibold text-blue-900 mb-2 sm:mb-3">Payment Printing Features</h3>
+                                <div class="text-blue-800 space-y-2 sm:space-y-3">
+                                    <div class="flex flex-col sm:flex-row sm:items-start gap-2">
+                                        <svg class="w-4 h-4 text-blue-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path>
                                         </svg>
-                                        <strong>Print Receipts:</strong> Click the "Print" button in the actions column or use the "Print Receipt" button in payment details to generate professional receipts
-                                    </p>
-                                    <p class="flex items-center">
-                                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <div class="text-sm sm:text-base">
+                                            <strong>Print Receipts:</strong> Click the "Print" button in the actions column or use the "Print Receipt" button in payment details to generate professional receipts
+                                        </div>
+                                    </div>
+                                    <div class="flex flex-col sm:flex-row sm:items-start gap-2">
+                                        <svg class="w-4 h-4 text-blue-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                                         </svg>
-                                        <strong>Export to CSV:</strong> Use the "Export CSV" button to download all payment data with current filters applied
-                                    </p>
+                                        <div class="text-sm sm:text-base">
+                                            <strong>Export to CSV:</strong> Use the "Export CSV" button to download all payment data with current filters applied
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -93,13 +97,13 @@
             </div>
 
             <!-- Filters and Search -->
-            <div class="mb-8">
-                <div class="bg-white rounded-lg shadow-sm border p-8" style="border-color: #E5E7EB; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
-                    <h3 class="text-xl font-semibold mb-6" style="color: #1E40AF;">Filters & Search</h3>
-                    <form method="GET" action="{{ route('membership.payments') }}" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="mb-6 sm:mb-8">
+                <div class="bg-white rounded-lg shadow-sm border p-4 sm:p-6 lg:p-8" style="border-color: #E5E7EB; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                    <h3 class="text-lg sm:text-xl font-semibold mb-4 sm:mb-6" style="color: #1E40AF;">Filters & Search</h3>
+                    <form method="GET" action="{{ route('membership.payments') }}" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                         <div>
-                            <label class="block text-sm font-medium mb-3" style="color: #374151;">Plan Type</label>
-                            <select name="plan_type" class="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors" style="border-color: #E5E7EB;">
+                            <label class="block text-xs sm:text-sm font-medium mb-2 sm:mb-3" style="color: #374151;">Plan Type</label>
+                            <select name="plan_type" class="w-full px-3 sm:px-4 py-2 sm:py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-xs sm:text-sm" style="border-color: #E5E7EB;">
                                 <option value="">All Plans</option>
                                 <option value="basic" {{ request('plan_type') === 'basic' ? 'selected' : '' }}>Basic</option>
                                 <option value="vip" {{ request('plan_type') === 'vip' ? 'selected' : '' }}>VIP</option>
@@ -107,15 +111,15 @@
                             </select>
                         </div>
                         <div>
-                            <label class="block text-sm font-medium mb-3" style="color: #374151;">Date</label>
-                            <input type="date" name="date" value="{{ request('date') }}" class="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors" style="border-color: #E5E7EB;">
+                            <label class="block text-xs sm:text-sm font-medium mb-2 sm:mb-3" style="color: #374151;">Date</label>
+                            <input type="date" name="date" value="{{ request('date') }}" class="w-full px-3 sm:px-4 py-2 sm:py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-xs sm:text-sm" style="border-color: #E5E7EB;">
                         </div>
-                        <div>
-                            <label class="block text-sm font-medium mb-3" style="color: #374151;">Search</label>
-                            <div class="flex space-x-3">
-                                <input type="text" name="search" value="{{ request('search') }}" placeholder="Search by member name, email..." class="flex-1 px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors" style="border-color: #E5E7EB;">
-                                <button type="submit" class="px-6 py-3 text-white rounded-lg transition-colors shadow-sm" style="background-color: #2563EB;" onmouseover="this.style.backgroundColor='#1D4ED8'" onmouseout="this.style.backgroundColor='#2563EB'">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="sm:col-span-2 lg:col-span-1">
+                            <label class="block text-xs sm:text-sm font-medium mb-2 sm:mb-3" style="color: #374151;">Search</label>
+                            <div class="flex space-x-2 sm:space-x-3">
+                                <input type="text" name="search" value="{{ request('search') }}" placeholder="Search by member name, email..." class="flex-1 px-3 sm:px-4 py-2 sm:py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-xs sm:text-sm" style="border-color: #E5E7EB;">
+                                <button type="submit" class="px-3 sm:px-6 py-2 sm:py-3 text-white rounded-lg transition-colors shadow-sm min-h-[44px]" style="background-color: #2563EB;" onmouseover="this.style.backgroundColor='#1D4ED8'" onmouseout="this.style.backgroundColor='#2563EB'">
+                                    <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                                     </svg>
                                 </button>
@@ -124,12 +128,12 @@
                     </form>
                     
                     <!-- Filter Actions -->
-                    <div class="mt-6 flex justify-end space-x-3">
-                        <button type="submit" form="filterForm" class="px-6 py-2 text-white rounded-lg transition-colors" style="background-color: #2563EB;" onmouseover="this.style.backgroundColor='#1D4ED8'" onmouseout="this.style.backgroundColor='#2563EB'">
+                    <div class="mt-4 sm:mt-6 flex flex-col sm:flex-row justify-end gap-2 sm:gap-3">
+                        <button type="submit" form="filterForm" class="w-full sm:w-auto px-4 sm:px-6 py-2 text-white rounded-lg transition-colors text-xs sm:text-sm min-h-[44px]" style="background-color: #2563EB;" onmouseover="this.style.backgroundColor='#1D4ED8'" onmouseout="this.style.backgroundColor='#2563EB'">
                             Apply
                         </button>
                         @if(request('plan_type') || request('date') || request('search'))
-                        <a href="{{ route('membership.payments') }}" class="px-6 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors" style="border-color: #E5E7EB;">
+                        <a href="{{ route('membership.payments') }}" class="w-full sm:w-auto px-4 sm:px-6 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors text-xs sm:text-sm min-h-[44px]" style="border-color: #E5E7EB;">
                             Reset
                         </a>
                         @endif
@@ -140,56 +144,60 @@
             <!-- Payments Table -->
             <div class="bg-white rounded-lg shadow-sm border overflow-hidden" style="border-color: #E5E7EB; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
                 <div class="overflow-x-auto">
-                    <table class="min-w-full divide-y" style="border-color: #E5E7EB;">
+                    <table class="min-w-full divide-y" style="border-color: #E5E7EB; min-width: 600px;">
                         <thead style="background-color: #1E40AF;">
                             <tr>
-                                <th class="px-6 py-4 text-left text-xs font-medium text-white uppercase tracking-wider">Member</th>
-                                <th class="px-6 py-4 text-left text-xs font-medium text-white uppercase tracking-wider">Plan</th>
-                                <th class="px-6 py-4 text-right text-xs font-medium text-white uppercase tracking-wider">Amount</th>
-                                <th class="px-6 py-4 text-left text-xs font-medium text-white uppercase tracking-wider">Date</th>
-                                <th class="px-6 py-4 text-left text-xs font-medium text-white uppercase tracking-wider">Actions</th>
+                                <th class="px-2 sm:px-3 lg:px-6 py-2 sm:py-3 lg:py-4 text-left text-xs sm:text-sm font-bold text-white uppercase tracking-wider">MEMBER</th>
+                                <th class="px-2 sm:px-3 lg:px-6 py-2 sm:py-3 lg:py-4 text-left text-xs sm:text-sm font-bold text-white uppercase tracking-wider">PLAN & DURATION</th>
+                                <th class="px-2 sm:px-3 lg:px-6 py-2 sm:py-3 lg:py-4 text-right text-xs sm:text-sm font-bold text-white uppercase tracking-wider">AMOUNT</th>
+                                <th class="px-2 sm:px-3 lg:px-6 py-2 sm:py-3 lg:py-4 text-left text-xs sm:text-sm font-bold text-white uppercase tracking-wider">ACTIONS</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y" style="background-color: #FFFFFF; border-color: #E5E7EB;">
                             @forelse($payments as $payment)
                             <tr class="hover:bg-gray-50 transition-colors" style="background-color: {{ $loop->even ? '#F9FAFB' : '#FFFFFF' }};">
-                                <td class="px-6 py-6 whitespace-nowrap">
+                                <td class="px-2 sm:px-3 lg:px-6 py-2 sm:py-3 lg:py-4 whitespace-nowrap">
                                     <div class="flex items-center">
-                                        <div class="w-12 h-12 rounded-full flex items-center justify-center" style="background-color: #1E40AF;">
-                                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <div class="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 rounded-full flex items-center justify-center" style="background-color: #1E40AF;">
+                                            <svg class="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
                                             </svg>
                                         </div>
-                                        <div class="ml-4">
-                                            <div class="text-sm font-semibold" style="color: #000000;">{{ $payment->member->full_name }}</div>
-                                            <div class="text-sm" style="color: #6B7280;">{{ $payment->member->email }}</div>
+                                        <div class="ml-2 sm:ml-3 lg:ml-4">
+                                            <div class="text-xs sm:text-sm font-semibold" style="color: #000000;">{{ $payment->member->full_name }}</div>
+                                            <div class="text-xs sm:text-sm hidden sm:block" style="color: #6B7280;">{{ $payment->member->email }}</div>
                                         </div>
                                     </div>
                                 </td>
-                                <td class="px-6 py-6 whitespace-nowrap">
-                                    <div class="text-sm" style="color: #000000;">
+                                <td class="px-2 sm:px-3 lg:px-6 py-2 sm:py-3 lg:py-4 whitespace-nowrap">
+                                    <div class="text-xs sm:text-sm" style="color: #000000;">
                                         <span class="font-semibold">{{ $payment->plan_type === 'vip' ? 'VIP' : ucfirst($payment->plan_type) }}</span>
-                                        <span style="color: #6B7280;" class="mx-2">+</span>
+                                        <span style="color: #6B7280;" class="mx-1 sm:mx-2">-</span>
                                         <span class="font-semibold">{{ ucfirst($payment->duration_type) }}</span>
                                     </div>
                                 </td>
-                                <td class="px-6 py-6 whitespace-nowrap text-right">
-                                    <div class="text-lg font-bold" style="color: #000000;">₱{{ number_format($payment->amount, 2) }}</div>
+                                <td class="px-2 sm:px-3 lg:px-6 py-2 sm:py-3 lg:py-4 whitespace-nowrap text-right">
+                                    <div class="text-xs sm:text-sm lg:text-lg font-bold" style="color: #000000;">₱{{ number_format($payment->amount, 2) }}</div>
                                 </td>
-                                <td class="px-6 py-6 whitespace-nowrap">
-                                    <div class="text-sm" style="color: #000000;">{{ $payment->full_payment_date ? $payment->full_payment_date->format('M d, Y') : 'N/A' }}</div>
-                                    <div class="text-sm" style="color: #6B7280;">{{ $payment->full_payment_date ? $payment->full_payment_date->format('h:i:s A') : 'N/A' }}</div>
-                                </td>
-                                <td class="px-6 py-6 whitespace-nowrap text-sm font-medium">
-                                    <div class="flex space-x-3">
-                                        <button onclick="viewPaymentDetails({{ $payment->id }})" class="text-blue-600 hover:text-blue-900 font-medium" title="View Details">👁️ View</button>
-                                        <a href="{{ route('membership.payments.print', $payment->id) }}" target="_blank" class="text-purple-600 hover:text-purple-900 font-medium" title="Print Receipt">🖨️ Print</a>
+                                <td class="px-2 sm:px-3 lg:px-6 py-2 sm:py-3 lg:py-4 whitespace-nowrap text-xs sm:text-sm font-medium">
+                                    <div class="flex items-center gap-2">
+                                        <button onclick="viewPaymentDetails({{ $payment->id }})" class="text-blue-600 hover:text-blue-900 transition-colors duration-200" title="View Details">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                                            </svg>
+                                        </button>
+                                        <a href="{{ route('membership.payments.print', $payment->id) }}" target="_blank" class="text-purple-600 hover:text-purple-900 transition-colors duration-200" title="Print Receipt">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path>
+                                            </svg>
+                                        </a>
                                     </div>
                                 </td>
                             </tr>
                             @empty
                             <tr>
-                                <td colspan="5" class="px-6 py-16 text-center" style="color: #6B7280;">
+                                <td colspan="4" class="px-6 py-16 text-center" style="color: #6B7280;">
                                     <div class="flex flex-col items-center">
                                         <svg class="w-16 h-16 mb-6" style="color: #6B7280;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
@@ -213,8 +221,8 @@
 
             <!-- Pagination -->
             @if($payments->hasPages())
-            <div class="mt-8">
-                <div class="bg-white rounded-lg shadow-sm border px-8 py-6" style="border-color: #E5E7EB; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+            <div class="mt-6 sm:mt-8">
+                <div class="bg-white rounded-lg shadow-sm border px-4 sm:px-6 lg:px-8 py-4 sm:py-6" style="border-color: #E5E7EB; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
                     {{ $payments->links() }}
                 </div>
             </div>
@@ -223,20 +231,18 @@
     </div>
 
     <!-- Payment Details Side Panel -->
-    <div id="paymentDetailsModal" class="fixed inset-0 bg-gray-600 bg-opacity-30 hidden z-50">
-        <div class="flex justify-end h-full">
-            <div class="bg-white shadow-2xl w-full max-w-2xl h-full overflow-y-auto">
-                <div class="flex items-center justify-between p-6 border-b border-gray-200 bg-gray-50">
-                    <h3 class="text-xl font-semibold text-gray-900">Payment Details</h3>
-                    <button onclick="closePaymentDetailsModal()" class="text-gray-400 hover:text-gray-600 transition-colors">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                        </svg>
-                    </button>
-                </div>
-                <div id="paymentDetailsContent" class="p-6">
-                    <!-- Content will be loaded here -->
-                </div>
+    <div id="paymentDetailsModal" class="fixed inset-0 flex items-center justify-center p-2 sm:p-4 hidden z-50">
+        <div class="bg-white rounded-xl shadow-lg w-full max-w-2xl max-h-[90vh] overflow-y-auto border border-gray-200" style="box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);">
+            <div class="flex items-center justify-between p-4 sm:p-6 border-b border-gray-200" style="background-color: #1E40AF;">
+                <h3 class="text-lg sm:text-xl font-bold text-white">Payment Details</h3>
+                <button onclick="closePaymentDetailsModal()" class="text-white hover:bg-white hover:bg-opacity-20 rounded-full p-1 transition-colors">
+                    <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            <div id="paymentDetailsContent" class="p-4 sm:p-6">
+                <!-- Content will be loaded here -->
             </div>
         </div>
     </div>

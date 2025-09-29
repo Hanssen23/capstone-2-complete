@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Member;
+use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
@@ -13,75 +14,63 @@ class AdminAndEmployeeSeeder extends Seeder
      */
     public function run(): void
     {
-        // Create Admin User
-        Member::firstOrCreate(
+        // Create Admin User in users table
+        User::firstOrCreate(
             ['email' => 'admin@silencio-gym.com'],
             [
-                'uid' => 'ADMIN001',
-                'member_number' => 'ADM001',
-                'membership' => null, // Admin doesn't need membership
+                'name' => 'Admin User',
                 'first_name' => 'Admin',
                 'last_name' => 'User',
                 'mobile_number' => '+1 (555) 000-0001',
                 'email' => 'admin@silencio-gym.com',
                 'password' => Hash::make('admin123'),
                 'role' => 'admin',
-                'status' => 'active',
-                'subscription_status' => 'not_subscribed',
+                'email_verified_at' => now(),
             ]
         );
 
-        // Create Employee User
-        Member::firstOrCreate(
+        // Create Employee User in users table
+        User::firstOrCreate(
             ['email' => 'employee@silencio-gym.com'],
             [
-                'uid' => 'EMP001',
-                'member_number' => 'EMP001',
-                'membership' => null, // Employee doesn't need membership
+                'name' => 'Employee User',
                 'first_name' => 'Employee',
                 'last_name' => 'User',
                 'mobile_number' => '+1 (555) 000-0002',
                 'email' => 'employee@silencio-gym.com',
                 'password' => Hash::make('employee123'),
                 'role' => 'employee',
-                'status' => 'active',
-                'subscription_status' => 'not_subscribed',
+                'email_verified_at' => now(),
             ]
         );
 
-        // Create additional admin user
-        Member::firstOrCreate(
+        // Create Manager User in users table
+        User::firstOrCreate(
             ['email' => 'manager@silencio-gym.com'],
             [
-                'uid' => 'MGR001',
-                'member_number' => 'MGR001',
-                'membership' => null,
+                'name' => 'Manager User',
                 'first_name' => 'Manager',
                 'last_name' => 'User',
                 'mobile_number' => '+1 (555) 000-0003',
                 'email' => 'manager@silencio-gym.com',
                 'password' => Hash::make('manager123'),
                 'role' => 'admin',
-                'status' => 'active',
-                'subscription_status' => 'not_subscribed',
+                'email_verified_at' => now(),
             ]
         );
 
-        // Create additional employee user
-        Member::firstOrCreate(
+        // Create Staff User in users table
+        User::firstOrCreate(
             ['email' => 'staff@silencio-gym.com'],
             [
-                'uid' => 'STF001',
-                'member_number' => 'STF001',
-                'membership' => null,
+                'name' => 'Staff User',
                 'first_name' => 'Staff',
                 'last_name' => 'User',
                 'mobile_number' => '+1 (555) 000-0004',
                 'email' => 'staff@silencio-gym.com',
                 'password' => Hash::make('staff123'),
                 'role' => 'employee',
-                'status' => 'active',
-                'subscription_status' => 'not_subscribed',
+                'email_verified_at' => now(),
             ]
         );
     }

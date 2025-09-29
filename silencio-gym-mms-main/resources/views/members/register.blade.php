@@ -1,9 +1,13 @@
 <x-layout>
-    <div class="flex items-center justify-center h-screen w-screen">
-        <div class="flex items-center justify-center w-450 rounded-lg shadow-lg overflow-hidden">
-            <div class="flex flex-col flex-1 justify-center items-center gap-5 p-8">
-                <h1 class="text-5xl font-bold">Silencio System</h1>
-                <h2 class="text-[16px] text-gray-500">Create your account to start your fitness journey</h2>
+    <div class="flex items-center justify-center min-h-screen w-full p-2 sm:p-4 relative">
+        <!-- Background Image -->
+        <div class="absolute inset-0 z-0">
+            </div>
+        
+        <div class="flex flex-col lg:flex-row items-center justify-center w-full max-w-sm sm:max-w-md lg:max-w-4xl rounded-lg shadow-lg overflow-hidden bg-white relative z-10">
+            <div class="flex flex-col flex-1 justify-center items-center gap-3 sm:gap-4 lg:gap-5 p-4 sm:p-6 lg:p-8 w-full">
+                <h1 class="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold text-center text-gray-900">Silencio System</h1>
+                <h2 class="text-xs sm:text-sm lg:text-base text-gray-600 text-center">Create your account to start your fitness journey</h2>
                 
                 @php
                     // Only show errors that are specifically related to member registration
@@ -25,8 +29,8 @@
                 @endphp
                 
                 @if (!empty($memberRegistrationErrors))
-                    <div class="w-full max-w-sm bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
-                        <ul class="list-disc list-inside text-sm">
+                    <div class="w-full max-w-xs sm:max-w-sm bg-red-50 border border-red-200 text-red-700 px-2 sm:px-3 lg:px-4 py-2 sm:py-3 rounded-lg">
+                        <ul class="list-disc list-inside text-xs sm:text-sm">
                             @foreach ($memberRegistrationErrors as $error)
                                 <li>{{ $error }}</li>
                             @endforeach
@@ -35,118 +39,71 @@
                 @endif
 
                 @if (session('success'))
-                    <div class="w-full max-w-sm bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg">
-                        <p class="text-sm">{{ session('success') }}</p>
+                    <div class="w-full max-w-xs sm:max-w-sm bg-green-50 border border-green-200 text-green-700 px-2 sm:px-3 lg:px-4 py-2 sm:py-3 rounded-lg">
+                        <p class="text-xs sm:text-sm">{{ session('success') }}</p>
                     </div>
                 @endif
 
                 @if (session('error'))
-                    <div class="w-full max-w-sm bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
-                        <p class="text-sm">{{ session('error') }}</p>
+                    <div class="w-full max-w-xs sm:max-w-sm bg-red-50 border border-red-200 text-red-700 px-2 sm:px-3 lg:px-4 py-2 sm:py-3 rounded-lg">
+                        <p class="text-xs sm:text-sm">{{ session('error') }}</p>
                     </div>
                 @endif
 
-                <form method="POST" action="{{ route('member.register.post') }}" class="flex flex-col w-100 mx-auto">
+                <form method="POST" action="{{ route('member.register.post') }}" class="flex flex-col w-full max-w-xs sm:max-w-sm mx-auto">
                     @csrf
                     
                     <!-- First Name -->
-                    <div class="mb-5">
-                        <label for="first_name" class="block mb-2 text-sm font-medium text-gray-900">First name</label>
-                        <input 
-                            type="text" 
-                            id="first_name"
-                            name="first_name" 
-                            value="{{ old('first_name') }}" 
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" 
-                            placeholder="Enter your first name"
-                            required 
-                        />
+                    <div class="mb-3 sm:mb-4 lg:mb-5">
+                        <label for="first_name" class="block mb-1 sm:mb-2 text-xs sm:text-sm font-medium text-gray-900">First name</label>
+                        <input type="text" id="first_name" name="first_name" value="{{ old('first_name') }}" class="bg-white border-2 border-gray-300 text-gray-900 text-xs sm:text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2 sm:p-3 lg:p-2.5 min-h-[40px] sm:min-h-[44px] shadow-sm" placeholder="Enter your first name" required />
                     </div>
                     
                     <!-- Last Name -->
-                    <div class="mb-5">
-                        <label for="last_name" class="block mb-2 text-sm font-medium text-gray-900">Last name</label>
-                        <input 
-                            type="text" 
-                            id="last_name"
-                            name="last_name" 
-                            value="{{ old('last_name') }}" 
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" 
-                            placeholder="Enter your last name"
-                            required 
-                        />
+                    <div class="mb-3 sm:mb-4 lg:mb-5">
+                        <label for="last_name" class="block mb-1 sm:mb-2 text-xs sm:text-sm font-medium text-gray-900">Last name</label>
+                        <input type="text" id="last_name" name="last_name" value="{{ old('last_name') }}" class="bg-white border-2 border-gray-300 text-gray-900 text-xs sm:text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2 sm:p-3 lg:p-2.5 min-h-[40px] sm:min-h-[44px] shadow-sm" placeholder="Enter your last name" required />
                     </div>
                     
                     <!-- Email -->
-                    <div class="mb-5">
-                        <label for="email" class="block mb-2 text-sm font-medium text-gray-900">Email address</label>
-                        <input 
-                            type="email" 
-                            id="email"
-                            name="email" 
-                            value="{{ old('email') }}" 
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" 
-                            placeholder="name@example.com"
-                            required 
-                        />
+                    <div class="mb-3 sm:mb-4 lg:mb-5">
+                        <label for="email" class="block mb-1 sm:mb-2 text-xs sm:text-sm font-medium text-gray-900">Email address</label>
+                        <input type="email" id="email" name="email" value="{{ old('email') }}" class="bg-white border-2 border-gray-300 text-gray-900 text-xs sm:text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2 sm:p-3 lg:p-2.5 min-h-[40px] sm:min-h-[44px] shadow-sm" placeholder="name@example.com" required />
                     </div>
                     
                     <!-- Mobile Number -->
-                    <div class="mb-5">
-                        <label for="mobile_number" class="block mb-2 text-sm font-medium text-gray-900">Mobile number</label>
-                        <div class="phone-input-container">
-                            <img src="https://flagcdn.com/w40/ph.png" alt="Philippines" class="flag-icon w-6 h-4">
-                            <span class="country-code">+63</span>
+                    <div class="mb-3 sm:mb-4 lg:mb-5">
+                        <label for="mobile_number" class="block mb-1 sm:mb-2 text-xs sm:text-sm font-medium text-gray-900">Mobile number</label>
+                        <div class="phone-input-container min-h-[40px] sm:min-h-[44px]">
+                            <img src="https://flagcdn.com/w40/ph.png" alt="Philippines" class="flag-icon w-5 h-3 sm:w-6 sm:h-4">
+                            <span class="country-code text-sm sm:text-base">+63</span>
                             <div class="separator-line"></div>
-                            <input 
-                                type="tel" 
-                                name="mobile_number" 
-                                id="mobile_number" 
-                                value="{{ old('mobile_number') }}" 
-                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pr-3 py-2.5" 
-                                placeholder="912 345 6789" 
-                                maxlength="13"
-                                required 
-                            />
+                            <input type="tel" name="mobile_number" id="mobile_number" value="{{ old('mobile_number') }}" class="bg-white border-2 border-gray-300 text-gray-900 text-xs sm:text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm" placeholder="912 345 6789" maxlength="13" required />
                         </div>
                         <p class="mt-1 text-xs text-gray-500">Enter your 10-digit mobile number (e.g., 912 345 6789)</p>
                     </div>
                     
                     <!-- Password -->
-                    <div class="mb-5">
-                        <label for="password" class="block mb-2 text-sm font-medium text-gray-900">Password</label>
-                        <input 
-                            type="password" 
-                            id="password"
-                            name="password" 
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" 
-                            placeholder="Create a password"
-                            required 
-                        />
+                    <div class="mb-3 sm:mb-4 lg:mb-5">
+                        <label for="password" class="block mb-1 sm:mb-2 text-xs sm:text-sm font-medium text-gray-900">Password</label>
+                        <input type="password" id="password" name="password" class="bg-white border-2 border-gray-300 text-gray-900 text-xs sm:text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2 sm:p-3 lg:p-2.5 min-h-[40px] sm:min-h-[44px] shadow-sm" placeholder="Create a password" required />
                     </div>
                     
                     <!-- Confirm Password -->
-                    <div class="mb-5">
-                        <label for="password_confirmation" class="block mb-2 text-sm font-medium text-gray-900">Confirm password</label>
-                        <input 
-                            type="password" 
-                            id="password_confirmation"
-                            name="password_confirmation" 
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" 
-                            placeholder="Confirm your password"
-                            required 
-                        />
+                    <div class="mb-3 sm:mb-4 lg:mb-5">
+                        <label for="password_confirmation" class="block mb-1 sm:mb-2 text-xs sm:text-sm font-medium text-gray-900">Confirm password</label>
+                        <input type="password" id="password_confirmation" name="password_confirmation" class="bg-white border-2 border-gray-300 text-gray-900 text-xs sm:text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2 sm:p-3 lg:p-2.5 min-h-[40px] sm:min-h-[44px] shadow-sm" placeholder="Confirm your password" required />
                     </div>
                     
-                    <!-- Sign Up Link and Submit Button -->
-                    <div class="flex items-start mb-5">
-                        <a href="{{ route('login') }}" class="text-sm text-blue-600 hover:underline mr-4">Already have an account? Log in</a>
+                    <!-- Sign Up Link -->
+                    <div class="flex flex-col gap-2 sm:gap-3 mb-3 sm:mb-4 lg:mb-5">
+                        <a href="{{ route('login') }}" class="text-xs sm:text-sm text-blue-600 hover:underline text-center">Already have an account? Log in</a>
                     </div>
                     
-                    <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Create Account</button>
+                    <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-xs sm:text-sm w-full px-4 sm:px-5 py-2 sm:py-3 lg:py-2.5 text-center min-h-[40px] sm:min-h-[44px]">Create Account</button>
                 </form>
             </div>
-            <div class="flex-2">
+            <div class="hidden lg:flex lg:flex-2">
                 <img class="object-cover w-full h-full rounded-r-lg" src="{{ asset('images/gym-image.png') }}" alt="Gym Image">
             </div>
         </div>

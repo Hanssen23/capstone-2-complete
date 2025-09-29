@@ -40,7 +40,6 @@ Route::prefix('rfid')->group(function () {
 Route::prefix('rfid')->name('rfid.')->middleware(['auth'])->group(function () {
     Route::post('start', [RfidController::class, 'startRfidReader'])->name('start');
     Route::post('stop', [RfidController::class, 'stopRfidReader'])->name('stop');
-    Route::post('tap', [RfidController::class, 'handleCardTap'])->name('tap');
     Route::get('status', [RfidController::class, 'getRfidStatus'])->name('status');
     Route::get('member-suggestions', [RfidController::class, 'getMemberSuggestions'])->name('member-suggestions');
     Route::get('logs', [RfidController::class, 'getRfidLogs'])->name('logs');
@@ -55,7 +54,6 @@ Route::middleware(['auth'])->group(function () {
     // Analytics routes
     Route::prefix('analytics')->name('analytics.')->group(function () {
         Route::get('weekly-attendance', [AnalyticsController::class, 'getWeeklyAttendance'])->name('weekly-attendance');
-        Route::get('weekly-revenue', [AnalyticsController::class, 'getWeeklyRevenue'])->name('weekly-revenue');
         Route::get('monthly-revenue', [AnalyticsController::class, 'getMonthlyRevenue'])->name('monthly-revenue');
         Route::get('dashboard-stats', [AnalyticsController::class, 'getDashboardStats'])->name('dashboard-stats');
         Route::get('attendance-trends', [AnalyticsController::class, 'getAttendanceTrends'])->name('attendance-trends');
@@ -103,8 +101,6 @@ Route::middleware(['auth'])->group(function () {
     })->name('rfid-monitor');
     
     // RFID System Management
-    Route::get('rfid/start', [RfidController::class, 'startRfidSystem'])->name('rfid.start');
-    Route::get('rfid/stop', [RfidController::class, 'stopRfidSystem'])->name('rfid.stop');
     Route::get('rfid/status', [RfidController::class, 'getRfidStatus'])->name('rfid.status');
     
     // Account Management routes (admin only)
@@ -141,7 +137,6 @@ Route::middleware(['auth', 'employee.only', 'ensure.session'])->group(function (
     // Analytics routes (same as admin)
     Route::prefix('employee/analytics')->name('employee.analytics.')->group(function () {
         Route::get('weekly-attendance', [AnalyticsController::class, 'getWeeklyAttendance'])->name('weekly-attendance');
-        Route::get('weekly-revenue', [AnalyticsController::class, 'getWeeklyRevenue'])->name('weekly-revenue');
         Route::get('monthly-revenue', [AnalyticsController::class, 'getMonthlyRevenue'])->name('monthly-revenue');
         Route::get('dashboard-stats', [AnalyticsController::class, 'getDashboardStats'])->name('dashboard-stats');
         Route::get('attendance-trends', [AnalyticsController::class, 'getAttendanceTrends'])->name('attendance-trends');
@@ -206,8 +201,6 @@ Route::middleware(['auth', 'employee.only', 'ensure.session'])->group(function (
     })->name('employee.rfid-monitor');
     
     // RFID System Management (full access)
-    Route::get('employee/rfid/start', [RfidController::class, 'startRfidSystem'])->name('employee.rfid.start');
-    Route::get('employee/rfid/stop', [RfidController::class, 'stopRfidSystem'])->name('employee.rfid.stop');
     Route::get('employee/rfid/status', [RfidController::class, 'getRfidStatus'])->name('employee.rfid.status');
     
     // Account Management routes (restricted - edit account only, no user type)

@@ -223,20 +223,18 @@
     </div>
 
     <!-- Payment Details Side Panel -->
-    <div id="paymentDetailsModal" class="fixed inset-0 bg-gray-600 bg-opacity-30 hidden z-50">
-        <div class="flex justify-end h-full">
-            <div class="bg-white shadow-2xl w-full max-w-2xl h-full overflow-y-auto">
-                <div class="flex items-center justify-between p-6 border-b border-gray-200 bg-gray-50">
-                    <h3 class="text-xl font-semibold text-gray-900">Payment Details</h3>
-                    <button onclick="closePaymentDetailsModal()" class="text-gray-400 hover:text-gray-600 transition-colors">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                        </svg>
-                    </button>
-                </div>
-                <div id="paymentDetailsContent" class="p-6">
-                    <!-- Content will be loaded here -->
-                </div>
+    <div id="paymentDetailsModal" class="fixed inset-0 flex items-center justify-center p-4 hidden z-50">
+        <div class="bg-white rounded-xl shadow-lg w-full max-w-2xl max-h-[90vh] overflow-y-auto border border-gray-200" style="box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);">
+            <div class="flex items-center justify-between p-6 border-b border-gray-200" style="background-color: #1E40AF;">
+                <h3 class="text-xl font-bold text-white">Payment Details</h3>
+                <button onclick="closePaymentDetailsModal()" class="text-white hover:bg-white hover:bg-opacity-20 rounded-full p-1 transition-colors">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            <div id="paymentDetailsContent" class="p-6">
+                <!-- Content will be loaded here -->
             </div>
         </div>
     </div>

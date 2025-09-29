@@ -9,10 +9,11 @@
     box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
     background-color: white !important;
     background: white !important;
+    transition: transform 0.3s ease-in-out;
 }
 
-/* Responsive behavior - always expanded */
-@media (max-width: 768px) {
+/* Mobile responsive behavior */
+@media (max-width: 1024px) {
     .sidebar {
         width: 280px;
         position: fixed;
@@ -20,6 +21,86 @@
         top: 0;
         height: 100vh;
         z-index: 1000;
+        transform: translateX(-100%);
+        overflow-x: hidden;
+    }
+    
+    .sidebar.open {
+        transform: translateX(0);
+    }
+    
+    /* Smooth transitions for swipe gestures */
+    .sidebar.swiping {
+        transition: transform 0.1s ease-out;
+    }
+    
+    /* Overlay for mobile */
+    .sidebar-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 999;
+        display: none;
+        opacity: 0;
+        transition: opacity 0.3s ease-in-out;
+    }
+    
+    .sidebar-overlay.active {
+        display: block;
+        opacity: 1;
+    }
+    
+    /* Ensure main content doesn't get squished */
+    .flex-1 {
+        width: 100%;
+        min-width: 0;
+    }
+    
+    /* Touch swipe zone indicators */
+    .swipe-zone {
+        position: fixed;
+        left: 0;
+        top: 0;
+        width: 20px;
+        height: 100vh;
+        z-index: 998;
+        background: transparent;
+    }
+}
+
+/* Laptop screen optimizations */
+@media (min-width: 1024px) and (max-width: 1366px) {
+    .sidebar {
+        width: 260px;
+    }
+    
+    /* Ensure table headers are readable on laptop screens */
+    .table th {
+        font-size: 0.875rem !important;
+        padding: 0.75rem 1rem !important;
+    }
+    
+    /* Ensure topbar content fits properly */
+    .topbar-content {
+        min-width: 0;
+        flex-shrink: 1;
+    }
+}
+
+/* Tablet responsive behavior */
+@media (min-width: 768px) and (max-width: 1024px) {
+    .sidebar {
+        width: 240px;
+    }
+}
+
+/* Small mobile devices */
+@media (max-width: 480px) {
+    .sidebar {
+        width: 100vw;
     }
 }
 

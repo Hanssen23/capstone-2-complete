@@ -274,7 +274,19 @@ class MemberController extends Controller
             ->paginate(5)
             ->withQueryString();
 
-        return view('employee.members.profile', compact(
+        // Check if this is an employee request
+        if (request()->is('employee/*')) {
+            return view('employee.members.profile', compact(
+                'member', 
+                'membershipPeriods', 
+                'currentMembership', 
+                'payments',
+                'attendances',
+                'rfidLogs'
+            ));
+        }
+        
+        return view('members.profile', compact(
             'member', 
             'membershipPeriods', 
             'currentMembership', 

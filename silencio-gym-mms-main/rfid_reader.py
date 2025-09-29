@@ -14,9 +14,9 @@ from smartcard.System import readers
 from smartcard.util import toHexString, toBytes
 
 class ACR122UReader:
-    def __init__(self, api_url="http://silencio-gym-mms-main.test"):
+    def __init__(self, api_url="http://localhost:8000"):
         # Normalize base URL (no trailing slash)
-        self.api_url = api_url.rstrip("/") if api_url else "http://silencio-gym-mms-main.test"
+        self.api_url = api_url.rstrip("/") if api_url else "http://localhost:8000"
         self.device_id = "acr122u_main"
         self.connection = None
         self.reader = None
@@ -29,6 +29,11 @@ class ACR122UReader:
             
             if not r:
                 print("❌ No smart card readers found!")
+                print("🔧 Please check:")
+                print("   - USB connection is secure")
+                print("   - Reader drivers are installed") 
+                print("   - Device is recognized by Windows")
+                print("⏳ Will retry continuously...")
                 return False
             
             print(f"📱 Found {len(r)} reader(s):")
@@ -47,6 +52,11 @@ class ACR122UReader:
             
         except Exception as e:
             print(f"❌ Connection failed: {e}")
+            print("🔧 Troubleshooting:")
+            print("   - Ensure RFID reader is connected via USB")
+            print("   - Try reconnecting the reader")
+            print("   - Check if reader drivers are installed")
+            print("⏳ Will retry continuously...")
             return False
     
     def get_card_uid(self):
@@ -140,16 +150,32 @@ class ACR122UReader:
     
     def run(self):
         """Main loop to continuously read cards"""
-        if not self.connect():
-            return
+        print("\n🚀 Starting RFID Reader System...")
+        print("🔧 Detecting hardware...")
         
-        print("\n🎯 Ready to read cards!")
+        connection_retry_count = 0
+        max_retries = 10
+        
+        while connection_retry_count < max_retries:
+            if self.connect():
+                break
+            connection_retry_count += 1
+            print(f"🔄 Connection attempt {connection_retry_count}/{max_retries}")
+            time.sleep(5)
+        
+        if connection_retry_count >= max_retries:
+            print("\n⚠️ Unable to connect to RFID hardware after multiple attempts")
+            print("🛑 Starting anyway - hardware detection will continue in background")
+            print("💡 Try reconnecting the RFID reader and restarting the system\n")
+        
+        print("🎯 RFID reader ready to detect cards!")
         print("📋 Place a card on the reader to check in/out")
         print("🛑 Press Ctrl+C to exit")
-        print("🔧 DEBUG: Running UPDATED script version\n")
+        print("\n")
         
-        card_present = False
+        card_presentation = False
         last_uid = None
+        reader_connected = True
         
         try:
             while True:
@@ -182,7 +208,7 @@ class ACR122UReader:
                     time.sleep(0.05)  # Ultra-fast response for immediate detection
                     
                 except Exception as e:
-                    # Silent error handling
+                    # Silent error handling - hardware might have disconnected
                     time.sleep(0.5)
                     
         except KeyboardInterrupt:
@@ -233,8 +259,8 @@ def main():
         except (OSError, json.JSONDecodeError) as e:
             print(f"⚠️  Config read error at {cfg_path}: {e}")
 
-    # Apply overrides and defaults (prefer CLI > ENV > config > Herd default)
-    api_url = (api_override or env_api or api_url or "http://silencio-gym-mms-main.test").rstrip("/")
+    # Apply overrides and defaults (prefer CLI > ENV > config > localhost default)
+    api_url = (api_override or env_api or api_url or "http://localhost:8000").rstrip("/")
     print(f"🌐 Using API URL: {api_url}")
 
     # Create and run reader

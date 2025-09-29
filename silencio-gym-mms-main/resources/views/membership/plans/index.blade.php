@@ -3,65 +3,65 @@
     <div class="flex-1 bg-white">
         <x-topbar>Membership Plans Configuration</x-topbar>
 
-        <div class="bg-white min-h-screen p-6">
+        <div class="bg-white min-h-screen p-4 sm:p-6">
             <!-- Plan Types Section -->
-            <div class="mb-8">
-                <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-8" style="box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-                    <div class="flex items-center justify-between mb-8">
-                        <div class="flex items-center space-x-4">
-                            <h2 class="text-3xl font-bold" style="color: #000000;">Plan Types</h2>
+            <div class="mb-6 sm:mb-8">
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6 lg:p-8" style="box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 sm:mb-8 gap-4">
+                        <div class="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-4">
+                            <h2 class="text-2xl sm:text-3xl font-bold text-gray-900">Plan Types</h2>
                             <div class="flex items-center space-x-2">
                                 <div id="realtime-indicator" class="w-3 h-3 rounded-full bg-green-500 animate-pulse"></div>
-                                <span class="text-sm text-gray-600">Live Updates</span>
+                                <span class="text-xs sm:text-sm text-gray-600">Live Updates</span>
                             </div>
                         </div>
-                        <button onclick="openAddPlanModal()" class="inline-flex items-center px-6 py-3 text-white rounded-lg transition-colors shadow-sm" style="background-color: #059669;" onmouseover="this.style.backgroundColor='#047857'" onmouseout="this.style.backgroundColor='#059669'">
-                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <button onclick="openAddPlanModal()" class="inline-flex items-center justify-center px-4 sm:px-6 py-3 text-white rounded-lg transition-colors shadow-sm min-h-[44px] w-full sm:w-auto" style="background-color: #059669;" onmouseover="this.style.backgroundColor='#047857'" onmouseout="this.style.backgroundColor='#059669'">
+                            <svg class="w-4 h-4 sm:w-5 sm:h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
                             </svg>
-                            Add New Plan Type
+                            <span class="text-sm sm:text-base">Add New Plan Type</span>
                         </button>
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
                         @foreach($plans as $plan)
-                        <div class="bg-white border rounded-lg p-6 hover:shadow-lg transition-shadow" style="border-color: #E5E7EB; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-                            <div class="flex items-center justify-between mb-6">
-                                <h3 class="text-2xl font-bold" style="color: #000000;">{{ $plan->name }}</h3>
+                        <div class="bg-white border rounded-lg p-4 sm:p-6 hover:shadow-lg transition-shadow" style="border-color: #E5E7EB; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 sm:mb-6 gap-2">
+                                <h3 class="text-xl sm:text-2xl font-bold text-gray-900">{{ $plan->name }}</h3>
                                 @if($plan->name === 'VIP' || $plan->name === 'Premium')
-                                <span class="px-4 py-2 text-sm font-medium rounded-full" style="background-color: #F59E0B; color: #000000;">
+                                <span class="px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium rounded-full bg-amber-500 text-white">
                                     {{ $plan->currency ?? '₱' }}{{ number_format($plan->price, 2) }}/month
                                 </span>
                                 @else
-                                <span class="px-4 py-2 text-sm font-medium rounded-full" style="background-color: #059669; color: #000000;">
+                                <span class="px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium rounded-full bg-green-600 text-white">
                                     {{ $plan->currency ?? '₱' }}{{ number_format($plan->price, 2) }}/month
                                 </span>
                                 @endif
                             </div>
-                            <p class="mb-6 leading-relaxed" style="color: #6B7280;">{{ $plan->description }}</p>
-                            <div class="space-y-3 mb-6">
-                                <div class="flex items-center justify-between py-2 px-3 bg-gray-50 rounded border" style="border-color: #E5E7EB;">
-                                    <span class="text-sm" style="color: #374151;">Monthly:</span>
-                                    <span class="font-semibold" style="color: #000000;">{{ $plan->currency ?? '₱' }}{{ number_format($plan->price, 2) }}</span>
+                            <p class="mb-4 sm:mb-6 leading-relaxed text-sm sm:text-base text-gray-600">{{ $plan->description }}</p>
+                            <div class="space-y-2 sm:space-y-3 mb-4 sm:mb-6">
+                                <div class="flex items-center justify-between py-2 px-3 bg-gray-50 rounded border border-gray-200">
+                                    <span class="text-xs sm:text-sm text-gray-700">Monthly:</span>
+                                    <span class="font-semibold text-xs sm:text-sm text-gray-900">{{ $plan->currency ?? '₱' }}{{ number_format($plan->price, 2) }}</span>
                                 </div>
-                                <div class="flex items-center justify-between py-2 px-3 bg-gray-50 rounded border" style="border-color: #E5E7EB;">
-                                    <span class="text-sm" style="color: #374151;">Quarterly:</span>
-                                    <span class="font-semibold" style="color: #000000;">{{ $plan->currency ?? '₱' }}{{ number_format($plan->price * 3, 2) }}</span>
+                                <div class="flex items-center justify-between py-2 px-3 bg-gray-50 rounded border border-gray-200">
+                                    <span class="text-xs sm:text-sm text-gray-700">Quarterly:</span>
+                                    <span class="font-semibold text-xs sm:text-sm text-gray-900">{{ $plan->currency ?? '₱' }}{{ number_format($plan->price * 3, 2) }}</span>
                                 </div>
-                                <div class="flex items-center justify-between py-2 px-3 bg-gray-50 rounded border" style="border-color: #E5E7EB;">
-                                    <span class="text-sm" style="color: #374151;">Biannually:</span>
-                                    <span class="font-semibold" style="color: #000000;">{{ $plan->currency ?? '₱' }}{{ number_format($plan->price * 6, 2) }}</span>
+                                <div class="flex items-center justify-between py-2 px-3 bg-gray-50 rounded border border-gray-200">
+                                    <span class="text-xs sm:text-sm text-gray-700">Biannually:</span>
+                                    <span class="font-semibold text-xs sm:text-sm text-gray-900">{{ $plan->currency ?? '₱' }}{{ number_format($plan->price * 6, 2) }}</span>
                                 </div>
-                                <div class="flex items-center justify-between py-2 px-3 bg-gray-50 rounded border" style="border-color: #E5E7EB;">
-                                    <span class="text-sm" style="color: #374151;">Annually:</span>
-                                    <span class="font-semibold" style="color: #000000;">{{ $plan->currency ?? '₱' }}{{ number_format($plan->price * 12, 2) }}</span>
+                                <div class="flex items-center justify-between py-2 px-3 bg-gray-50 rounded border border-gray-200">
+                                    <span class="text-xs sm:text-sm text-gray-700">Annually:</span>
+                                    <span class="font-semibold text-xs sm:text-sm text-gray-900">{{ $plan->currency ?? '₱' }}{{ number_format($plan->price * 12, 2) }}</span>
                                 </div>
                             </div>
-                            <div class="flex space-x-3">
-                                <button onclick="editPlanType('{{ $plan->id }}')" class="flex-1 px-4 py-2 text-white text-sm rounded-lg transition-colors" style="background-color: #059669;" onmouseover="this.style.backgroundColor='#047857'" onmouseout="this.style.backgroundColor='#059669'">
+                            <div class="flex flex-col sm:flex-row gap-2 sm:gap-3">
+                                <button onclick="editPlanType('{{ $plan->id }}')" class="flex-1 px-3 sm:px-4 py-2 text-white text-xs sm:text-sm rounded-lg transition-colors min-h-[44px]" style="background-color: #059669;" onmouseover="this.style.backgroundColor='#047857'" onmouseout="this.style.backgroundColor='#059669'">
                                     Edit
                                 </button>
-                                <button onclick="deletePlanType('{{ $plan->id }}')" class="flex-1 px-4 py-2 text-white text-sm rounded-lg transition-colors" 
+                                <button onclick="deletePlanType('{{ $plan->id }}')" class="flex-1 px-3 sm:px-4 py-2 text-white text-xs sm:text-sm rounded-lg transition-colors min-h-[44px]" 
                                         style="background-color: #DC2626; border: 2px solid #E5E7EB; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);" 
                                         onmouseover="this.style.backgroundColor='#B91C1C'" 
                                         onmouseout="this.style.backgroundColor='#DC2626'">
@@ -180,12 +180,11 @@
     </div>
 
     <!-- Add Plan Type Modal -->
-    <div id="addPlanModal" class="fixed inset-0 bg-black bg-opacity-30 backdrop-blur-sm hidden z-50">
-        <div class="flex items-center justify-center min-h-screen p-4">
-            <div class="bg-white rounded-xl shadow-2xl max-w-md w-full mx-4 transform transition-all duration-300 scale-95 opacity-0 border" id="addPlanModalContent" style="border-color: #E5E7EB;">
-                <div class="flex items-center justify-between p-6 border-b rounded-t-xl" style="background-color: #1E40AF; border-color: #E5E7EB;">
+    <div id="addPlanModal" class="fixed inset-0 flex items-center justify-center p-4 hidden z-50">
+            <div class="bg-white rounded-xl shadow-lg max-w-md w-full mx-4 transform transition-all duration-300 scale-95 opacity-0 border border-gray-200" id="addPlanModalContent" style="box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);">
+                <div class="flex items-center justify-between p-6 border-b border-gray-200" style="background-color: #1E40AF;">
                     <h3 class="text-xl font-bold text-white">Add New Plan Type</h3>
-                    <button onclick="closeAddPlanModal()" class="text-white hover:text-gray-200 transition-colors p-2 hover:bg-white hover:bg-opacity-20 rounded-full">
+                    <button onclick="closeAddPlanModal()" class="text-white hover:bg-white hover:bg-opacity-20 rounded-full p-1 transition-colors">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                         </svg>
@@ -204,18 +203,24 @@
                         </div>
                     </div>
                     <div class="mb-4">
-                        <label class="block text-sm font-semibold mb-2" style="color: #374151;">Duration (days)</label>
-                        <input type="number" name="duration_days" min="1" class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200" style="border-color: #E5E7EB;" placeholder="30" required>
+                        <label class="block text-sm font-semibold mb-2" style="color: #374151;">Duration</label>
+                        <select name="duration_days" class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200" style="border-color: #E5E7EB;" required>
+                            <option value="">Select duration</option>
+                            <option value="30">30 days (Monthly)</option>
+                            <option value="90">90 days (Quarterly)</option>
+                            <option value="180">180 days (Bi-Annually)</option>
+                            <option value="360">360 days (Annually)</option>
+                        </select>
                     </div>
                     <div class="mb-6">
                         <label class="block text-sm font-semibold mb-2" style="color: #374151;">Description</label>
                         <textarea name="description" rows="3" class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 resize-none" style="border-color: #E5E7EB;" placeholder="Describe the plan features and benefits" required></textarea>
                     </div>
-                    <div class="flex justify-end space-x-3">
-                        <button type="button" onclick="closeAddPlanModal()" class="px-6 py-2 bg-gray-100 border rounded hover:bg-gray-200 transition-all duration-200 font-semibold" style="color: #374151; border-color: #E5E7EB;">
+                    <div class="flex justify-end space-x-3 pt-4" style="background-color: #F9FAFB;">
+                        <button type="button" onclick="closeAddPlanModal()" class="px-6 py-2 bg-gray-100 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-200 transition-all duration-200 font-medium">
                             Cancel
                         </button>
-                        <button type="submit" class="px-6 py-2 text-white rounded transition-all duration-200 font-semibold" style="background-color: #059669;" onmouseover="this.style.backgroundColor='#047857'" onmouseout="this.style.backgroundColor='#059669'">
+                        <button type="submit" class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all duration-200 font-medium">
                             Add Plan
                         </button>
                     </div>
@@ -225,12 +230,11 @@
     </div>
 
     <!-- Edit Plan Type Modal -->
-    <div id="editPlanModal" class="fixed inset-0 bg-black bg-opacity-30 backdrop-blur-sm hidden z-50">
-        <div class="flex items-center justify-center min-h-screen p-4">
-            <div class="bg-white rounded-xl shadow-2xl max-w-md w-full mx-4 transform transition-all duration-300 scale-95 opacity-0 border" id="editPlanModalContent" style="border-color: #E5E7EB;">
-                <div class="flex items-center justify-between p-6 border-b rounded-t-xl" style="background-color: #1E40AF; border-color: #E5E7EB;">
+    <div id="editPlanModal" class="fixed inset-0 flex items-center justify-center p-4 hidden z-50">
+            <div class="bg-white rounded-xl shadow-lg max-w-md w-full mx-4 transform transition-all duration-300 scale-95 opacity-0 border border-gray-200" id="editPlanModalContent" style="box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);">
+                <div class="flex items-center justify-between p-6 border-b border-gray-200" style="background-color: #1E40AF;">
                     <h3 class="text-xl font-bold text-white">Edit Plan Type</h3>
-                    <button onclick="closeEditPlanModal()" class="text-white hover:text-gray-200 transition-colors p-2 hover:bg-white hover:bg-opacity-20 rounded-full">
+                    <button onclick="closeEditPlanModal()" class="text-white hover:bg-white hover:bg-opacity-20 rounded-full p-1 transition-colors">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                         </svg>
@@ -250,8 +254,14 @@
                         </div>
                     </div>
                     <div class="mb-4">
-                        <label class="block text-sm font-semibold mb-2" style="color: #374151;">Duration (days)</label>
-                        <input type="number" name="duration_days" id="editPlanDuration" min="1" class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200" style="border-color: #E5E7EB;" required>
+                        <label class="block text-sm font-semibold mb-2" style="color: #374151;">Duration</label>
+                        <select name="duration_days" id="editPlanDuration" class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200" style="border-color: #E5E7EB;" required>
+                            <option value="">Select duration</option>
+                            <option value="30">30 days (Monthly)</option>
+                            <option value="90">90 days (Quarterly)</option>
+                            <option value="180">180 days (Bi-Annually)</option>
+                            <option value="360">360 days (Annually)</option>
+                        </select>
                     </div>
                     <div class="mb-4">
                         <label class="block text-sm font-semibold mb-2" style="color: #374151;">Description</label>
@@ -263,11 +273,11 @@
                             <span class="ml-3 text-sm font-semibold" style="color: #374151;">Active Plan</span>
                         </label>
                     </div>
-                    <div class="flex justify-end space-x-3">
-                        <button type="button" onclick="closeEditPlanModal()" class="px-6 py-2 bg-gray-100 border rounded hover:bg-gray-200 transition-all duration-200 font-semibold" style="color: #374151; border-color: #E5E7EB;">
+                    <div class="flex justify-end space-x-3 pt-4" style="background-color: #F9FAFB;">
+                        <button type="button" onclick="closeEditPlanModal()" class="px-6 py-2 bg-gray-100 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-200 transition-all duration-200 font-medium">
                             Cancel
                         </button>
-                        <button type="submit" class="px-6 py-2 text-white rounded transition-all duration-200 font-semibold" style="background-color: #059669;" onmouseover="this.style.backgroundColor='#047857'" onmouseout="this.style.backgroundColor='#059669'">
+                        <button type="submit" class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all duration-200 font-medium">
                             Update Plan
                         </button>
                     </div>
@@ -277,12 +287,11 @@
     </div>
 
     <!-- Add Duration Type Modal -->
-    <div id="addDurationModal" class="fixed inset-0 bg-black bg-opacity-30 backdrop-blur-sm hidden z-50">
-        <div class="flex items-center justify-center min-h-screen p-4">
-            <div class="bg-white rounded-xl shadow-2xl max-w-md w-full mx-4 transform transition-all duration-300 scale-95 opacity-0 border border-black" id="addDurationModalContent">
-                <div class="flex items-center justify-between p-6 border-b border-black bg-gradient-to-r from-green-50 to-green-100 rounded-t-xl">
-                    <h3 class="text-xl font-bold text-gray-900">Add New Duration Type</h3>
-                    <button onclick="closeAddDurationModal()" class="text-gray-500 hover:text-gray-700 transition-colors p-2 hover:bg-white rounded-full border border-gray-300">
+    <div id="addDurationModal" class="fixed inset-0 flex items-center justify-center p-4 hidden z-50">
+            <div class="bg-white rounded-xl shadow-lg max-w-md w-full mx-4 transform transition-all duration-300 scale-95 opacity-0 border border-gray-200" id="addDurationModalContent" style="box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);">
+                <div class="flex items-center justify-between p-6 border-b border-gray-200" style="background-color: #1E40AF;">
+                    <h3 class="text-xl font-bold text-white">Add New Duration Type</h3>
+                    <button onclick="closeAddDurationModal()" class="text-white hover:bg-white hover:bg-opacity-20 rounded-full p-1 transition-colors">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                         </svg>
@@ -308,11 +317,11 @@
                             <input type="number" name="days" min="1" class="w-full pr-16 pl-3 py-2 border border-black rounded focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all duration-200" placeholder="30" required>
                         </div>
                     </div>
-                    <div class="flex justify-end space-x-3">
-                        <button type="button" onclick="closeAddDurationModal()" class="px-6 py-2 text-gray-700 bg-gray-100 border border-black rounded hover:bg-gray-200 transition-all duration-200 font-semibold">
+                    <div class="flex justify-end space-x-3 pt-4" style="background-color: #F9FAFB;">
+                        <button type="button" onclick="closeAddDurationModal()" class="px-6 py-2 bg-gray-100 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-200 transition-all duration-200 font-medium">
                             Cancel
                         </button>
-                        <button type="submit" class="px-6 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition-all duration-200 font-semibold">
+                        <button type="submit" class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all duration-200 font-medium">
                             Add Duration
                         </button>
                     </div>
@@ -322,12 +331,11 @@
     </div>
 
     <!-- Edit Duration Type Modal -->
-    <div id="editDurationModal" class="fixed inset-0 bg-black bg-opacity-30 backdrop-blur-sm hidden z-50">
-        <div class="flex items-center justify-center min-h-screen p-4">
-            <div class="bg-white rounded-xl shadow-2xl max-w-md w-full mx-4 transform transition-all duration-300 scale-95 opacity-0 border border-black" id="editDurationModalContent">
-                <div class="flex items-center justify-between p-6 border-b border-black bg-gradient-to-r from-green-50 to-green-100 rounded-t-xl">
-                    <h3 class="text-xl font-bold text-gray-900">Edit Duration Type</h3>
-                    <button onclick="closeEditDurationModal()" class="text-gray-500 hover:text-gray-700 transition-colors p-2 hover:bg-white rounded-full border border-gray-300">
+    <div id="editDurationModal" class="fixed inset-0 flex items-center justify-center p-4 hidden z-50">
+            <div class="bg-white rounded-xl shadow-lg max-w-md w-full mx-4 transform transition-all duration-300 scale-95 opacity-0 border border-gray-200" id="editDurationModalContent" style="box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);">
+                <div class="flex items-center justify-between p-6 border-b border-gray-200" style="background-color: #1E40AF;">
+                    <h3 class="text-xl font-bold text-white">Edit Duration Type</h3>
+                    <button onclick="closeEditDurationModal()" class="text-white hover:bg-white hover:bg-opacity-20 rounded-full p-1 transition-colors">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                         </svg>
@@ -354,11 +362,11 @@
                             <input type="number" name="days" id="editDurationDays" min="1" class="w-full pr-16 pl-3 py-2 border border-black rounded focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all duration-200" required>
                         </div>
                     </div>
-                    <div class="flex justify-end space-x-3">
-                        <button type="button" onclick="closeEditDurationModal()" class="px-6 py-2 text-gray-700 bg-gray-100 border border-black rounded hover:bg-gray-200 transition-all duration-200 font-semibold">
+                    <div class="flex justify-end space-x-3 pt-4" style="background-color: #F9FAFB;">
+                        <button type="button" onclick="closeEditDurationModal()" class="px-6 py-2 bg-gray-100 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-200 transition-all duration-200 font-medium">
                             Cancel
                         </button>
-                        <button type="submit" class="px-6 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition-all duration-200 font-semibold">
+                        <button type="submit" class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all duration-200 font-medium">
                             Update Duration
                         </button>
                     </div>
@@ -368,27 +376,25 @@
     </div>
 
     <!-- Delete Confirmation Modal -->
-    <div id="deleteConfirmModal" class="fixed inset-0 bg-black bg-opacity-40 backdrop-blur-sm hidden z-50">
-        <div class="flex items-center justify-center min-h-screen p-4">
-            <div class="bg-white rounded-xl max-w-md w-full mx-4 transform transition-all duration-300 scale-95 opacity-0" 
-                 id="deleteConfirmModalContent"
-                 style="border: 2px solid #E5E7EB; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);">
-                <div class="p-8 text-center">
+    <div id="deleteConfirmModal" class="fixed inset-0 flex items-center justify-center p-4 hidden z-50">
+            <div class="bg-white rounded-xl shadow-lg max-w-md w-full mx-4 transform transition-all duration-300 scale-95 opacity-0 border border-gray-200" 
+                 id="deleteConfirmModalContent" style="box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);">
+                <div class="p-6 text-center">
                     <div class="mb-6">
-                        <div class="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                            <svg class="w-10 h-10 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <svg class="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
                             </svg>
                         </div>
-                        <h3 class="text-2xl font-bold text-gray-900 mb-3">Are you sure you want to delete this item?</h3>
-                        <p id="deleteConfirmMessage" class="text-gray-600 text-lg">This action cannot be undone.</p>
+                        <h3 class="text-lg font-semibold text-gray-900 mb-2">Are you sure you want to delete this item?</h3>
+                        <p id="deleteConfirmMessage" class="text-gray-600">This action cannot be undone.</p>
                     </div>
-                    <div class="flex justify-center space-x-4">
-                        <button onclick="cancelDelete()" class="px-8 py-3 bg-orange-100 border-2 border-orange-200 text-orange-800 rounded-lg hover:bg-orange-200 transition-all duration-200 font-semibold shadow-md hover:shadow-lg">
+                    <div class="flex justify-center space-x-3 pt-4" style="background-color: #F9FAFB;">
+                        <button onclick="cancelDelete()" class="px-6 py-2 bg-gray-100 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-200 transition-all duration-200 font-medium">
                             Cancel
                         </button>
-                        <button onclick="confirmDelete()" class="px-8 py-3 bg-green-100 border-2 border-green-200 text-green-800 rounded-lg hover:bg-green-200 transition-all duration-200 font-semibold shadow-md hover:shadow-lg">
-                            Confirm
+                        <button onclick="confirmDelete()" class="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-all duration-200 font-medium">
+                            Delete
                         </button>
                     </div>
                 </div>

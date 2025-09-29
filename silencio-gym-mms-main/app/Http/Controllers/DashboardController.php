@@ -26,8 +26,8 @@ class DashboardController extends Controller
         // Get this week's attendance
         $thisWeekAttendance = Attendance::thisWeek()->count();
         
-        // Get this month's revenue
-        $thisMonthRevenue = Payment::completed()->thisMonth()->sum('amount');
+        // Get this week's revenue
+        $thisWeekRevenue = Payment::completed()->thisWeek()->sum('amount');
         
         // Get pending payments count
         $pendingPaymentsCount = Payment::pending()->count();
@@ -35,8 +35,8 @@ class DashboardController extends Controller
         // Get memberships expiring this week (from multiple sources)
         $expiringMembershipsCount = Member::expiringThisWeek()->count();
         
-        // Get memberships expiring this month (30 days)
-        $expiringMembershipsThisMonth = Member::expiringSoon(30)->count();
+        // Get memberships expiring this week
+        $expiringMembershipsThisWeek = Member::expiringThisWeek()->count();
         
         // Also get count from payments for verification
         $expiringPaymentsCount = Payment::expiringThisWeek()->count();
@@ -55,10 +55,10 @@ class DashboardController extends Controller
             'totalActiveMembersCount',
             'todayAttendance',
             'thisWeekAttendance',
-            'thisMonthRevenue',
+            'thisWeekRevenue',
             'pendingPaymentsCount',
             'expiringMembershipsCount',
-            'expiringMembershipsThisMonth',
+            'expiringMembershipsThisWeek',
             'expiringPaymentsCount',
             'recentRfidLogs',
             'expiredMembershipsToday',
@@ -74,7 +74,7 @@ class DashboardController extends Controller
         $todayAttendance = Attendance::today()->count();
         $thisWeekAttendance = Attendance::thisWeek()->count();
         $expiringMembershipsCount = Member::expiringThisWeek()->count();
-        $expiringMembershipsThisMonth = Member::expiringSoon(30)->count();
+        $expiringMembershipsThisWeek = Member::expiringThisWeek()->count();
         $expiredMembershipsToday = Member::expired()->count();
         $unknownCardsToday = RfidLog::unknownCards()->today()->count();
         
@@ -83,8 +83,7 @@ class DashboardController extends Controller
             'total_active_members' => $totalActiveMembersCount,
             'today_attendance' => $todayAttendance,
             'this_week_attendance' => $thisWeekAttendance,
-            'expiring_memberships' => $expiringMembershipsCount,
-            'expiring_memberships_this_month' => $expiringMembershipsThisMonth,
+            'expiring_memberships_this_week' => $expiringMembershipsThisWeek,
             'expired_memberships_today' => $expiredMembershipsToday,
             'unknown_cards_today' => $unknownCardsToday,
             'last_updated' => now()->format('H:i:s'),

@@ -14,17 +14,17 @@ class AuthController extends Controller
     public function showLogin()
     {
         // If already logged in as admin, redirect to admin dashboard
-        if (Auth::check() && Auth::user()->isAdmin()) {
+        if (Auth::guard('web')->check() && Auth::guard('web')->user()->isAdmin()) {
             return redirect()->route('dashboard');
         }
         
         // If logged in as employee, redirect to employee dashboard
-        if (Auth::check() && Auth::user()->isEmployee()) {
+        if (Auth::guard('web')->check() && Auth::guard('web')->user()->isEmployee()) {
             return redirect()->route('employee.dashboard');
         }
         
         // If logged in as member, redirect to member dashboard
-        if (Auth::check() && Auth::user()->role === 'member') {
+        if (Auth::guard('member')->check()) {
             return redirect()->route('member.dashboard');
         }
 
@@ -41,30 +41,28 @@ class AuthController extends Controller
         $credentials = $request->only('email', 'password');
 
         // Attempt user login (admin/employee)
-        if (Auth::attempt($credentials, $request->boolean('remember'))) {
-            $user = Auth::user();
+        if (Auth::guard('web')->attempt($credentials, $request->boolean('remember'))) {
+            $user = Auth::guard('web')->user();
             
             // Check if account is activated
             if (!$user->email_verified_at) {
-                Auth::logout();
+                Auth::guard('web')->logout();
                 return back()->withErrors([
                     'email' => 'Your account is not activated. Please contact an administrator.',
                 ])->withInput($request->only('email'));
             }
             
-            // Only regenerate session if not already authenticated
-            if (!$request->session()->has('login_web_' . sha1(Auth::getProvider()->getModel()))) {
-                $request->session()->regenerate();
-            }
+            // Regenerate session for security
+            $request->session()->regenerate();
             
             // Redirect based on user role
             if ($user->isAdmin()) {
-                return redirect('/dashboard');
+                return redirect()->route('dashboard');
             } elseif ($user->isEmployee()) {
-                return redirect('/employee/dashboard');
+                return redirect()->route('employee.dashboard');
             } else {
                 // Fallback for any other role
-                return redirect('/dashboard');
+                return redirect()->route('dashboard');
             }
         }
 

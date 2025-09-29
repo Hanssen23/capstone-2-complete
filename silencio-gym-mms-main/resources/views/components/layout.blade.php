@@ -18,7 +18,10 @@
         <link rel="stylesheet" href="{{ asset('css/sidebar.css') }}">
     </head>
     <body class="m-0 p-0 h-screen w-screen {{ $bodyClass ?? '' }}">
-        <main class="h-full w-full flex">
+        <!-- Mobile Sidebar Overlay -->
+        <div id="sidebar-overlay" class="sidebar-overlay"></div>
+        
+        <main class="h-full w-full flex flex-col lg:flex-row">
             {{ $slot }}
         </main>
         
@@ -26,6 +29,27 @@
         <script src="{{ asset('js/dropdown.js') }}"></script>
         <!-- Sidebar JavaScript -->
         <script src="{{ asset('js/sidebar.js') }}"></script>
+        
+        <!-- Mobile Sidebar Toggle Script -->
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const sidebarToggle = document.querySelector('.sidebar-toggle');
+                const sidebar = document.getElementById('sidebar');
+                const overlay = document.getElementById('sidebar-overlay');
+                
+                if (sidebarToggle && sidebar && overlay) {
+                    sidebarToggle.addEventListener('click', function() {
+                        sidebar.classList.toggle('open');
+                        overlay.classList.toggle('active');
+                    });
+                    
+                    overlay.addEventListener('click', function() {
+                        sidebar.classList.remove('open');
+                        overlay.classList.remove('active');
+                    });
+                }
+            });
+        </script>
         
         <!-- CSRF Token Refresh Script -->
         <script>

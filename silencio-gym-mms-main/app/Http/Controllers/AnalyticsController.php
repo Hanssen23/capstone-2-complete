@@ -40,7 +40,7 @@ class AnalyticsController extends Controller
             
             $result[] = [
                 'date' => $dateKey,
-                'day' => $date->format('D'),
+                'day' => $date->format('D'), // Mon, Tue, Wed, etc.
                 'count' => $attendanceData->get($dateKey, (object)['count' => 0])->count ?? 0,
                 'formatted_date' => $date->format('M j')
             ];
@@ -57,7 +57,52 @@ class AnalyticsController extends Controller
     }
 
     /**
-     * Get monthly revenue data for the current month
+     * Get weekly revenue data for the past 7 days
+     */
+    public function getWeeklyRevenue(Request $request)
+    {
+        $days = $request->get('days', 7);
+        $startDate = Carbon::now()->subDays($days - 1)->startOfDay();
+        $endDate = Carbon::now()->endOfDay();
+
+        // Get daily revenue
+        $revenueData = Payment::select(
+                DB::raw('DATE(payment_date) as date'),
+                DB::raw('SUM(amount) as total')
+            )
+            ->where('status', 'completed')
+            ->whereBetween('payment_date', [$startDate, $endDate])
+            ->groupBy(DB::raw('DATE(payment_date)'))
+            ->orderBy('date')
+            ->get()
+            ->keyBy('date');
+
+        // Generate complete date range with zero revenue for missing days
+        $result = [];
+        for ($i = 0; $i < $days; $i++) {
+            $date = $startDate->copy()->addDays($i);
+            $dateKey = $date->format('Y-m-d');
+            
+            $result[] = [
+                'date' => $dateKey,
+                'day' => $date->format('D'), // Mon, Tue, Wed, etc.
+                'revenue' => $revenueData->get($dateKey, (object)['total' => 0])->total ?? 0,
+                'formatted_date' => $date->format('M j')
+            ];
+        }
+
+        return response()->json([
+            'data' => $result,
+            'total' => array_sum(array_column($result, 'revenue')),
+            'period' => [
+                'start' => $startDate->format('Y-m-d'),
+                'end' => $endDate->format('Y-m-d')
+            ]
+        ]);
+    }
+
+    /**
+     * Get monthly revenue data for the current month (kept for backward compatibility)
      */
     public function getMonthlyRevenue(Request $request)
     {
@@ -129,17 +174,19 @@ class AnalyticsController extends Controller
             $now->endOfWeek()
         ])->count();
 
-        // This month's revenue
-        $thisMonthRevenue = Payment::where('status', 'completed')
-            ->whereMonth('payment_date', $now->month)
-            ->whereYear('payment_date', $now->year)
+        // This week's revenue
+        $thisWeekRevenue = Payment::where('status', 'completed')
+            ->whereBetween('payment_date', [
+                $now->startOfWeek(),
+                $now->endOfWeek()
+            ])
             ->sum('amount');
 
         // Pending payments
         $pendingPayments = Payment::where('status', 'pending')->count();
 
         // Expiring memberships this week
-        $expiringMemberships = Member::expiringThisWeek()->count();
+        $expiringMembershipsThisWeek = Member::expiringThisWeek()->count();
 
         // Total active members
         $totalActiveMembers = Member::active()->count();
@@ -163,9 +210,9 @@ class AnalyticsController extends Controller
             'current_active_members' => $currentActiveMembers,
             'today_attendance' => $todayAttendance,
             'this_week_attendance' => $thisWeekAttendance,
-            'this_month_revenue' => $thisMonthRevenue,
+            'this_week_revenue' => $thisWeekRevenue,
             'pending_payments' => $pendingPayments,
-            'expiring_memberships' => $expiringMemberships,
+            'expiring_memberships_this_week' => $expiringMembershipsThisWeek,
             'total_active_members' => $totalActiveMembers,
             'recent_rfid_logs' => $recentRfidLogs,
             'last_updated' => $now->format('H:i:s'),

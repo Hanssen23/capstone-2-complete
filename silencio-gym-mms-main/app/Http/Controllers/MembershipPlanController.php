@@ -83,9 +83,20 @@ class MembershipPlanController extends Controller
             'name' => 'required|string|max:255|unique:membership_plans,name',
             'description' => 'required|string',
             'price' => 'required|numeric|min:0',
-            'duration_days' => 'required|integer|min:1',
+            'duration_days' => 'required|integer|in:30,90,180,360',
             'features' => 'nullable|array',
             'is_active' => 'boolean'
+        ], [
+            'name.unique' => 'A membership plan with this name already exists. Please choose a different name.',
+            'name.required' => 'Plan name is required.',
+            'name.max' => 'Plan name cannot exceed 255 characters.',
+            'description.required' => 'Plan description is required.',
+            'price.required' => 'Plan price is required.',
+            'price.numeric' => 'Plan price must be a valid number.',
+            'price.min' => 'Plan price must be at least 0.',
+            'duration_days.required' => 'Duration is required.',
+            'duration_days.integer' => 'Duration must be a whole number.',
+            'duration_days.in' => 'Duration must be one of: 30, 90, 180, or 360 days.',
         ]);
 
         if ($validator->fails()) {
@@ -144,7 +155,7 @@ class MembershipPlanController extends Controller
             'name' => 'required|string|max:255|unique:membership_plans,name,' . $plan->id,
             'description' => 'required|string',
             'price' => 'required|numeric|min:0',
-            'duration_days' => 'required|integer|min:1',
+            'duration_days' => 'required|integer|in:30,90,180,360',
             'features' => 'nullable|array',
             'is_active' => 'boolean'
         ]);

@@ -37,8 +37,8 @@ class AccountController extends Controller
             return view('employee.accounts', compact('accounts'));
         }
         
-        // Admin functionality - show all accounts
-        $query = User::query();
+        // Admin functionality - show only admin and employee accounts (not members)
+        $query = User::query()->whereIn('role', ['admin', 'employee']);
 
         // Search functionality
         if ($request->has('search') && $request->search) {
@@ -51,9 +51,11 @@ class AccountController extends Controller
             });
         }
 
-        // Filter by role
+        // Filter by role (only admin and employee roles)
         if ($request->has('role') && $request->role) {
-            $query->where('role', $request->role);
+            if (in_array($request->role, ['admin', 'employee'])) {
+                $query->where('role', $request->role);
+            }
         }
 
         // Filter by status (active/inactive based on email_verified_at)
@@ -115,7 +117,8 @@ class AccountController extends Controller
         }
         
         // Only admins can create accounts
-        if (auth()->user()->role !== 'admin') {
+        $currentUser = auth()->user();
+        if (!$currentUser || $currentUser->role !== 'admin') {
             if ($request->expectsJson()) {
                 return response()->json([
                     'success' => false,
@@ -131,7 +134,7 @@ class AccountController extends Controller
             'email' => 'required|string|email|max:255|unique:users',
             'mobile_number' => 'nullable|string|regex:/^9\d{2}\s\d{3}\s\d{4}$/',
             'password' => 'required|string|min:8|confirmed',
-            'role' => 'required|in:admin,employee,member',
+            'role' => 'required|in:admin,employee',
         ], [
             'first_name.required' => 'First name is required',
             'last_name.required' => 'Last name is required',

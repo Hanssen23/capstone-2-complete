@@ -3,17 +3,17 @@
     <div class="flex-1 bg-white">
         <x-topbar>Member Plan Management</x-topbar>
 
-        <div class="bg-white min-h-screen p-6">
+        <div class="bg-white min-h-screen p-4 sm:p-6">
             <!-- Member Selection -->
-            <div class="mb-8">
-                <div class="bg-white rounded-lg border p-8" style="border-color: #E5E7EB; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
-                    <h2 class="text-3xl font-bold mb-8" style="color: #1E40AF;">Select Member</h2>
+            <div class="mb-6 sm:mb-8">
+                <div class="bg-white rounded-lg border p-4 sm:p-6 lg:p-8" style="border-color: #E5E7EB; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                    <h2 class="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8" style="color: #1E40AF;">Select Member</h2>
                     
                     <!-- Search Bar -->
-                    <div class="mb-8">
+                    <div class="mb-6 sm:mb-8">
                         <div class="relative">
                             <input type="text" id="memberSearch" placeholder="Search by name, email, or member number..." 
-                                   class="w-full px-3 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-base" 
+                                   class="w-full px-3 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-sm sm:text-base min-h-[44px]" 
                                    style="border-color: #E5E7EB; color: #000000;">
                         </div>
                     </div>
@@ -21,14 +21,14 @@
                     <!-- Member Results -->
                     <div id="memberResults" class="space-y-4">
                         @foreach($members as $member)
-                        <div class="member-card bg-white border rounded-lg p-6 cursor-pointer transition-all duration-200 hover:shadow-md" 
+                        <div class="member-card bg-white border rounded-lg p-4 sm:p-6 cursor-pointer transition-all duration-200 hover:shadow-md" 
                              style="border-color: #E5E7EB;" 
                              data-member='@json($member)'
                              onclick="selectMember(this)">
-                            <div class="flex items-center justify-between">
+                            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                                 <div class="flex-1">
-                                    <div class="flex items-center gap-4 mb-2">
-                                        <h3 class="text-lg font-semibold" style="color: #000000;">{{ $member->full_name }}</h3>
+                                    <div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 mb-2">
+                                        <h3 class="text-base sm:text-lg font-semibold" style="color: #000000;">{{ $member->full_name }}</h3>
                                         @php
                                             $currentPlan = $member->currentMembershipPeriod ? $member->currentMembershipPeriod->plan_type : null;
                                             $isActive = $member->currentMembershipPeriod && $member->currentMembershipPeriod->is_active;
@@ -96,8 +96,8 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="ml-4">
-                                    <button class="px-4 py-2 border rounded-lg font-medium transition-colors" 
+                                <div class="flex justify-end sm:ml-4">
+                                    <button class="px-4 py-2 border rounded-lg font-medium transition-colors min-h-[44px] w-full sm:w-auto" 
                                             style="border-color: #2563EB; color: #2563EB;" 
                                             onmouseover="this.style.backgroundColor='#2563EB'; this.style.color='#FFFFFF'" 
                                             onmouseout="this.style.backgroundColor='transparent'; this.style.color='#2563EB'">
@@ -113,8 +113,8 @@
 
             <!-- Plan Selection and Payment Form -->
             <div id="planSelectionForm" class="hidden">
-                <div class="bg-white rounded-lg border p-8 mb-8" style="border-color: #E5E7EB; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
-                    <h2 class="text-3xl font-bold mb-8" style="color: #1E40AF;">Plan Selection & Payment</h2>
+                <div class="bg-white rounded-lg border p-4 sm:p-6 lg:p-8 mb-6 sm:mb-8" style="border-color: #E5E7EB; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                    <h2 class="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8" style="color: #1E40AF;">Plan Selection & Payment</h2>
                     
                     <!-- Selected Member Card -->
                     <div id="selectedMemberInfo" class="bg-white border rounded-lg p-6 mb-8" style="border-color: #059669; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
@@ -129,21 +129,21 @@
                     </div>
 
                     <!-- Plan Selection -->
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-12">
                         <div>
-                            <h3 class="text-xl font-semibold mb-6" style="color: #1E40AF;">Plan Options</h3>
+                            <h3 class="text-lg sm:text-xl font-semibold mb-4 sm:mb-6" style="color: #1E40AF;">Plan Options</h3>
                             
                             <!-- Plan Cards -->
-                            <div class="space-y-4 mb-8">
+                            <div class="space-y-3 sm:space-y-4 mb-6 sm:mb-8">
                                     @foreach(config('membership.plan_types') as $key => $plan)
-                                <div class="plan-card bg-white border rounded-lg p-6 cursor-pointer transition-all duration-200 hover:shadow-md" 
+                                <div class="plan-card bg-white border rounded-lg p-4 sm:p-6 cursor-pointer transition-all duration-200 hover:shadow-md" 
                                      style="border-color: #E5E7EB;" 
                                      data-plan="{{ $key }}"
                                      onclick="selectPlan('{{ $key }}')">
-                                    <div class="flex items-center justify-between">
+                                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                                         <div class="flex-1">
-                                            <div class="flex items-center gap-3 mb-2">
-                                                <h4 class="text-lg font-bold" style="color: #000000;">{{ $plan['name'] }}</h4>
+                                            <div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 mb-2">
+                                                <h4 class="text-base sm:text-lg font-bold" style="color: #000000;">{{ $plan['name'] }}</h4>
                                                 @if($key === 'basic')
                                                 <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full text-white" 
                                                       style="background-color: #059669;">
@@ -156,11 +156,11 @@
                                                 </span>
                                                 @endif
                                             </div>
-                                            <p class="text-sm mb-3" style="color: #6B7280;">{{ $plan['description'] }}</p>
-                                            <div class="text-lg font-bold" style="color: #000000;">₱{{ number_format($plan['base_price'], 2) }}/month</div>
+                                            <p class="text-xs sm:text-sm mb-3" style="color: #6B7280;">{{ $plan['description'] }}</p>
+                                            <div class="text-base sm:text-lg font-bold" style="color: #000000;">₱{{ number_format($plan['base_price'], 2) }}/month</div>
                                         </div>
-                                        <div class="ml-4">
-                                            <button class="select-plan-btn px-4 py-2 border rounded-lg font-medium transition-colors" 
+                                        <div class="flex justify-end sm:ml-4">
+                                            <button class="select-plan-btn px-4 py-2 border rounded-lg font-medium transition-colors min-h-[44px] w-full sm:w-auto" 
                                                     style="border-color: #2563EB; color: #2563EB;" 
                                                     onmouseover="this.style.backgroundColor='#2563EB'; this.style.color='#FFFFFF'" 
                                                     onmouseout="this.style.backgroundColor='transparent'; this.style.color='#2563EB'">
@@ -173,11 +173,11 @@
                             </div>
 
                             <!-- Duration Selection -->
-                            <div class="mb-8">
-                                <h4 class="text-lg font-semibold mb-4" style="color: #1E40AF;">Duration</h4>
-                                <div class="flex gap-2">
+                            <div class="mb-6 sm:mb-8">
+                                <h4 class="text-base sm:text-lg font-semibold mb-3 sm:mb-4" style="color: #1E40AF;">Duration</h4>
+                                <div class="grid grid-cols-2 sm:flex gap-2">
                                     @foreach(config('membership.duration_types') as $key => $duration)
-                                    <button class="duration-btn px-4 py-2 border rounded-lg font-medium transition-colors" 
+                                    <button class="duration-btn px-3 sm:px-4 py-2 border rounded-lg font-medium transition-colors min-h-[44px] text-xs sm:text-sm" 
                                             style="border-color: #E5E7EB; color: #6B7280;" 
                                             data-duration="{{ $key }}"
                                             onclick="selectDuration('{{ $key }}')"
@@ -190,48 +190,48 @@
                             </div>
 
                             <!-- Start Date -->
-                            <div class="mb-8">
+                            <div class="mb-6 sm:mb-8">
                                 <label class="block text-sm font-medium mb-3" style="color: #6B7280;">Membership Start Date</label>
                                 <input type="date" id="startDate" name="start_date" 
-                                       class="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors" 
+                                       class="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors min-h-[44px]" 
                                        style="border-color: #E5E7EB;" required>
                             </div>
                         </div>
 
                         <div>
-                            <h3 class="text-xl font-semibold mb-6" style="color: #1E40AF;">Payment Details</h3>
+                            <h3 class="text-lg sm:text-xl font-semibold mb-4 sm:mb-6" style="color: #1E40AF;">Payment Details</h3>
                             
                             <!-- Price Calculation -->
-                            <div id="priceCalculation" class="bg-gray-50 border rounded-lg p-8 mb-8 text-center" style="border-color: #E5E7EB;">
-                                <div class="text-4xl font-bold mb-3" style="color: #000000;" id="totalPrice">₱0.00</div>
-                                <div class="text-lg" style="color: #6B7280;" id="priceBreakdown">Select plan and duration</div>
+                            <div id="priceCalculation" class="bg-gray-50 border rounded-lg p-4 sm:p-6 lg:p-8 mb-6 sm:mb-8 text-center" style="border-color: #E5E7EB;">
+                                <div class="text-2xl sm:text-3xl lg:text-4xl font-bold mb-3" style="color: #000000;" id="totalPrice">₱0.00</div>
+                                <div class="text-sm sm:text-base lg:text-lg" style="color: #6B7280;" id="priceBreakdown">Select plan and duration</div>
                             </div>
 
                             <!-- Payment Form -->
-                            <div class="space-y-6">
+                            <div class="space-y-4 sm:space-y-6">
                                 <div>
                                     <label class="block text-sm font-medium mb-3" style="color: #6B7280;">Payment Amount</label>
                                     <input type="number" id="paymentAmount" name="amount" step="0.01" min="0" 
-                                           class="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors bg-gray-50" 
+                                           class="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors bg-gray-50 min-h-[44px]" 
                                            style="border-color: #E5E7EB;" readonly>
                                 </div>
                                 
                                 <div>
                                     <label class="block text-sm font-medium mb-3" style="color: #6B7280;">Notes (Optional)</label>
-                                    <textarea name="notes" rows="4" placeholder="Any additional notes about this payment..." 
-                                              class="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors resize-none" 
+                                    <textarea name="notes" rows="3" placeholder="Any additional notes about this payment..." 
+                                              class="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors resize-none min-h-[44px]" 
                                               style="border-color: #E5E7EB;"></textarea>
                                 </div>
 
                                 <!-- Confirm Payment Button -->
                                 <button id="confirmPaymentBtn" onclick="confirmPayment()" 
-                                        class="w-full py-4 text-white font-semibold text-lg rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-sm flex items-center justify-center gap-3" 
+                                        class="w-full py-3 sm:py-4 text-white font-semibold text-base sm:text-lg rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-sm flex items-center justify-center gap-3 min-h-[44px]" 
                                         style="background-color: #059669;" 
                                         onmouseover="this.style.backgroundColor='#047857'" 
                                         onmouseout="this.style.backgroundColor='#059669'" 
                                         disabled>
-                                    <span class="text-xl">💳</span>
-                                    Confirm Payment & Activate Membership
+                                    <span class="text-lg sm:text-xl">💳</span>
+                                    <span class="text-sm sm:text-base">Confirm Payment & Activate Membership</span>
                                 </button>
                             </div>
                         </div>

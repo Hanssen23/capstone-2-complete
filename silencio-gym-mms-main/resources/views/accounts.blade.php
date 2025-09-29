@@ -3,12 +3,12 @@
     <div class="flex-1 bg-white">
         <x-topbar>Accounts</x-topbar>
 
-        <div class="bg-white p-6">
+        <div class="bg-white p-4 sm:p-6">
             <!-- Account Creation Form -->
-            <div class="mb-8">
-                <div class="bg-white rounded-lg border p-8" style="border-color: #E5E7EB; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
-                    <h2 class="text-2xl font-bold mb-6" style="color: #1E40AF;">Create New Account</h2>
-                    <form id="create-account-form" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+            <div class="mb-6 sm:mb-8">
+                <div class="bg-white rounded-lg border p-4 sm:p-6 lg:p-8" style="border-color: #E5E7EB; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                    <h2 class="text-xl sm:text-2xl font-bold mb-4 sm:mb-6" style="color: #1E40AF;">Create New Account</h2>
+                    <form id="create-account-form" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3 sm:gap-4">
                         <div>
                             <label for="account-first-name" class="block text-sm font-medium mb-2" style="color: #6B7280; font-size: 0.875rem;">First Name</label>
                             <input type="text" id="account-first-name" name="first_name" required
@@ -77,14 +77,13 @@
                                 <option value="">Select user type</option>
                                 <option value="admin">Admin</option>
                                 <option value="employee">Employee</option>
-                                <option value="member">Member</option>
                             </select>
                             <div id="role-error" class="text-red-500 text-sm mt-1 hidden"></div>
                         </div>
                         
-                        <div class="md:col-span-2 lg:col-span-5 flex justify-end">
+                        <div class="sm:col-span-2 lg:col-span-3 xl:col-span-5 flex justify-end">
                             <button type="submit" id="create-account-btn"
-                                    class="px-6 py-3 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 flex items-center gap-2"
+                                    class="w-full sm:w-auto px-4 sm:px-6 py-3 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 flex items-center justify-center gap-2"
                                     style="background-color: #2563EB; border-radius: 6px;">
                                 <span id="create-account-text">Create Account</span>
                                 <div id="create-account-spinner" class="hidden">
@@ -100,18 +99,17 @@
             </div>
 
             <!-- Edit Account Modal -->
-            <div id="editAccountModal" class="fixed inset-0 bg-black bg-opacity-30 backdrop-blur-sm hidden z-50">
-                <div class="flex items-center justify-center min-h-screen p-4">
-                    <div id="editAccountModalContent" class="bg-white rounded-lg shadow-xl max-w-md w-full transform scale-95 opacity-0 transition-all duration-300">
-                        <div class="flex items-center justify-between p-6 border-b" style="border-color: #E5E7EB;">
-                            <h3 class="text-lg font-semibold" style="color: #1E40AF;">Edit Account</h3>
-                            <button onclick="closeEditAccountModal()" class="text-gray-400 hover:text-gray-600 transition-colors">
-                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                                </svg>
-                            </button>
-                        </div>
-                        <form id="editAccountForm" class="p-6">
+            <div id="editAccountModal" class="fixed inset-0 flex items-center justify-center p-2 sm:p-4 hidden z-50">
+                <div id="editAccountModalContent" class="bg-white rounded-xl shadow-lg max-w-md w-full max-h-[90vh] overflow-y-auto transform scale-95 opacity-0 transition-all duration-300 border border-gray-200" style="box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);">
+                    <div class="flex items-center justify-between p-4 sm:p-6 border-b border-gray-200" style="background-color: #1E40AF;">
+                        <h3 class="text-lg sm:text-xl font-bold text-white">Edit Account</h3>
+                        <button onclick="closeEditAccountModal()" class="text-white hover:bg-white hover:bg-opacity-20 rounded-full p-1 transition-colors">
+                            <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </button>
+                    </div>
+                        <form id="editAccountForm" class="p-4 sm:p-6">
                             <input type="hidden" name="account_id" id="editAccountId">
                             <div class="mb-4">
                                 <label class="block text-sm font-semibold mb-2" style="color: #374151;">First Name</label>
@@ -153,43 +151,40 @@
                                     <option value="employee">Employee</option>
                                 </select>
                             </div>
-                            <div class="flex justify-end space-x-3">
-                                <button type="button" onclick="closeEditAccountModal()" class="px-6 py-2 bg-gray-100 border rounded hover:bg-gray-200 transition-all duration-200 font-semibold" style="color: #374151; border-color: #E5E7EB;">
+                            <div class="flex flex-col sm:flex-row justify-end gap-3 pt-4" style="background-color: #F9FAFB;">
+                                <button type="button" onclick="closeEditAccountModal()" class="w-full sm:w-auto px-4 sm:px-6 py-2 bg-gray-100 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-200 transition-all duration-200 font-medium">
                                     Cancel
                                 </button>
-                                <button type="submit" class="px-6 py-2 text-white rounded transition-all duration-200 font-semibold" style="background-color: #059669;" onmouseover="this.style.backgroundColor='#047857'" onmouseout="this.style.backgroundColor='#059669'">
+                                <button type="submit" class="w-full sm:w-auto px-4 sm:px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all duration-200 font-medium">
                                     Update Account
                                 </button>
                             </div>
                         </form>
-                    </div>
                 </div>
             </div>
 
             <!-- Delete Confirmation Modal -->
-            <div id="deleteConfirmModal" class="fixed inset-0 bg-black bg-opacity-40 backdrop-blur-sm hidden z-50">
-                <div class="flex items-center justify-center min-h-screen p-4">
-                    <div class="bg-white rounded-xl max-w-md w-full mx-4 transform transition-all duration-300 scale-95 opacity-0" 
-                         id="deleteConfirmModalContent"
-                         style="border: 2px solid #E5E7EB; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);">
-                        <div class="p-8 text-center">
-                            <div class="mb-6">
-                                <div class="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                                    <svg class="w-10 h-10 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
-                                    </svg>
-                                </div>
-                                <h3 class="text-2xl font-bold text-gray-900 mb-3">Are you sure you want to delete this account?</h3>
-                                <p id="deleteConfirmMessage" class="text-gray-600 text-lg">This action cannot be undone.</p>
+            <div id="deleteConfirmModal" class="fixed inset-0 flex items-center justify-center p-2 sm:p-4 hidden z-50">
+                <div class="bg-white rounded-xl shadow-lg max-w-md w-full transform transition-all duration-300 scale-95 opacity-0 border border-gray-200" 
+                     id="deleteConfirmModalContent"
+                     style="box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);">
+                    <div class="p-4 sm:p-6 text-center">
+                        <div class="mb-4 sm:mb-6">
+                            <div class="w-12 h-12 sm:w-16 sm:h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4">
+                                <svg class="w-6 h-6 sm:w-8 sm:h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                                </svg>
                             </div>
-                            <div class="flex justify-center space-x-4">
-                                <button onclick="cancelDelete()" class="px-8 py-3 bg-orange-100 border-2 border-orange-200 text-orange-800 rounded-lg hover:bg-orange-200 transition-all duration-200 font-semibold shadow-md hover:shadow-lg">
-                                    Cancel
-                                </button>
-                                <button onclick="confirmDelete()" class="px-8 py-3 bg-green-100 border-2 border-green-200 text-green-800 rounded-lg hover:bg-green-200 transition-all duration-200 font-semibold shadow-md hover:shadow-lg">
-                                    Confirm
-                                </button>
-                            </div>
+                            <h3 class="text-base sm:text-lg font-semibold text-gray-900 mb-2">Are you sure you want to delete this account?</h3>
+                            <p id="deleteConfirmMessage" class="text-sm sm:text-base text-gray-600">This action cannot be undone.</p>
+                        </div>
+                        <div class="flex flex-col sm:flex-row justify-center gap-3 pt-4" style="background-color: #F9FAFB;">
+                            <button onclick="cancelDelete()" class="w-full sm:w-auto px-4 sm:px-6 py-2 bg-gray-100 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-200 transition-all duration-200 font-medium">
+                                Cancel
+                            </button>
+                            <button onclick="confirmDelete()" class="w-full sm:w-auto px-4 sm:px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-all duration-200 font-medium">
+                                Delete
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -198,17 +193,17 @@
             <!-- Account Management Features -->
             <div class="space-y-6">
                 <!-- Search and Filter Controls -->
-                <div class="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
-                    <div class="flex flex-col sm:flex-row gap-4 flex-1">
-                        <div class="relative">
+                <div class="flex flex-col gap-4">
+                    <div class="flex flex-col sm:flex-row gap-3 sm:gap-4">
+                        <div class="relative flex-1">
                             <input type="text" id="accounts-search" placeholder="Search accounts..."
-                                   class="w-full sm:w-64 px-3 py-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                   style="border-color: #E5E7EB; background-color: #F9FAFB; color: #000000; font-size: 1rem;">
+                                   class="w-full px-3 py-2 sm:py-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                   style="border-color: #E5E7EB; background-color: #F9FAFB; color: #000000; font-size: 0.875rem; sm:font-size: 1rem;">
                         </div>
                         
-                        <div class="relative">
-                            <select id="accounts-role-filter" class="px-3 py-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                    style="border-color: #E5E7EB; background-color: #F9FAFB; color: #000000; font-size: 1rem;">
+                        <div class="relative w-full sm:w-auto">
+                            <select id="accounts-role-filter" class="w-full sm:w-auto px-3 py-2 sm:py-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    style="border-color: #E5E7EB; background-color: #F9FAFB; color: #000000; font-size: 0.875rem; sm:font-size: 1rem;">
                                 <option value="">All Roles</option>
                                 <option value="admin">Admin</option>
                                 <option value="employee">Employee</option>
@@ -220,16 +215,16 @@
                 <!-- Accounts Table -->
                 <div class="bg-white rounded-lg border overflow-hidden" style="border-color: #E5E7EB; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
                     <div class="overflow-x-auto">
-                        <table class="w-full">
+                        <table class="w-full min-w-[600px]">
                             <thead class="bg-gray-50" style="background-color: #F9FAFB;">
                                 <tr>
-                                    <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" style="color: #6B7280; font-size: 0.75rem; font-weight: 500;">
+                                    <th class="px-3 sm:px-6 py-3 sm:py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" style="color: #6B7280; font-size: 0.75rem; font-weight: 500;">
                                         ACCOUNT
                                     </th>
-                                    <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" style="color: #6B7280; font-size: 0.75rem; font-weight: 500;">
+                                    <th class="px-3 sm:px-6 py-3 sm:py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" style="color: #6B7280; font-size: 0.75rem; font-weight: 500;">
                                         USER TYPE
                                     </th>
-                                    <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" style="color: #6B7280; font-size: 0.75rem; font-weight: 500;">
+                                    <th class="px-3 sm:px-6 py-3 sm:py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" style="color: #6B7280; font-size: 0.75rem; font-weight: 500;">
                                         ACTIONS
                                     </th>
                                 </tr>
@@ -1006,6 +1001,47 @@
                     cancelDelete();
                 }
             });
+            
+            // Mobile number validation for account creation
+            const phoneInput = document.getElementById('account-mobile-number');
+            if (phoneInput) {
+                // Format phone number as user types
+                phoneInput.addEventListener('input', function(e) {
+                    let value = e.target.value.replace(/\D/g, ''); // Remove non-digits
+                    
+                    // Limit to 10 digits
+                    if (value.length > 10) {
+                        value = value.substring(0, 10);
+                    }
+                    
+                    // Format as XXX XXX XXXX
+                    if (value.length >= 6) {
+                        value = value.substring(0, 3) + ' ' + value.substring(3, 6) + ' ' + value.substring(6);
+                    } else if (value.length >= 3) {
+                        value = value.substring(0, 3) + ' ' + value.substring(3);
+                    }
+                    
+                    e.target.value = value;
+                });
+                
+                // Prevent non-numeric input
+                phoneInput.addEventListener('keydown', function(e) {
+                    // Allow backspace, delete, arrow keys, tab, etc.
+                    if ([8, 9, 27, 46, 37, 38, 39, 40].indexOf(e.keyCode) !== -1 ||
+                        // Allow Ctrl+A, Ctrl+C, Ctrl+V, Ctrl+X
+                        (e.keyCode === 65 && e.ctrlKey === true) ||
+                        (e.keyCode === 67 && e.ctrlKey === true) ||
+                        (e.keyCode === 86 && e.ctrlKey === true) ||
+                        (e.keyCode === 88 && e.ctrlKey === true)) {
+                        return;
+                    }
+                    
+                    // Allow only digits
+                    if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && (e.keyCode < 96 || e.keyCode > 105)) {
+                        e.preventDefault();
+                    }
+                });
+            }
         });
 
         // Clean up intervals when page is unloaded

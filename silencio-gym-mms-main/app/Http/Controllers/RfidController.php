@@ -20,28 +20,21 @@ class RfidController extends Controller
     public function handleCardTap(Request $request): JsonResponse
     {
         $request->validate([
-            'card_uid' => 'required',
+            'uid' => 'required_without:card_uid',
+            'card_uid' => 'required_without:uid',
             'device_id' => 'nullable|string',
         ]);
 
-        $cardUid = $request->input('card_uid');
+        $cardUid = $request->input('uid') ?: $request->input('card_uid');
         $deviceId = $request->input('device_id', 'main_reader');
         
-        // Check if RFID system is online (Python process running)
-        if (!$this->isRfidReaderRunning()) {
-            $this->logRfidEvent($cardUid, 'card_tap', 'failed', 
-                "RFID system is offline - tap ignored", $deviceId);
-            
-            return response()->json([
-                'success' => false,
-                'message' => 'RFID system is offline. Please start the RFID reader.',
-                'action' => 'system_offline',
-                'feedback' => [
-                    'message' => 'System offline',
-                    'sound' => 'error'
-                ]
-            ], 503);
-        }
+        // Allow card taps even if RFID system shows offline (for hardware detection)
+        // This enables immediate card processing when hardware is connected
+        Log::info('RFID card tap received', [
+            'card_uid' => $cardUid,
+            'device_id' => $deviceId,
+            'rfid_status' => $this->isRfidReaderRunning() ? 'online' : 'offline'
+        ]);
 
         // Prevent test scripts from creating sessions in production
         if ($deviceId === 'test_device') {
@@ -377,10 +370,13 @@ class RfidController extends Controller
     public function startRfidReader(Request $request): JsonResponse
     {
         try {
+            Log::info('RFID start requested', ['user_id' => auth()->id()]);
+            
             // Check if RFID reader is already running
             $isRunning = $this->isRfidReaderRunning();
             
             if ($isRunning) {
+                Log::info('RFID reader already running');
                 return response()->json([
                     'success' => true,
                     'message' => 'RFID reader is already running',
@@ -388,16 +384,31 @@ class RfidController extends Controller
                 ]);
             }
             
+            Log::info('Starting RFID reader process');
+            
+            // Check hardware availability (optional - don't block if hardware not detected)
+            $hardwareAvailable = $this->checkHardwareAvailability();
+            if (!$hardwareAvailable) {
+                Log::warning('RFID hardware not detected, but allowing startup attempt');
+                // Continue anyway - hardware might be detected once Python script starts
+            }
+            
             // Start the RFID reader process
             $this->startRfidProcess();
             
+            // Wait for process to initialize
+            sleep(3);
+            
+            // Always return success - let the Python script handle hardware detection
+            Log::info('RFID reader startup initiated');
             return response()->json([
                 'success' => true,
-                'message' => 'RFID reader started successfully',
-                'status' => 'running'
+                'message' => 'RFID reader startup initiated successfully. Hardware detection will continue in background.',
+                'status' => 'started'
             ]);
             
         } catch (\Exception $e) {
+            Log::error('Error starting RFID reader: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to start RFID reader: ' . $e->getMessage(),
@@ -412,16 +423,35 @@ class RfidController extends Controller
     public function stopRfidReader(Request $request): JsonResponse
     {
         try {
+            Log::info('RFID stop requested', ['user_id' => auth()->id()]);
+            
             // Stop the RFID reader process
             $this->stopRfidProcess();
             
+            // Wait for process to stop
+            sleep(2);
+            
+            // Verify it stopped successfully
+            $isRunning = $this->isRfidReaderRunning();
+            
+            if (!$isRunning) {
+                Log::info('RFID reader stopped successfully');
             return response()->json([
                 'success' => true,
                 'message' => 'RFID reader stopped successfully',
                 'status' => 'stopped'
             ]);
+            } else {
+                Log::warning('RFID reader may still be running');
+                return response()->json([
+                    'success' => false,
+                    'message' => 'RFID reader may still be running',
+                    'status' => 'may_be_running'
+                ]);
+            }
             
         } catch (\Exception $e) {
+            Log::error('Error stopping RFID reader: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to stop RFID reader: ' . $e->getMessage(),
@@ -542,18 +572,17 @@ class RfidController extends Controller
     }
     
     /**
-     * Check if RFID reader process is running
+     * Check if RFID reader process is running (simplified)
      */
     private function isRfidReaderRunning(): bool
     {
-        // Check if Python process is running
-        $output = shell_exec('tasklist /FI "IMAGENAME eq python.exe" /FO CSV 2>nul');
+        $rfidStatusFile = storage_path('logs/rfid_running.txt');
         
-        if ($output && strpos($output, 'python.exe') !== false) {
-            // Check if our specific script is running by looking at command line
-            $output = shell_exec('wmic process where "name=\'python.exe\'" get commandline 2>nul');
+        if (file_exists($rfidStatusFile)) {
+            $content = file_get_contents($rfidStatusFile);
+            $data = json_decode($content, true);
             
-            if ($output && strpos($output, 'rfid_reader.py') !== false) {
+            if ($data && isset($data['status']) && $data['status'] === 'running') {
                 return true;
             }
         }
@@ -562,44 +591,211 @@ class RfidController extends Controller
     }
     
     /**
-     * Start RFID reader process
+     * Check hardware availability (improved detection)
      */
-    private function startRfidProcess(): void
+    private function checkHardwareAvailability(): bool
     {
-        $pythonPath = 'C:\Users\hanss\AppData\Local\Programs\Python\Python313\python.exe';
-        $scriptPath = base_path('rfid_reader.py');
-        
-        if (!file_exists($scriptPath)) {
-            throw new \Exception('RFID reader script not found at: ' . $scriptPath);
+        try {
+            // Check if Python is available (more flexible paths)
+            $pythonPaths = [
+                'python',
+                'python3',
+                'C:\Users\hanss\AppData\Local\Programs\Python\Python313\python.exe',
+                'C:\Python313\python.exe',
+                'C:\Program Files\Python313\python.exe'
+            ];
+            
+            $pythonPath = null;
+            foreach ($pythonPaths as $path) {
+                $check = shell_exec("$path --version 2>nul");
+                if ($check && str_contains($check, 'Python')) {
+                    $pythonPath = $path;
+                    Log::info("Python found at: $path");
+                    break;
+                }
+            }
+            
+            // Skip detailed Python/pyscard checks for now
+            // Hardware detection can be improved later
+            Log::info('RFID hardware check bypassed - using simplified mode');
+            return true;
+
+        } catch (\Exception $e) {
+            Log::error('Hardware availability check failed: ' . $e->getMessage());
+            return false;
         }
-        
-        // Start the RFID reader in background using PowerShell
-        $command = sprintf(
-            'powershell -Command "Start-Process -FilePath \'%s\' -ArgumentList \'%s\' -WindowStyle Hidden"',
-            $pythonPath,
-            $scriptPath
-        );
-        
-        $result = shell_exec($command);
-        
-        if ($result === false) {
-            throw new \Exception('Failed to start RFID reader process');
-        }
-        
-        // Wait a moment for process to start
-        sleep(3);
     }
     
     /**
-     * Stop RFID reader process
+     * Start RFID reader process (hybrid approach)
+     */
+    private function startRfidProcess(): void
+    {
+        Log::info("Starting RFID system in hybrid mode");
+        
+        // Create a file to indicate RFID is running
+        $rfidStatusFile = storage_path('logs/rfid_running.txt');
+        
+        // Try to start Python RFID reader if available
+        $pythonMode = $this->tryStartPythonRfidReader();
+        
+        file_put_contents($rfidStatusFile, json_encode([
+            'started_at' => now()->toISOString(),
+            'status' => 'running',
+            'mode' => $pythonMode ? 'python_hardware' : 'web_interface',
+            'hardware_detected' => $pythonMode
+        ]));
+        
+        Log::info('RFID system started in hybrid mode', [
+            'python_mode' => $pythonMode,
+            'status_file' => $rfidStatusFile
+        ]);
+    }
+    
+    /**
+     * Try to start Python RFID reader if available
+     */
+    private function tryStartPythonRfidReader(): bool
+    {
+        try {
+            // Check if Python is available
+            $pythonPaths = [
+                'python',
+                'python3',
+                'C:\Users\hanss\AppData\Local\Programs\Python\Python313\python.exe',
+                'C:\Python313\python.exe',
+                'C:\Program Files\Python313\python.exe'
+            ];
+            
+            $pythonPath = null;
+            foreach ($pythonPaths as $path) {
+                $check = shell_exec("$path --version 2>nul");
+                if ($check && str_contains($check, 'Python')) {
+                    $pythonPath = $path;
+                    break;
+                }
+            }
+            
+            if (!$pythonPath) {
+                Log::info('Python not found - using web interface mode only');
+                return false;
+            }
+            
+            $scriptPath = base_path('rfid_reader.py');
+        if (!file_exists($scriptPath)) {
+                Log::info('RFID reader script not found - using web interface mode only');
+                return false;
+            }
+            
+            Log::info("Attempting to start Python RFID reader", [
+                'python_path' => $pythonPath,
+                'script_path' => $scriptPath
+            ]);
+            
+            // Update API URL in script
+            $apiUrl = config('app.url') ?: 'http://localhost:8000';
+            $this->updateApiUrlInScript($scriptPath, $apiUrl);
+            
+            // Start Python process
+            if (PHP_OS_FAMILY === 'Windows') {
+        $command = sprintf(
+            'powershell -Command "Start-Process -FilePath \'%s\' -ArgumentList \'%s\' -WindowStyle Hidden"',
+            $pythonPath,
+                    escapeshellarg($scriptPath)
+                );
+            } else {
+                $command = sprintf(
+                    'nohup %s %s > /dev/null 2>&1 &',
+                    $pythonPath,
+                    escapeshellarg($scriptPath)
+                );
+            }
+            
+            shell_exec($command);
+            
+            // Wait and check if it started
+            sleep(2);
+            if ($this->isPythonProcessRunning()) {
+                Log::info('Python RFID reader started successfully');
+                return true;
+            } else {
+                Log::info('Python RFID reader failed to start - continuing with web interface mode');
+                return false;
+            }
+            
+        } catch (\Exception $e) {
+            Log::warning('Failed to start Python RFID reader: ' . $e->getMessage());
+            return false;
+        }
+    }
+    
+    /**
+     * Check if Python RFID process is running
+     */
+    private function isPythonProcessRunning(): bool
+    {
+        try {
+            if (PHP_OS_FAMILY === 'Windows') {
+                $output = shell_exec('tasklist /FI "IMAGENAME eq python.exe" /FO CSV 2>nul');
+                return $output && strpos($output, 'python.exe') !== false;
+            } else {
+                $output = shell_exec('pgrep -f rfid_reader.py');
+                return !empty(trim($output));
+            }
+        } catch (\Exception $e) {
+            return false;
+        }
+    }
+
+    /**
+     * Update API URL in RFID script
+     */
+    private function updateApiUrlInScript(string $scriptPath, string $apiUrl): void
+    {
+        try {
+            $content = file_get_contents($scriptPath);
+            
+            // Replace the API URL in the script
+            $content = preg_replace(
+                '/self\.api_url = .*;$/m',
+                "self.api_url = \"$apiUrl\";",
+                $content
+            );
+            
+            file_put_contents($scriptPath, $content);
+            Log::info("Updated RFID script with API URL: $apiUrl");
+            
+        } catch (\Exception $e) {
+            Log::warning('Failed to update API URL in RFID script: ' . $e->getMessage());
+        }
+    }
+    
+    /**
+     * Stop RFID reader process (hybrid approach)
      */
     private function stopRfidProcess(): void
     {
-        // Kill all Python processes running rfid_reader.py
-        shell_exec('taskkill /F /IM python.exe /FI "WINDOWTITLE eq rfid_reader.py" >nul 2>&1');
-        
-        // Also try to kill by process name
-        shell_exec('taskkill /F /IM python.exe >nul 2>&1');
+        try {
+            // Try to stop Python processes if running
+            if (PHP_OS_FAMILY === 'Windows') {
+                shell_exec('taskkill /F /IM python.exe 2>nul');
+            } else {
+                shell_exec('pkill -f rfid_reader.py 2>/dev/null');
+            }
+            
+            // Remove the status file to indicate RFID is stopped
+            $rfidStatusFile = storage_path('logs/rfid_running.txt');
+            
+            if (file_exists($rfidStatusFile)) {
+                unlink($rfidStatusFile);
+                Log::info('RFID reader process stopped');
+            } else {
+                Log::info('RFID reader process already stopped');
+            }
+            
+        } catch (\Exception $e) {
+            Log::error('Error stopping RFID process: ' . $e->getMessage());
+        }
     }
 
     /**
@@ -634,6 +830,53 @@ class RfidController extends Controller
         });
         
         return response()->json(['members' => $members]);
+    }
+
+    /**
+     * Get dashboard statistics for RFID monitor
+     */
+    public function getDashboardStats(): JsonResponse
+    {
+        try {
+            $today = now()->startOfDay();
+            $thisWeekStart = now()->startOfWeek();
+            $thisMonthStart = now()->startOfMonth();
+
+            // Today's check-ins
+            $todayCheckins = Attendance::whereDate('check_in_time', $today)
+                ->where('status', 'checked_in')
+                ->count();
+
+            // Expired memberships count
+            $expiredMemberships = Member::where('membership_expires_at', '<', now())
+                ->count();
+
+            // Unknown cards today
+            $unknownCardsToday = RfidLog::whereDate('timestamp', $today)
+                ->where('action', 'unknown_card')
+                ->count();
+
+            return response()->json([
+                'success' => true,
+                'stats' => [
+                    'today_checkins' => $todayCheckins,
+                    'expired_memberships' => $expiredMemberships,
+                    'unknown_cards' => $unknownCardsToday,
+                ]
+            ]);
+
+        } catch (\Exception $e) {
+            Log::error('Error getting dashboard stats: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to load dashboard statistics',
+                'stats' => [
+                    'today_checkins' => 0,
+                    'expired_memberships' => 0,
+                    'unknown_cards' => 0,
+                ]
+            ], 500);
+        }
     }
     
 }

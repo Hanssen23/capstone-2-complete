@@ -5,22 +5,22 @@
     <div class="flex-1 bg-gray-100">
         <x-topbar>Dashboard</x-topbar>
 
-        <div class="bg-gray-100 p-6">
+        <div class="bg-gray-100 p-4 sm:p-6">
             <!-- Clean, Minimal Overview Section -->
-            <div class="mb-8">
-                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
-                    <h2 class="text-2xl font-bold text-gray-900 mb-6">Overview</h2>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="mb-6 sm:mb-8">
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6 lg:p-8">
+                    <h2 class="text-xl sm:text-2xl font-bold text-gray-900 mb-4 sm:mb-6">Overview</h2>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
                         <!-- Current Active Members -->
-                        <div class="bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-200 rounded-xl p-6">
+                        <div class="bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-200 rounded-xl p-4 sm:p-6">
                             <div class="flex items-center justify-between">
                                 <div>
-                                    <p class="text-sm font-medium text-blue-700 mb-1">Currently Active</p>
-                                    <p id="current-active-members-count" class="text-3xl font-bold text-blue-900">{{ $currentActiveMembersCount }}</p>
+                                    <p class="text-xs sm:text-sm font-medium text-blue-700 mb-1">Currently Active</p>
+                                    <p id="current-active-members-count" class="text-2xl sm:text-3xl font-bold text-blue-900">{{ $currentActiveMembersCount }}</p>
                                     <p class="text-xs text-blue-600 mt-1">Members logged in</p>
                                 </div>
-                                <div class="w-16 h-16 bg-blue-200 rounded-full flex items-center justify-center">
-                                    <svg class="w-8 h-8 text-blue-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <div class="w-12 h-12 sm:w-16 sm:h-16 bg-blue-200 rounded-full flex items-center justify-center">
+                                    <svg class="w-6 h-6 sm:w-8 sm:h-8 text-blue-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
                                     </svg>
                                 </div>
@@ -28,31 +28,31 @@
                         </div>
                         
                         <!-- Today's Attendance -->
-                        <div class="bg-gradient-to-br from-green-50 to-green-100 border border-green-200 rounded-xl p-6">
+                        <div class="bg-gradient-to-br from-green-50 to-green-100 border border-green-200 rounded-xl p-4 sm:p-6">
                             <div class="flex items-center justify-between">
                                 <div>
-                                    <p class="text-sm font-medium text-green-700 mb-1">Today's Attendance</p>
-                                    <p id="today-attendance-count" class="text-3xl font-bold text-green-900">{{ $todayAttendance }}</p>
+                                    <p class="text-xs sm:text-sm font-medium text-green-700 mb-1">Today's Attendance</p>
+                                    <p id="today-attendance-count" class="text-2xl sm:text-3xl font-bold text-green-900">{{ $todayAttendance }}</p>
                                     <p class="text-xs text-green-600 mt-1">Check-ins today</p>
                                 </div>
-                                <div class="w-16 h-16 bg-green-200 rounded-full flex items-center justify-center">
-                                    <svg class="w-8 h-8 text-green-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <div class="w-12 h-12 sm:w-16 sm:h-16 bg-green-200 rounded-full flex items-center justify-center">
+                                    <svg class="w-6 h-6 sm:w-8 sm:h-8 text-green-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
                                     </svg>
                                 </div>
                             </div>
                         </div>
                         
-                        <!-- Monthly Revenue -->
-                        <div class="bg-gradient-to-br from-yellow-50 to-yellow-100 border border-yellow-200 rounded-xl p-6">
+                        <!-- Weekly Revenue -->
+                        <div class="bg-gradient-to-br from-yellow-50 to-yellow-100 border border-yellow-200 rounded-xl p-4 sm:p-6 sm:col-span-2 lg:col-span-1">
                             <div class="flex items-center justify-between">
                                 <div>
-                                    <p class="text-sm font-medium text-yellow-700 mb-1">Monthly Revenue</p>
-                                    <p class="text-3xl font-bold text-yellow-900">₱{{ number_format($thisMonthRevenue, 0) }}</p>
-                                    <p class="text-xs text-yellow-600 mt-1">This month</p>
+                                    <p class="text-xs sm:text-sm font-medium text-yellow-700 mb-1">Weekly Revenue</p>
+                                    <p class="text-2xl sm:text-3xl font-bold text-yellow-900">₱{{ number_format($thisWeekRevenue, 0) }}</p>
+                                    <p class="text-xs text-yellow-600 mt-1">This week</p>
                                 </div>
-                                <div class="w-16 h-16 bg-yellow-200 rounded-full flex items-center justify-center">
-                                    <span class="text-2xl font-bold text-yellow-700">₱</span>
+                                <div class="w-12 h-12 sm:w-16 sm:h-16 bg-yellow-200 rounded-full flex items-center justify-center">
+                                    <span class="text-xl sm:text-2xl font-bold text-yellow-700">₱</span>
                                 </div>
                             </div>
                         </div>
@@ -62,72 +62,76 @@
 
             <!-- Analytics & Reports Section -->
             <div class="mb-8">
-                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
-                    <h2 class="text-2xl font-bold text-gray-900 mb-6">Analytics & Reports</h2>
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 lg:p-8">
+                    <h2 class="text-xl sm:text-2xl font-bold text-gray-900 mb-6">Analytics & Reports</h2>
                     
                     <!-- Performance Metrics Grid -->
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                            <div class="bg-white border border-gray-200 rounded-lg p-4">
-                                <div class="flex items-center justify-between">
-                                    <div>
-                                    <p class="text-sm font-medium text-gray-600">Total Members</p>
-                                    <p class="text-2xl font-bold text-gray-900">{{ $totalActiveMembersCount }}</p>
-                                    </div>
-                                <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                                    <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-8">
+                        <!-- Total Members -->
+                        <div class="bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-200 rounded-xl p-4 sm:p-6">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-xs sm:text-sm font-medium text-blue-700 mb-1">Total Members</p>
+                                    <p class="text-xl sm:text-2xl font-bold text-blue-900">{{ $totalActiveMembersCount }}</p>
+                                    <p class="text-xs text-blue-600 mt-1">Active accounts</p>
+                                </div>
+                                <div class="w-10 h-10 sm:w-12 sm:h-12 bg-blue-200 rounded-full flex items-center justify-center">
+                                    <svg class="w-5 h-5 sm:w-6 sm:h-6 text-blue-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
                                     </svg>
                                 </div>
                             </div>
                         </div>
                         
-                            <div class="bg-white border border-gray-200 rounded-lg p-4">
-                                <div class="flex items-center justify-between">
-                                    <div>
-                                        <p class="text-sm font-medium text-gray-600">This Week</p>
-                                        <p class="text-2xl font-bold text-gray-900">{{ $thisWeekAttendance }}</p>
-                                    <p class="text-xs text-gray-500">Check-ins</p>
-                                </div>
-                                <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
-                                    <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-                                            </svg>
-                        </div>
-                    </div>
-                </div>
-
-                        <div class="bg-white border border-gray-200 rounded-lg p-4">
+                        <!-- Weekly Attendance -->
+                        <div class="bg-gradient-to-br from-green-50 to-green-100 border border-green-200 rounded-xl p-4 sm:p-6">
                             <div class="flex items-center justify-between">
-                                        <div>
-                                    <p class="text-sm font-medium text-gray-600">Expiring</p>
-                                    <p class="text-2xl font-bold text-gray-900">{{ $expiringMembershipsCount }}</p>
-                                    <p class="text-xs text-gray-500">This week: {{ $expiringMembershipsCount }}, This month: {{ $expiringMembershipsThisMonth }}</p>
-                                    </div>
-                                    <div class="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
-                                        <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                                        </svg>
-                                    </div>
+                                <div>
+                                    <p class="text-xs sm:text-sm font-medium text-green-700 mb-1">This Week</p>
+                                    <p class="text-xl sm:text-2xl font-bold text-green-900">{{ $thisWeekAttendance }}</p>
+                                    <p class="text-xs text-green-600 mt-1">Check-ins</p>
+                                </div>
+                                <div class="w-10 h-10 sm:w-12 sm:h-12 bg-green-200 rounded-full flex items-center justify-center">
+                                    <svg class="w-5 h-5 sm:w-6 sm:h-6 text-green-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                                    </svg>
                                 </div>
                             </div>
                         </div>
 
+                        <!-- Expiring Memberships -->
+                        <div class="bg-gradient-to-br from-orange-50 to-orange-100 border border-orange-200 rounded-xl p-4 sm:p-6 sm:col-span-2 lg:col-span-1">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-xs sm:text-sm font-medium text-orange-700 mb-1">Expiring Soon</p>
+                                    <p class="text-xl sm:text-2xl font-bold text-orange-900">{{ $expiringMembershipsCount ?? 0 }}</p>
+                                    <p class="text-xs text-orange-600 mt-1">This week: {{ $expiringMembershipsThisWeek ?? 0 }}</p>
+                                </div>
+                                <div class="w-10 h-10 sm:w-12 sm:h-12 bg-orange-200 rounded-full flex items-center justify-center">
+                                    <svg class="w-5 h-5 sm:w-6 sm:h-6 text-orange-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- Charts Section -->
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <div class="grid grid-cols-1 xl:grid-cols-2 gap-4 sm:gap-6 lg:gap-8">
                         <!-- Weekly Attendance Chart -->
-                        <div class="bg-white border border-gray-200 rounded-lg p-6">
+                        <div class="bg-white border border-gray-200 rounded-lg p-4 sm:p-6">
                             <div class="flex items-center justify-between mb-4">
-                                <h3 class="text-lg font-semibold text-gray-900">Weekly Attendance Trend</h3>
+                                <h3 class="text-base sm:text-lg font-semibold text-gray-900">Weekly Attendance Trend</h3>
                                 <div class="flex items-center gap-2">
                                     <!-- Calendar-style date picker -->
                                     <div class="relative">
-                                        <button onclick="toggleAttendanceCalendar()" class="flex items-center gap-2 px-3 py-2 text-sm border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <button onclick="toggleAttendanceCalendar()" class="flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-2 text-xs sm:text-sm border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 min-h-[44px]">
+                                            <svg class="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                                             </svg>
-                                            <span id="attendanceDateText">Last 7 days</span>
+                                            <span id="attendanceDateText" class="hidden sm:inline">Last 7 days</span>
                                         </button>
-                                        <div id="attendanceCalendar" class="absolute right-0 mt-2 w-80 bg-white border border-gray-200 rounded-lg shadow-lg z-10 hidden">
+                                        <div id="attendanceCalendar" class="absolute right-0 mt-2 w-72 sm:w-80 bg-white border border-gray-200 rounded-lg shadow-lg z-10 hidden">
                                             <div class="p-4">
                                                 <!-- Calendar Header -->
                                                 <div class="flex items-center justify-between mb-4">
@@ -180,28 +184,28 @@
                                     </button>
                                 </div>
                             </div>
-                            <div class="h-64">
+                            <div class="h-48 sm:h-56 lg:h-64">
                                 <canvas id="weeklyAttendanceChart"></canvas>
-                    </div>
-                            <div class="mt-2 text-sm text-gray-500 text-center">
+                            </div>
+                            <div class="mt-2 text-xs sm:text-sm text-gray-500 text-center">
                                 <span id="attendanceTotal">Total: 0</span> check-ins
-                    </div>
+                            </div>
                 </div>
 
-                        <!-- Monthly Revenue Chart -->
-                        <div class="bg-white border border-gray-200 rounded-lg p-6">
+                        <!-- Weekly Revenue Chart -->
+                        <div class="bg-white border border-gray-200 rounded-lg p-4 sm:p-6">
                             <div class="flex items-center justify-between mb-4">
-                                <h3 class="text-lg font-semibold text-gray-900">Monthly Revenue Trend</h3>
+                                <h3 class="text-base sm:text-lg font-semibold text-gray-900">Weekly Revenue Trend</h3>
                                 <div class="flex items-center gap-2">
                                     <!-- Calendar-style date picker -->
                                     <div class="relative">
-                                        <button onclick="toggleRevenueCalendar()" class="flex items-center gap-2 px-3 py-2 text-sm border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-green-500">
-                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <button onclick="toggleRevenueCalendar()" class="flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-2 text-xs sm:text-sm border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-green-500 min-h-[44px]">
+                                            <svg class="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                                             </svg>
-                                            <span id="revenueDateText">May 2024</span>
+                                            <span id="revenueDateText" class="hidden sm:inline">May 2024</span>
                                         </button>
-                                        <div id="revenueCalendar" class="absolute right-0 mt-2 w-80 bg-white border border-gray-200 rounded-lg shadow-lg z-10 hidden">
+                                        <div id="revenueCalendar" class="absolute right-0 mt-2 w-72 sm:w-80 bg-white border border-gray-200 rounded-lg shadow-lg z-10 hidden">
                                             <div class="p-4">
                                                 <!-- Calendar Header -->
                                                 <div class="flex items-center justify-between mb-4">
@@ -254,10 +258,10 @@
                                     </button>
                                 </div>
                             </div>
-                            <div class="h-64">
-                                <canvas id="monthlyRevenueChart"></canvas>
+                            <div class="h-48 sm:h-56 lg:h-64">
+                                <canvas id="weeklyRevenueChart"></canvas>
                             </div>
-                            <div class="mt-2 text-sm text-gray-500 text-center">
+                            <div class="mt-2 text-xs sm:text-sm text-gray-500 text-center">
                                 <span id="revenueTotal">Total: ₱0</span>
                             </div>
                         </div>
@@ -409,8 +413,8 @@
                 }
             });
 
-            // Monthly Revenue Chart
-            const revenueCtx = document.getElementById('monthlyRevenueChart').getContext('2d');
+            // Weekly Revenue Chart
+            const revenueCtx = document.getElementById('weeklyRevenueChart').getContext('2d');
             revenueChart = new Chart(revenueCtx, {
                 type: 'bar',
                 data: {
@@ -479,10 +483,8 @@
                 })
                 .catch(error => console.error('Error loading weekly attendance:', error));
 
-            // Load monthly revenue data
-            const revenueMonth = currentRevenueDate.getMonth() + 1;
-            const revenueYear = currentRevenueDate.getFullYear();
-            fetch(`{{ route("analytics.monthly-revenue") }}?month=${revenueMonth}&year=${revenueYear}`)
+            // Load weekly revenue data
+            fetch(`{{ route("analytics.weekly-revenue") }}?days=7`)
                 .then(response => response.json())
                 .then(data => {
                     if (revenueChart) {
@@ -493,7 +495,7 @@
                     // Update total
                     document.getElementById('revenueTotal').textContent = `Total: ₱${data.total.toLocaleString()}`;
                 })
-                .catch(error => console.error('Error loading monthly revenue:', error));
+                .catch(error => console.error('Error loading weekly revenue:', error));
 
             // Load dashboard stats
             fetch('{{ route("analytics.dashboard-stats") }}')
@@ -524,7 +526,7 @@
                         expiringElement.textContent = data.expiring_memberships;
                     }
                     if (expiringSubtitle) {
-                        expiringSubtitle.textContent = `This week: ${data.expiring_memberships}, This month: ${data.expiring_memberships_this_month}`;
+                        expiringSubtitle.textContent = `This week: ${data.expiring_memberships_this_week}`;
                     }
 
                     // Update total members
@@ -533,10 +535,10 @@
                         totalMembersElement.textContent = data.total_active_members;
                     }
 
-                    // Update monthly revenue
-                    const monthlyRevenueElement = document.querySelector('.bg-gradient-to-br.from-yellow-50 .text-3xl');
-                    if (monthlyRevenueElement) {
-                        monthlyRevenueElement.textContent = '₱' + data.this_month_revenue.toLocaleString();
+                    // Update weekly revenue
+                    const weeklyRevenueElement = document.querySelector('.bg-gradient-to-br.from-yellow-50 .text-3xl');
+                    if (weeklyRevenueElement) {
+                        weeklyRevenueElement.textContent = '₱' + data.this_week_revenue.toLocaleString();
                     }
                 })
                 .catch(error => console.error('Error updating stats:', error));
@@ -801,9 +803,7 @@
         }
 
         function refreshRevenueChart() {
-            const month = currentRevenueDate.getMonth() + 1;
-            const year = currentRevenueDate.getFullYear();
-            fetch(`{{ route("analytics.monthly-revenue") }}?month=${month}&year=${year}`)
+            fetch(`{{ route("analytics.weekly-revenue") }}?days=7`)
                 .then(response => response.json())
                 .then(data => {
                     if (revenueChart) {

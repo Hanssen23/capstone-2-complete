@@ -160,10 +160,10 @@ class ACR122UReader:
                 if sw1 == 0x90 and sw2 == 0x00:
                     uid = toHexString(data).replace(' ', '')
                     self.logger.info(f"Card UID read (alt): {uid}")
-                        return uid
+                    return uid
                 else:
                     self.logger.warning(f"Failed to read card UID. Status: {sw1:02X} {sw2:02X}")
-                        return None
+                    return None
                         
         except NoCardException:
             # No card present - this is normal

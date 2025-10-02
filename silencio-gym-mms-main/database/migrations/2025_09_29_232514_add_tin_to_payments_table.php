@@ -12,7 +12,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('payments', function (Blueprint $table) {
-            $table->string('tin', 20)->nullable()->after('notes');
+            // Check if TIN column doesn't already exist before adding
+            if (!Schema::hasColumn('payments', 'tin')) {
+                $table->string('tin', 20)->nullable()->after('notes');
+            }
         });
     }
 

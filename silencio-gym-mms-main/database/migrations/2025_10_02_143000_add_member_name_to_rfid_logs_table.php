@@ -12,7 +12,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('rfid_logs', function (Blueprint $table) {
-            $table->string('member_name')->nullable()->after('member_id');
+            // Check if member_name column doesn't already exist before adding
+            if (!Schema::hasColumn('rfid_logs', 'member_name')) {
+                $table->string('member_name')->nullable()->after('member_id');
+            }
         });
     }
 

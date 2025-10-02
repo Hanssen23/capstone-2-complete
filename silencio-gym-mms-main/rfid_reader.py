@@ -187,7 +187,7 @@ class ACR122UReader:
             
         self.last_card_uid = card_uid
         self.last_card_time = current_time
-            return False
+        return False
 
     def get_card_state(self, card_uid):
         """Get the current state of a card (None, 'first_tap', 'second_tap')"""
@@ -211,11 +211,11 @@ class ACR122UReader:
             # Second tap - check out
             self.set_card_state(card_uid, 'second_tap')
             self.logger.info(f"Second tap detected for card {card_uid} - Check-out")
-                        return True
-                    else:
+            return True
+        else:
             # Already completed session, ignore
             self.logger.info(f"Card {card_uid} already completed session, ignoring tap")
-                    return False
+            return False
                     
     def reset_card_state(self, card_uid):
         """Reset card state when card is removed"""

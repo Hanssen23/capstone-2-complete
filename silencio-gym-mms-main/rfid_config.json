@@ -1,6 +1,6 @@
 {
   "api": {
-    "url": "http://localhost:8000",
+        "url": "http://silencio-gym-mms-main.test",
     "endpoint": "/api/rfid/tap",
     "timeout": 3,
     "retry_attempts": 3,

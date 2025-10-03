@@ -12,21 +12,4 @@
             <h1 class="text-lg sm:text-xl font-semibold text-gray-800">{{ $slot }}</h1>
         </div>
     </div>
-    
-    <!-- Admin Info - Right Side -->
-    <div class="flex items-center gap-3 sm:gap-4">
-        <!-- Admin Name and Role -->
-        <div class="hidden md:flex items-center gap-2 text-right">
-            <div>
-                <div class="text-sm font-semibold text-gray-800">{{ auth()->user()->name ?? 'Admin' }}</div>
-                <div class="text-xs text-gray-500 uppercase">{{ auth()->user()->role ?? 'ADMIN' }}</div>
-            </div>
-            <!-- Admin Avatar -->
-            <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-                </svg>
-            </div>
-        </div>
-    </div>
 </aside>

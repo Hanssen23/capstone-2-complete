@@ -23,6 +23,13 @@ return Application::configure(basePath: dirname(__DIR__))
             'prevent.member.admin' => \App\Http\Middleware\PreventMemberAdminAccess::class,
             'ensure.session' => \App\Http\Middleware\EnsureSessionPersistence::class,
         ]);
+
+        // Configure authentication redirects
+        $middleware->redirectGuestsTo(fn () => route('login.show'));
+        $middleware->validateCsrfTokens(except: [
+            'api/*',
+            'rfid/*',
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

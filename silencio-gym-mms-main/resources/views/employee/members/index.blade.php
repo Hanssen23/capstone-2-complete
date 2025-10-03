@@ -38,28 +38,28 @@
                 <!-- Filter Pills -->
                 <div class="mt-4 sm:mt-6">
                     <div class="flex flex-wrap gap-2 sm:gap-3">
-                        <a href="{{ route('employee.members') }}" 
+                        <a href="{{ route('employee.members.index') }}" 
                            class="px-3 sm:px-4 py-2 rounded-full text-xs sm:text-sm font-medium transition-colors min-h-[44px] flex items-center justify-center {{ empty($selectedMembership) ? 'text-white' : 'text-gray-600' }}" 
                            style="background-color: {{ empty($selectedMembership) ? '#1E40AF' : '#F3F4F6' }};"
                            onmouseover="this.style.backgroundColor='{{ empty($selectedMembership) ? '#1E40AF' : '#E5E7EB' }}'" 
                            onmouseout="this.style.backgroundColor='{{ empty($selectedMembership) ? '#1E40AF' : '#F3F4F6' }}'">
                             All
                         </a>
-                        <a href="{{ route('employee.members', ['membership' => 'basic']) }}" 
+                        <a href="{{ route('employee.members.index', ['membership' => 'basic']) }}" 
                            class="px-3 sm:px-4 py-2 rounded-full text-xs sm:text-sm font-medium transition-colors min-h-[44px] flex items-center justify-center {{ ($selectedMembership ?? '') === 'basic' ? 'text-white' : 'text-gray-600' }}" 
                            style="background-color: {{ ($selectedMembership ?? '') === 'basic' ? '#1E40AF' : '#F3F4F6' }};"
                            onmouseover="this.style.backgroundColor='{{ ($selectedMembership ?? '') === 'basic' ? '#1E40AF' : '#E5E7EB' }}'" 
                            onmouseout="this.style.backgroundColor='{{ ($selectedMembership ?? '') === 'basic' ? '#1E40AF' : '#F3F4F6' }}'">
                             Basic
                         </a>
-                        <a href="{{ route('employee.members', ['membership' => 'vip']) }}" 
+                        <a href="{{ route('employee.members.index', ['membership' => 'vip']) }}" 
                            class="px-3 sm:px-4 py-2 rounded-full text-xs sm:text-sm font-medium transition-colors min-h-[44px] flex items-center justify-center {{ ($selectedMembership ?? '') === 'vip' ? 'text-white' : 'text-gray-600' }}" 
                            style="background-color: {{ ($selectedMembership ?? '') === 'vip' ? '#1E40AF' : '#F3F4F6' }};"
                            onmouseover="this.style.backgroundColor='{{ ($selectedMembership ?? '') === 'vip' ? '#1E40AF' : '#E5E7EB' }}'" 
                            onmouseout="this.style.backgroundColor='{{ ($selectedMembership ?? '') === 'vip' ? '#1E40AF' : '#F3F4F6' }}'">
                             VIP
                         </a>
-                        <a href="{{ route('employee.members', ['membership' => 'premium']) }}" 
+                        <a href="{{ route('employee.members.index', ['membership' => 'premium']) }}" 
                            class="px-3 sm:px-4 py-2 rounded-full text-xs sm:text-sm font-medium transition-colors min-h-[44px] flex items-center justify-center {{ ($selectedMembership ?? '') === 'premium' ? 'text-white' : 'text-gray-600' }}" 
                            style="background-color: {{ ($selectedMembership ?? '') === 'premium' ? '#1E40AF' : '#F3F4F6' }};"
                            onmouseover="this.style.backgroundColor='{{ ($selectedMembership ?? '') === 'premium' ? '#1E40AF' : '#E5E7EB' }}'" 
@@ -72,7 +72,7 @@
 
             <!-- Search Bar -->
             <div class="bg-white rounded-lg border p-4 sm:p-6 lg:p-8 mb-4 sm:mb-6" style="border-color: #E5E7EB; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
-                <x-members-search :action="route('employee.members')" :search="$search ?? ''" :selectedMembership="$selectedMembership ?? ''" />
+                <x-members-search :action="route('employee.members.index')" :search="$search ?? ''" :selectedMembership="$selectedMembership ?? ''" />
             </div>
 
             <!-- Members Table -->

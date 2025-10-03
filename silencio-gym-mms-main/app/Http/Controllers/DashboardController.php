@@ -16,8 +16,8 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        // Get current user role for data filtering
-        $user = auth()->user();
+        // Get current user role for data filtering (handle case when user is not authenticated)
+        $user = auth()->check() ? auth()->user() : null;
         $isEmployee = $user && $user->role === 'employee';
         
         // Cache key with current hour and role to refresh hourly
@@ -39,9 +39,13 @@ class DashboardController extends Controller
             ")[0];
 
             // Get this week's revenue with proper formatting
-            $thisWeekRevenue = Payment::completed()
-                ->thisWeek()
-                ->sum('amount');
+            try {
+                $thisWeekRevenue = Payment::completed()
+                    ->thisWeek()
+                    ->sum('amount') ?? 0;
+            } catch (\Exception $e) {
+                $thisWeekRevenue = 0;
+            }
             
             // Get this month's revenue
             $thisMonthRevenue = Payment::completed()
@@ -137,9 +141,13 @@ class DashboardController extends Controller
             ")[0];
 
             // Get this week's revenue
-            $thisWeekRevenue = Payment::completed()
-                ->thisWeek()
-                ->sum('amount');
+            try {
+                $thisWeekRevenue = Payment::completed()
+                    ->thisWeek()
+                    ->sum('amount') ?? 0;
+            } catch (\Exception $e) {
+                $thisWeekRevenue = 0;
+            }
 
             return [
                 'current_active_members' => $counts->active_sessions_count,

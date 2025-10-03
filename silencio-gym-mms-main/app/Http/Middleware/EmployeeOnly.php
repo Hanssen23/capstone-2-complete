@@ -34,15 +34,15 @@ class EmployeeOnly
             if ($request->ajax() || $request->wantsJson()) {
                 return response()->json([
                     'error' => 'Authentication required',
-                    'redirect' => route('login')
+                    'redirect' => route('login.show')
                 ], 401);
             }
             
             // Prevent redirect loop by checking if we're already on login page
             if (!$request->is('login') && !$request->is('/')) {
-                return redirect()->route('login');
+                return redirect()->route('login.show');
             }
-            return redirect()->route('login');
+            return redirect()->route('login.show');
         }
 
         // Additional security: Verify the user has employee role
@@ -51,10 +51,10 @@ class EmployeeOnly
             if ($request->ajax() || $request->wantsJson()) {
                 return response()->json([
                     'error' => 'User not found',
-                    'redirect' => route('login')
+                    'redirect' => route('login.show')
                 ], 401);
             }
-            return redirect()->route('login');
+            return redirect()->route('login.show');
         }
         
         if (!$user->isEmployee()) {
@@ -71,10 +71,10 @@ class EmployeeOnly
                 if ($request->ajax() || $request->wantsJson()) {
                     return response()->json([
                         'error' => 'Employee privileges required',
-                        'redirect' => route('login')
+                        'redirect' => route('login.show')
                     ], 403);
                 }
-                return redirect()->route('login')->withErrors([
+                return redirect()->route('login.show')->withErrors([
                     'email' => 'Access denied. Employee privileges required.'
                 ]);
             }

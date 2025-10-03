@@ -24,9 +24,9 @@ class MemberOnly
             }
             // Prevent redirect loop by checking if we're already on login page
             if (!$request->is('login') && !$request->is('/')) {
-                return redirect()->route('login');
+                return redirect()->route('login.show');
             }
-            return redirect()->route('login');
+            return redirect()->route('login.show');
         }
 
         // Additional security: Verify the member has member role
@@ -37,7 +37,7 @@ class MemberOnly
             $request->session()->invalidate();
             $request->session()->regenerateToken();
             
-            return redirect()->route('login')->withErrors([
+            return redirect()->route('login.show')->withErrors([
                 'email' => 'Access denied. Member privileges required.'
             ]);
         }

@@ -235,7 +235,7 @@ class MemberController extends Controller
         
         $member->delete();
 
-        $redirectRoute = request()->is('employee/*') ? 'employee.members' : 'members.index';
+        $redirectRoute = request()->is('employee/*') ? 'employee.members.index' : 'members.index';
         return redirect()->route($redirectRoute)
             ->with('success', 'Member deleted successfully!');
     }

@@ -75,7 +75,7 @@ class MemberAuthController extends Controller
 
             // Do NOT auto-login after registration for security
             // Redirect to login page with success message
-            return redirect()->route('login')->with('success', 'Registration successful! Please log in with your credentials.');
+            return redirect()->route('login.show')->with('success', 'Registration successful! Please log in with your credentials.');
             
         } catch (\Illuminate\Validation\ValidationException $e) {
             // Return back with validation errors

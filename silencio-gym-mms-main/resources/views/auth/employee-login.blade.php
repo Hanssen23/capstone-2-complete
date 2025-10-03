@@ -85,7 +85,7 @@
 
         <div class="mt-6 text-center">
             <p class="text-sm text-gray-600">
-                <a href="{{ route('login') }}" class="text-blue-600 hover:text-blue-500">Admin Login</a> | 
+                <a href="{{ route('login.show') }}" class="text-blue-600 hover:text-blue-500">Admin Login</a> | 
                 <a href="{{ route('member.register') }}" class="text-blue-600 hover:text-blue-500">Member Registration</a>
             </p>
         </div>

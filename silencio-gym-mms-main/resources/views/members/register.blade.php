@@ -116,7 +116,7 @@
                     
                     <!-- Sign Up Link -->
                     <div class="flex flex-col gap-2 sm:gap-3 mb-3 sm:mb-4 lg:mb-5">
-                        <a href="{{ route('login') }}" class="text-xs sm:text-sm text-blue-600 hover:underline text-center">Already have an account? Log in</a>
+                        <a href="{{ route('login.show') }}" class="text-xs sm:text-sm text-blue-600 hover:underline text-center">Already have an account? Log in</a>
                     </div>
                     
                     <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-xs sm:text-sm w-full px-4 sm:px-5 py-2 sm:py-3 lg:py-2.5 text-center min-h-[40px] sm:min-h-[44px]">Create Account</button>

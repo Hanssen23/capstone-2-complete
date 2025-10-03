@@ -156,7 +156,7 @@ def test_api_connection():
         import requests
         
         # Test API endpoint
-        api_url = "http://localhost:8003/api/rfid/tap"
+        api_url = "http://156.67.221.184/rfid/tap"
         test_data = {
             'card_uid': 'TEST_UID_123',
             'device_id': 'debug_test'

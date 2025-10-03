@@ -128,7 +128,7 @@
                                     </div>
                                 </a>
                         
-                        <a href="{{ route('employee.members') }}" class="block w-full p-4 sm:p-6 border rounded-lg hover:bg-gray-50 transition-colors group" style="border-color: #E5E7EB;">
+                        <a href="{{ route('employee.members.index') }}" class="block w-full p-4 sm:p-6 border rounded-lg hover:bg-gray-50 transition-colors group" style="border-color: #E5E7EB;">
                             <div class="flex items-center">
                                 <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-lg flex items-center justify-center mr-3 sm:mr-4 group-hover:bg-gray-100 transition-colors" style="background-color: #7C3AED;">
                                     <svg class="w-5 h-5 sm:w-6 sm:h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">

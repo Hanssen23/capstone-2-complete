@@ -170,11 +170,8 @@
             
             // Start automatic data refresh
             startDataRefresh();
-            
-            // Show welcome notification
-            setTimeout(() => {
-                showNotification('RFID Monitor initialized with 1-second real-time updates', 'success');
-            }, 1000);
+
+            // Welcome notification removed as per user request
         });
 
         // Load dashboard statistics
@@ -444,14 +441,14 @@
                     if (data.success) {
                         console.log('✅ RFID system started successfully');
                         updateRfidStatus(true, data.message);
-                        
+
                         // Refresh data after starting
                         setTimeout(() => {
                             loadDashboardStats();
                             loadRfidLogs();
                         }, 2000);
-                        
-                        showNotification('RFID system started successfully', 'success');
+
+                        // Notification removed as per user request
                     } else {
                         console.log('❌ RFID startup response:', data.message);
                         updateRfidStatus(false, data.message);
@@ -778,12 +775,12 @@
         // Manual refresh function for immediate updates
         function manualRefresh() {
             console.log('🔄 Manual refresh triggered');
-            
+
             loadDashboardStats();
             loadRfidLogs();
             loadActiveMembers();
             checkRfidStatus();
-            showNotification('Dashboard refreshed', 'success');
+            // Notification removed as per user request
         }
 
         // Add event listener for refresh button

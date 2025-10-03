@@ -1,0 +1,9 @@
+[33mcommit 8bb9aeb3a28dd5a0d699fc90575e8f13826aec5f[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m
+Author: Hanssen23 <hanssen23@gmail.com>
+Date:   Thu Oct 2 19:19:32 2025 +0800
+
+    Update RFID configuration and reader, add test_all_cards.php
+
+silencio-gym-mms-main/rfid_config.json
+silencio-gym-mms-main/rfid_reader.py
+silencio-gym-mms-main/test_all_cards.php

@@ -28,9 +28,9 @@ class AdminOnly
             }
             // Prevent redirect loop by checking if we're already on login page
             if (!$request->is('login') && !$request->is('/')) {
-                return redirect()->route('login');
+                return redirect()->route('login.show');
             }
-            return redirect()->route('login');
+            return redirect()->route('login.show');
         }
 
         // Additional security: Verify the user has admin role
@@ -53,7 +53,7 @@ class AdminOnly
             $request->session()->invalidate();
             $request->session()->regenerateToken();
             
-            return redirect()->route('login')->withErrors([
+            return redirect()->route('login.show')->withErrors([
                 'email' => 'Access denied. Admin privileges required.'
             ]);
         }

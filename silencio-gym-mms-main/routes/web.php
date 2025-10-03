@@ -14,7 +14,9 @@ use App\Http\Controllers\MembershipController;
 use App\Http\Controllers\MembershipPlanController;
 
 // Public Authentication Routes
-Route::get('/', [AuthController::class, 'showLogin'])->name('login');
+Route::get('/', function () {
+    return redirect('/dashboard');
+});
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login.show');
 Route::post('/login', [AuthController::class, 'login'])->name('login.post');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
@@ -41,11 +43,20 @@ Route::get('/terms', function () {
     return view('terms');
 })->name('terms');
 
+// Public Dashboard (accessible without authentication)
+Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+Route::get('/dashboard/stats', [DashboardController::class, 'getStats'])->name('dashboard.stats');
+
+// Public Analytics Routes for Dashboard (accessible without authentication)
+Route::prefix('analytics')->name('analytics.')->group(function () {
+    Route::get('/weekly-revenue', [AnalyticsController::class, 'weeklyRevenue'])->name('weekly-revenue');
+    Route::get('/weekly-attendance', [AnalyticsController::class, 'weeklyAttendance'])->name('weekly-attendance');
+    Route::get('/dashboard-stats', [AnalyticsController::class, 'getDashboardStats'])->name('dashboard-stats');
+});
+
 // Authentication Routes
 Route::middleware(['auth'])->group(function () {
-    // Dashboard
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-    Route::get('/dashboard/stats', [DashboardController::class, 'getStats'])->name('dashboard.stats');
+    // Dashboard Routes moved outside for public access
 
     // RFID Routes
     Route::get('/rfid-monitor', [RfidController::class, 'monitor'])->name('rfid.monitor');
@@ -105,12 +116,9 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/export/csv', [PaymentController::class, 'exportCsv'])->name('export_csv');
     });
 
-    // Analytics Routes
+    // Analytics Routes (remaining protected routes)
     Route::prefix('analytics')->name('analytics.')->group(function () {
-        Route::get('/weekly-revenue', [AnalyticsController::class, 'weeklyRevenue'])->name('weekly-revenue');
-        Route::get('/weekly-attendance', [AnalyticsController::class, 'weeklyAttendance'])->name('weekly-attendance');
         Route::get('/rfid-activity', [AnalyticsController::class, 'rfidActivity'])->name('rfid-activity');
-        Route::get('/dashboard-stats', [AnalyticsController::class, 'getDashboardStats'])->name('dashboard-stats');
     });
 
     // Account Management Routes
@@ -131,12 +139,13 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/dashboard', [EmployeeController::class, 'dashboard'])->name('dashboard');
         Route::get('/dashboard/stats', [DashboardController::class, 'getStats'])->name('dashboard.stats');
         Route::get('/rfid-monitor', [EmployeeController::class, 'rfidMonitor'])->name('rfid-monitor');
-        Route::get('/members', [EmployeeController::class, 'members'])->name('members');
+        Route::get('/members', [EmployeeController::class, 'members'])->name('members.index');
         Route::get('/members/create', [EmployeeController::class, 'createMember'])->name('members.create');
         Route::post('/members', [MemberController::class, 'store'])->name('members.store');
         Route::get('/members/{id}', [MemberController::class, 'show'])->name('members.show');
         Route::get('/members/{id}/edit', [MemberController::class, 'edit'])->name('members.edit');
         Route::put('/members/{id}', [MemberController::class, 'update'])->name('members.update');
+        Route::delete('/members/{id}', [MemberController::class, 'destroy'])->name('members.destroy');
         Route::get('/members/{id}/profile', [MemberController::class, 'profile'])->name('members.profile');
         Route::get('/payments', [EmployeeController::class, 'payments'])->name('payments');
         

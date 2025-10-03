@@ -1,9 +1,14 @@
 <x-layout>
-    @if(auth()->user()->role === 'employee')
-        <x-nav-employee></x-nav-employee>
+    @if(auth()->check())
+        @if(auth()->user()->role === 'employee')
+            <x-nav-employee></x-nav-employee>
+        @else
+            <x-nav></x-nav>
+        @endif
     @else
         <x-nav></x-nav>
     @endif
+    
     <div class="flex-1 bg-gray-100">
         <x-topbar>Dashboard</x-topbar>
 
@@ -327,6 +332,7 @@
             padding: 8px 0;
         }
         
+        /* Enhanced responsive design for mobile and zoom */
         @media (max-width: 640px) {
             .calendar-day {
                 min-height: 28px;
@@ -336,6 +342,107 @@
             .calendar-header-day {
                 font-size: 0.75rem;
                 padding: 6px 0;
+            }
+            
+            /* Enhanced mobile responsiveness */
+            .grid.grid-cols-1.lg\\:grid-cols-2 {
+                gap: 1rem !important;
+            }
+            
+            .bg-white.border.border-gray-200.rounded-lg.p-6 {
+                padding: 1rem !important;
+            }
+            
+            .text-lg.font-semibold {
+                font-size: 1rem !important;
+            }
+            
+            /* Chart container adaptive sizing */
+            .h-64 {
+                height: 16rem !important;
+                min-height: 12rem;
+            }
+        }
+        
+        /* High zoom level (150%+) support */
+        @media (min-resolution: 144dpi) {
+            .grid.grid-cols-1.sm\\:grid-cols-2.lg\\:grid-cols-3 {
+                gap: 0.75rem;
+            }
+            
+            .bg-gradient-to-br {
+                padding: 0.75rem !important;
+            }
+            
+            .text-2xl {
+                font-size: 1.5rem !important;
+            }
+            
+            .text-xl {
+                font-size: 1.25rem !important;
+            }
+        }
+        
+        /* Extra small devices and high zoom */
+        @media (max-width: 320px), (min-resolution: 192dpi) {
+            .bg-white.rounded-xl.shadow-sm {
+                padding: 0.75rem !important;
+                margin-bottom: 0.75rem !important;
+            }
+            
+            .grid.grid-cols-1.sm\\:grid-cols-2.lg\\:grid-cols-3 {
+                gap: 0.5rem !important;
+            }
+            
+            .bg-gradient-to-br.from-yellow-50.to-yellow-100,
+            .bg-gradient-to-br.from-blue-50.to-blue-100,
+            .bg-gradient-to-br.from-green-50.to-green-100,
+            .bg-gradient-to-br.from-red-50.to-red-100 {
+                padding: 0.75rem !important;
+            }
+            
+            .text-3xl {
+                font-size: 1.5rem !important;
+            }
+            
+            .text-xs {
+                font-size: 0.7rem !important;
+            }
+            
+            .w-12.h-12 {
+                width: 2.5rem !important;
+                height: 2.5rem !important;
+            }
+            
+            .w-16.h-16 {
+                width: 3rem !important;
+                height: 3rem !important;
+            }
+        }
+        
+        /* Smooth transitions for zoom levels */
+        .bg-gradient-to-br {
+            transition: padding 0.3s ease;
+        }
+        
+        .text-2xl, .text-3xl, .text-xl {
+            transition: font-size 0.3s ease;
+        }
+        
+        /* Ensure charts remain responsive */
+        canvas {
+            max-width: 100%;
+            height: auto !important;
+        }
+        
+        .grid.lg\\:grid-cols-2.gap-8 {
+            gap: 1rem;
+        }
+        
+        @media (max-width: 768px) {
+            .grid.lg\\:grid-cols-2 {
+                grid-template-columns: 1fr !important;
+                gap: 1rem !important;
             }
         }
     </style>
@@ -473,7 +580,7 @@
 
         function loadRealTimeData() {
             // Load weekly attendance data
-            @if(auth()->user()->role === 'employee')
+            @if(auth()->check() && auth()->user()->role === 'employee')
                 fetch(`{{ route("employee.analytics.weekly-attendance") }}?days=${currentAttendancePeriod}`)
             @else
                 fetch(`{{ route("analytics.weekly-attendance") }}?days=${currentAttendancePeriod}`)
@@ -491,7 +598,7 @@
                 .catch(error => console.error('Error loading weekly attendance:', error));
 
             // Load weekly revenue data
-            @if(auth()->user()->role === 'employee')
+            @if(auth()->check() && auth()->user()->role === 'employee')
                 fetch(`{{ route("employee.analytics.weekly-revenue") }}?days=7`)
             @else
                 fetch(`{{ route("analytics.weekly-revenue") }}?days=7`)
@@ -509,7 +616,7 @@
                 .catch(error => console.error('Error loading weekly revenue:', error));
 
             // Load dashboard stats
-            @if(auth()->user()->role === 'employee')
+            @if(auth()->check() && auth()->user()->role === 'employee')
                 fetch('{{ route("employee.analytics.dashboard-stats") }}')
             @else
                 fetch('{{ route("analytics.dashboard-stats") }}')
@@ -541,7 +648,7 @@
                         expiringElement.textContent = data.expiring_memberships;
                     }
                     if (expiringSubtitle) {
-                        expiringSubtitle.textContent = `This week: ${data.expiring_memberships_this_week}`;
+                        expiringSubtitle.textContent = `This week: ${data.expiring_memberships_this_week || 0}`;
                     }
 
                     // Update total members
@@ -804,7 +911,7 @@
 
         // Refresh functions
         function refreshAttendanceChart() {
-            @if(auth()->user()->role === 'employee')
+            @if(auth()->check() && auth()->user()->role === 'employee')
                 fetch(`{{ route("employee.analytics.weekly-attendance") }}?days=${currentAttendancePeriod}`)
             @else
                 fetch(`{{ route("analytics.weekly-attendance") }}?days=${currentAttendancePeriod}`)
@@ -824,7 +931,7 @@
         function refreshRevenueChart() {
             const month = currentRevenueDate.getMonth() + 1;
             const year = currentRevenueDate.getFullYear();
-            @if(auth()->user()->role === 'employee')
+            @if(auth()->check() && auth()->user()->role === 'employee')
                 fetch(`{{ route("employee.analytics.weekly-revenue") }}?days=7`)
             @else
                 fetch(`{{ route("analytics.weekly-revenue") }}?days=7`)

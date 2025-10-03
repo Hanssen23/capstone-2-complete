@@ -12,6 +12,7 @@ from datetime import datetime
 from smartcard.System import readers
 from smartcard.util import toHexString
 from smartcard.Exceptions import CardConnectionException, NoCardException
+from smartcard.CardConnection import CardConnection
 import smartcard
 
 class ACR122UReader:
@@ -116,13 +117,13 @@ class ACR122UReader:
         try:
             if not self.reader:
                 raise Exception("Reader not initialized")
-            
+
             self.connection = self.reader.createConnection()
             # Force T0 protocol for ACR122U compatibility
-            self.connection.connect(protocol=0)
+            self.connection.connect(CardConnection.T0_protocol)
             self.logger.info("Connected to ACR122U reader with T0 protocol")
             return True
-            
+
         except Exception as e:
             self.logger.error(f"Failed to connect to reader: {e}")
             return False
@@ -133,21 +134,27 @@ class ACR122UReader:
             if self.connection:
                 self.connection.disconnect()
                 self.connection = None
-                self.logger.info("Disconnected from ACR122U reader")
+                # Only log disconnections at debug level to reduce noise
+                self.logger.debug("Disconnected from ACR122U reader")
         except Exception as e:
             self.logger.error(f"Error disconnecting from reader: {e}")
     
     def get_card_uid(self):
         """Read the UID of the card on the reader"""
         try:
+            # Try to connect to a card (will fail if no card present)
             if not self.connection:
-                if not self.connect():
+                try:
+                    self.connection = self.reader.createConnection()
+                    self.connection.connect(CardConnection.T0_protocol)
+                except Exception as e:
+                    # No card present - this is normal, just return None silently
                     return None
-            
-            # Get UID command for ACR122U (using RAW protocol)
+
+            # Get UID command for ACR122U (using T0 protocol)
             get_uid_command = [0xFF, 0xCA, 0x00, 0x00, 0x00]
-            data, sw1, sw2 = self.connection.transmit(get_uid_command)
-            
+            data, sw1, sw2 = self.connection.transmit(get_uid_command, CardConnection.T0_protocol)
+
             if sw1 == 0x90 and sw2 == 0x00:
                 uid = toHexString(data).replace(' ', '')
                 self.logger.info(f"Card UID read: {uid}")
@@ -155,25 +162,33 @@ class ACR122UReader:
             else:
                 # Try alternative UID command
                 alt_command = [0xFF, 0xCA, 0x00, 0x00, 0x04]
-                data, sw1, sw2 = self.connection.transmit(alt_command)
-                
+                data, sw1, sw2 = self.connection.transmit(alt_command, CardConnection.T0_protocol)
+
                 if sw1 == 0x90 and sw2 == 0x00:
                     uid = toHexString(data).replace(' ', '')
                     self.logger.info(f"Card UID read (alt): {uid}")
                     return uid
                 else:
                     self.logger.warning(f"Failed to read card UID. Status: {sw1:02X} {sw2:02X}")
+                    self.disconnect()
                     return None
-                        
+
         except NoCardException:
             # No card present - this is normal
+            if self.connection:
+                self.disconnect()
             return None
         except CardConnectionException as e:
-            self.logger.error(f"Card connection error: {e}")
-            self.handle_protocol_error()
+            # Card was removed or connection lost
+            if self.connection:
+                self.disconnect()
             return None
         except Exception as e:
-            self.logger.error(f"Error reading card UID: {e}")
+            # Only log actual errors, not "no card" situations
+            if "No card" not in str(e) and "removed" not in str(e).lower():
+                self.logger.error(f"Error reading card UID: {e}")
+            if self.connection:
+                self.disconnect()
             return None
     
     def is_duplicate_card(self, card_uid):
@@ -231,17 +246,11 @@ class ACR122UReader:
             self.reset_card_state(card_uid)
             self.logger.info(f"Card {card_uid} removed from reader")
             return True
-                return False
+        return False
                 
     def handle_protocol_error(self):
-        """Handle protocol errors by reconnecting with T0"""
-        self.logger.warning("Protocol error detected, reconnecting with T0...")
-        try:
-            self.disconnect()
-            self.connect()
-            self.logger.info("Successfully reconnected with T0 protocol")
-        except Exception as e:
-            self.logger.error(f"Failed to reconnect: {e}")
+        """Handle protocol errors by disconnecting"""
+        self.disconnect()
     
     def send_to_api(self, card_uid):
         """Send card data to Laravel API"""
@@ -355,11 +364,11 @@ def main():
     """Main entry point"""
     try:
         reader = ACR122UReader()
-    reader.run()
+        reader.run()
     except Exception as e:
         print(f"Failed to start RFID reader: {e}")
         return 1
-    
+
     return 0
 
 if __name__ == "__main__":

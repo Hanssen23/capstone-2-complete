@@ -69,32 +69,37 @@
                             <div id="password-confirmation-error" class="text-red-500 text-sm mt-1 hidden"></div>
                         </div>
                         
-                        <div class="flex gap-3">
-                            <div class="flex-1">
-                                <label for="account-role" class="block text-sm font-medium mb-2" style="color: #6B7280; font-size: 0.875rem;">User Type</label>
+                        <div class="sm:col-span-2 lg:col-span-1">
+                            <label for="account-role" class="block text-sm font-medium mb-2" style="color: #6B7280; font-size: 0.875rem;">User Type</label>
+                            <div class="relative">
                                 <select id="account-role" name="role" required
-                                        class="w-full px-3 py-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                        style="border-color: #E5E7EB; background-color: #F9FAFB; color: #000000; font-size: 1rem;">
-                                    <option value="">Select user type</option>
-                                    <option value="admin">Admin</option>
-                                    <option value="employee">Employee</option>
+                                        class="w-full px-3 py-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent custom-select"
+                                        style="border-color: #E5E7EB; background-color: #F9FAFB; color: #6B7280; font-size: 1rem;">
+                                    <option value="" disabled selected style="color: #9CA3AF;">Select user type</option>
+                                    <option value="admin" style="color: #000000;">Admin</option>
+                                    <option value="employee" style="color: #000000;">Employee</option>
                                 </select>
-                                <div id="role-error" class="text-red-500 text-sm mt-1 hidden"></div>
+                                <div class="select-arrow">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#6B7280" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <polyline points="6 9 12 15 18 9"></polyline>
+                                    </svg>
+                                </div>
                             </div>
-                            
-                            <div class="flex items-end" style="margin-top: 24px;">
-                                <button type="submit" id="create-account-btn"
-                                        class="px-6 py-3 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 flex items-center justify-center gap-2 whitespace-nowrap"
-                                        style="background-color: #2563EB; border-radius: 6px; height: 48px; min-width: 140px;">
-                                    <span id="create-account-text">Create Account</span>
-                                    <div id="create-account-spinner" class="hidden">
-                                        <svg class="animate-spin h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
-                                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                        </svg>
-                                    </div>
-                                </button>
-                            </div>
+                            <div id="role-error" class="text-red-500 text-sm mt-1 hidden"></div>
+                        </div>
+
+                        <div class="sm:col-span-2 lg:col-span-1 flex items-end">
+                            <button type="submit" id="create-account-btn"
+                                    class="w-full px-6 py-3 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 flex items-center justify-center gap-2 whitespace-nowrap"
+                                    style="background-color: #2563EB; border-radius: 6px; height: 48px;">
+                                <span id="create-account-text">Create Account</span>
+                                <div id="create-account-spinner" class="hidden">
+                                    <svg class="animate-spin h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
+                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                    </svg>
+                                </div>
+                            </button>
                         </div>
                     </form>
                 </div>
@@ -148,10 +153,17 @@
                             </div>
                             <div class="mb-6">
                                 <label class="block text-sm font-semibold mb-2" style="color: #374151;">User Type</label>
-                                <select name="role" id="editAccountRole" class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200" style="border-color: #E5E7EB;" required>
-                                    <option value="admin">Admin</option>
-                                    <option value="employee">Employee</option>
-                                </select>
+                                <div class="relative">
+                                    <select name="role" id="editAccountRole" class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 custom-select" style="border-color: #E5E7EB;" required>
+                                        <option value="admin" style="color: #000000;">Admin</option>
+                                        <option value="employee" style="color: #000000;">Employee</option>
+                                    </select>
+                                    <div class="select-arrow">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#6B7280" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <polyline points="6 9 12 15 18 9"></polyline>
+                                        </svg>
+                                    </div>
+                                </div>
                             </div>
                             <div class="flex flex-col sm:flex-row justify-end gap-3 pt-4" style="background-color: #F9FAFB;">
                                 <button type="button" onclick="closeEditAccountModal()" class="w-full sm:w-auto px-4 sm:px-6 py-2 bg-gray-100 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-200 transition-all duration-200 font-medium">
@@ -204,12 +216,17 @@
                         </div>
                         
                         <div class="relative w-full sm:w-auto">
-                            <select id="accounts-role-filter" class="w-full sm:w-auto px-3 py-2 sm:py-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                    style="border-color: #E5E7EB; background-color: #F9FAFB; color: #000000; font-size: 0.875rem; sm:font-size: 1rem;">
-                                <option value="">All Roles</option>
-                                <option value="admin">Admin</option>
-                                <option value="employee">Employee</option>
+                            <select id="accounts-role-filter" class="w-full sm:w-auto px-3 py-2 sm:py-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 custom-select"
+                                    style="border-color: #E5E7EB; background-color: #F9FAFB; color: #000000; font-size: 1rem;">
+                                <option value="" style="color: #000000;">All Roles</option>
+                                <option value="admin" style="color: #000000;">Admin</option>
+                                <option value="employee" style="color: #000000;">Employee</option>
                             </select>
+                            <div class="select-arrow">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#6B7280" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="6 9 12 15 18 9"></polyline>
+                                </svg>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -271,35 +288,41 @@
             border-radius: 6px;
             padding: 0.75rem 1rem;
             transition: all 0.3s ease;
+            min-height: 48px;
+            width: 100%;
         }
-        
+
         .phone-input-container:focus-within {
             border-color: #2563EB;
             box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
         }
-        
+
         .phone-input-container .flag-icon {
             width: 24px;
             height: 16px;
             border-radius: 2px;
             margin-right: 0.5rem;
             box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+            flex-shrink: 0;
         }
-        
+
         .phone-input-container .country-code {
             font-weight: 500;
             color: #374151;
             margin-right: 0.5rem;
             font-size: 0.875rem;
+            flex-shrink: 0;
+            white-space: nowrap;
         }
-        
+
         .phone-input-container .separator-line {
             width: 1px;
             height: 20px;
             background-color: #D1D5DB;
             margin-right: 0.75rem;
+            flex-shrink: 0;
         }
-        
+
         .phone-input-container .phone-input {
             flex: 1;
             border: none;
@@ -308,15 +331,173 @@
             color: #000000;
             background: transparent;
             padding: 0;
+            min-width: 0;
+            width: 100%;
         }
-        
+
         .phone-input-container .phone-input::placeholder {
             color: #9CA3AF;
         }
-        
+
         .phone-input-container.error {
             border-color: #DC2626;
             box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+        }
+
+        /* Responsive adjustments for phone input */
+        @media (max-width: 640px) {
+            .phone-input-container {
+                padding: 0.625rem 0.75rem;
+                min-height: 44px;
+            }
+
+            .phone-input-container .flag-icon {
+                width: 20px;
+                height: 14px;
+            }
+
+            .phone-input-container .country-code {
+                font-size: 0.8125rem;
+            }
+
+            .phone-input-container .phone-input {
+                font-size: 0.9375rem;
+            }
+        }
+
+        /* Zoom support - maintain layout integrity */
+        @media (min-resolution: 1.5dppx) {
+            .phone-input-container {
+                padding: 0.75rem 1rem;
+            }
+        }
+
+        /* Select dropdown styling */
+        .custom-select {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            padding-right: 2.5rem !important;
+            background-color: #F9FAFB;
+        }
+
+        .select-arrow {
+            position: absolute;
+            right: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 1.25rem;
+            height: 1.25rem;
+            pointer-events: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .select-arrow svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        select option {
+            padding: 0.5rem;
+        }
+
+        select option:disabled {
+            color: #9CA3AF;
+        }
+
+        select:invalid {
+            color: #9CA3AF;
+        }
+
+        select:valid {
+            color: #000000;
+        }
+
+        /* Hide default select arrow in IE */
+        select::-ms-expand {
+            display: none;
+        }
+
+        /* Responsive page layout */
+        @media (max-width: 1024px) {
+            #create-account-form {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (min-width: 640px) and (max-width: 1024px) {
+            #create-account-form {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (min-width: 1024px) {
+            #create-account-form {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media (min-width: 1280px) {
+            #create-account-form {
+                grid-template-columns: repeat(5, 1fr);
+            }
+        }
+
+        /* Ensure form inputs maintain proper sizing on zoom */
+        @media (min-resolution: 1.25dppx) {
+            input, select, .phone-input-container {
+                font-size: 1rem !important;
+            }
+
+            label {
+                font-size: 0.875rem !important;
+            }
+        }
+
+        /* Mobile-specific adjustments */
+        @media (max-width: 640px) {
+            .bg-white.p-4 {
+                padding: 1rem !important;
+            }
+
+            .rounded-lg.border.p-4 {
+                padding: 1rem !important;
+            }
+
+            input, select {
+                font-size: 16px !important; /* Prevents zoom on iOS */
+            }
+        }
+
+        /* Tablet adjustments */
+        @media (min-width: 641px) and (max-width: 1024px) {
+            .bg-white.p-4 {
+                padding: 1.5rem !important;
+            }
+        }
+
+        /* Desktop adjustments */
+        @media (min-width: 1025px) {
+            .bg-white.p-4 {
+                padding: 1.5rem !important;
+            }
+        }
+
+        /* High DPI screens */
+        @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+            .phone-input-container .flag-icon {
+                image-rendering: -webkit-optimize-contrast;
+                image-rendering: crisp-edges;
+            }
+        }
+
+        /* Accessibility - ensure touch targets are large enough */
+        @media (pointer: coarse) {
+            button, select, input {
+                min-height: 44px;
+            }
         }
     </style>
 
@@ -1024,22 +1205,22 @@
                 // Format phone number as user types
                 phoneInput.addEventListener('input', function(e) {
                     let value = e.target.value.replace(/\D/g, ''); // Remove non-digits
-                    
+
                     // Limit to 10 digits
                     if (value.length > 10) {
                         value = value.substring(0, 10);
                     }
-                    
+
                     // Format as XXX XXX XXXX
                     if (value.length >= 6) {
                         value = value.substring(0, 3) + ' ' + value.substring(3, 6) + ' ' + value.substring(6);
                     } else if (value.length >= 3) {
                         value = value.substring(0, 3) + ' ' + value.substring(3);
                     }
-                    
+
                     e.target.value = value;
                 });
-                
+
                 // Prevent non-numeric input
                 phoneInput.addEventListener('keydown', function(e) {
                     // Allow backspace, delete, arrow keys, tab, etc.
@@ -1051,13 +1232,62 @@
                         (e.keyCode === 88 && e.ctrlKey === true)) {
                         return;
                     }
-                    
+
                     // Allow only digits
                     if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && (e.keyCode < 96 || e.keyCode > 105)) {
                         e.preventDefault();
                     }
                 });
             }
+
+            // First Name and Last Name validation - prevent numbers and special characters
+            const firstNameInput = document.getElementById('account-first-name');
+            const lastNameInput = document.getElementById('account-last-name');
+            const editFirstNameInput = document.getElementById('editAccountFirstName');
+            const editLastNameInput = document.getElementById('editAccountLastName');
+
+            const nameFields = [firstNameInput, lastNameInput, editFirstNameInput, editLastNameInput].filter(field => field !== null);
+
+            nameFields.forEach(field => {
+                // Remove numbers and special characters as user types
+                field.addEventListener('input', function(e) {
+                    let value = e.target.value;
+                    // Allow only letters, spaces, and hyphens
+                    value = value.replace(/[^A-Za-z\s\-]/g, '');
+                    // Prevent multiple consecutive spaces
+                    value = value.replace(/\s+/g, ' ');
+                    // Prevent multiple consecutive hyphens
+                    value = value.replace(/\-+/g, '-');
+                    e.target.value = value;
+                });
+
+                // Prevent typing numbers and special characters
+                field.addEventListener('keypress', function(e) {
+                    const char = String.fromCharCode(e.which);
+                    // Allow only letters, spaces, and hyphens
+                    if (!/[A-Za-z\s\-]/.test(char)) {
+                        e.preventDefault();
+                    }
+                });
+
+                // Handle paste events
+                field.addEventListener('paste', function(e) {
+                    e.preventDefault();
+                    const paste = (e.clipboardData || window.clipboardData).getData('text');
+                    // Clean the pasted text - allow only letters, spaces, and hyphens
+                    const cleanPaste = paste.replace(/[^A-Za-z\s\-]/g, '').replace(/\s+/g, ' ').replace(/\-+/g, '-');
+
+                    // Insert the cleaned text at cursor position
+                    const start = e.target.selectionStart;
+                    const end = e.target.selectionEnd;
+                    const currentValue = e.target.value;
+                    e.target.value = currentValue.substring(0, start) + cleanPaste + currentValue.substring(end);
+
+                    // Set cursor position after pasted text
+                    const newPosition = start + cleanPaste.length;
+                    e.target.setSelectionRange(newPosition, newPosition);
+                });
+            });
         });
 
         // Clean up intervals when page is unloaded

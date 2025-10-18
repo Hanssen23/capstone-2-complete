@@ -1,12 +1,13 @@
 <x-layout>
+    <!-- Cache buster: v2.0 - 2025-10-08 -->
     <x-nav></x-nav>
     <div class="flex-1 bg-gray-100">
         <x-topbar>Members</x-topbar>
 
         <!-- Main Content -->
         <div class="p-4 sm:p-6">
-            <!-- Header with Back Button -->
-            <div class="mb-4 sm:mb-6 sticky top-16 sm:top-20 z-10 -mx-4 sm:-mx-6 px-4 sm:px-6 py-3 bg-white/90 backdrop-blur border-b border-gray-200">
+            <!-- Header with Back Button - STATIC (NOT STICKY) -->
+            <div class="mb-4 sm:mb-6 -mx-4 sm:-mx-6 px-4 sm:px-6 py-3 bg-white border-b border-gray-200">
                 <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
                     <a href="{{ route('members.index') }}" class="flex items-center gap-2 text-black hover:text-red-600 transition-colors duration-200 min-h-[44px]">
                         <svg class="w-5 h-5 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
@@ -50,31 +51,78 @@
                     <!-- First Name Field -->
                     <div>
                         <label for="first_name" class="block text-sm font-medium text-black mb-2">First Name</label>
-                        <input type="text" id="first_name" name="first_name" required 
+                        <input type="text" id="first_name" name="first_name" required
                                class="w-full px-3 sm:px-4 py-3 border {{ $errors->has('first_name') ? 'border-red-500' : 'border-black' }} bg-white text-black rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition-colors duration-200 placeholder-gray-500 min-h-[44px] text-sm sm:text-base"
-                               placeholder="Enter first name (letters, spaces, and hyphens only)"
+                               placeholder="Enter first name (must start with capital letter)"
                                value="{{ old('first_name') }}"
-                               pattern="^[a-zA-Z\s\-]+$"
-                               title="First name can only contain letters, spaces, and hyphens">
+                               pattern="^[A-Z][a-zA-Z\s]*$"
+                               title="First name must start with a capital letter and contain only letters and spaces">
                         @error('first_name')
                             <div class="text-red-500 text-sm mt-1">{{ $message }}</div>
                         @enderror
                         <div id="first_name_error" class="text-red-500 text-sm mt-1 hidden"></div>
                     </div>
 
+                    <!-- Middle Name Field -->
+                    <div>
+                        <label for="middle_name" class="block text-sm font-medium text-black mb-2">Middle Name (Optional)</label>
+                        <input type="text" id="middle_name" name="middle_name"
+                               class="w-full px-3 sm:px-4 py-3 border {{ $errors->has('middle_name') ? 'border-red-500' : 'border-black' }} bg-white text-black rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition-colors duration-200 placeholder-gray-500 min-h-[44px] text-sm sm:text-base"
+                               placeholder="Enter middle name (must start with capital letter)"
+                               value="{{ old('middle_name') }}"
+                               pattern="^[A-Z][a-zA-Z\s]*$"
+                               title="Middle name must start with a capital letter and contain only letters and spaces">
+                        @error('middle_name')
+                            <div class="text-red-500 text-sm mt-1">{{ $message }}</div>
+                        @enderror
+                        <div id="middle_name_error" class="text-red-500 text-sm mt-1 hidden"></div>
+                    </div>
+
                     <!-- Last Name Field -->
                     <div>
                         <label for="last_name" class="block text-sm font-medium text-black mb-2">Last Name</label>
-                        <input type="text" id="last_name" name="last_name" required 
+                        <input type="text" id="last_name" name="last_name" required
                                class="w-full px-3 sm:px-4 py-3 border {{ $errors->has('last_name') ? 'border-red-500' : 'border-black' }} bg-white text-black rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition-colors duration-200 placeholder-gray-500 min-h-[44px] text-sm sm:text-base"
-                               placeholder="Enter last name (letters, spaces, and hyphens only)"
+                               placeholder="Enter last name (must start with capital letter)"
                                value="{{ old('last_name') }}"
-                               pattern="^[a-zA-Z\s\-]+$"
-                               title="Last name can only contain letters, spaces, and hyphens">
+                               pattern="^[A-Z][a-zA-Z\s]*$"
+                               title="Last name must start with a capital letter and contain only letters and spaces">
                         @error('last_name')
                             <div class="text-red-500 text-sm mt-1">{{ $message }}</div>
                         @enderror
                         <div id="last_name_error" class="text-red-500 text-sm mt-1 hidden"></div>
+                    </div>
+
+                    <!-- Age Field -->
+                    <div>
+                        <label for="age" class="block text-sm font-medium text-black mb-2">Age</label>
+                        <input type="number" id="age" name="age" required
+                               class="w-full px-3 sm:px-4 py-3 border {{ $errors->has('age') ? 'border-red-500' : 'border-black' }} bg-white text-black rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition-colors duration-200 placeholder-gray-500 min-h-[44px] text-sm sm:text-base"
+                               placeholder="Enter age (1-120)"
+                               value="{{ old('age') }}"
+                               min="1"
+                               max="120">
+                        @error('age')
+                            <div class="text-red-500 text-sm mt-1">{{ $message }}</div>
+                        @enderror
+                        <div id="age_error" class="text-red-500 text-sm mt-1 hidden"></div>
+                    </div>
+
+                    <!-- Gender Field -->
+                    <div>
+                        <label for="gender" class="block text-sm font-medium text-black mb-2">Gender</label>
+                        <select id="gender" name="gender" required
+                                class="w-full px-3 sm:px-4 py-3 border {{ $errors->has('gender') ? 'border-red-500' : 'border-black' }} bg-white text-black rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition-colors duration-200 min-h-[44px] text-sm sm:text-base">
+                            <option value="">Select gender</option>
+                            <option value="Male" {{ old('gender') == 'Male' ? 'selected' : '' }}>Male</option>
+                            <option value="Female" {{ old('gender') == 'Female' ? 'selected' : '' }}>Female</option>
+                            <option value="Other" {{ old('gender') == 'Other' ? 'selected' : '' }}>Other</option>
+                            <option value="Prefer not to say" {{ old('gender') == 'Prefer not to say' ? 'selected' : '' }}>Prefer not to say</option>
+                        </select>
+                        @error('gender')
+                            <div class="text-red-500 text-sm mt-1">{{ $message }}</div>
+                        @enderror
+                        <div id="gender_error" class="text-red-500 text-sm mt-1 hidden"></div>
                     </div>
 
                     <!-- Mobile Number Field -->

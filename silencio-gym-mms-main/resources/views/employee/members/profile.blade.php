@@ -40,9 +40,31 @@
                                 <p class="text-sm mt-1" style="color: #000000;">{{ $member->member_number }}</p>
                             </div>
                             <div>
-                                <label class="text-sm font-medium" style="color: #6B7280;">Full Name</label>
-                                <p class="text-sm mt-1" style="color: #000000;">{{ $member->full_name }}</p>
+                                <label class="text-sm font-medium" style="color: #6B7280;">First Name</label>
+                                <p class="text-sm mt-1" style="color: #000000;">{{ $member->first_name }}</p>
                             </div>
+                            @if($member->middle_name)
+                            <div>
+                                <label class="text-sm font-medium" style="color: #6B7280;">Middle Name</label>
+                                <p class="text-sm mt-1" style="color: #000000;">{{ $member->middle_name }}</p>
+                            </div>
+                            @endif
+                            <div>
+                                <label class="text-sm font-medium" style="color: #6B7280;">Last Name</label>
+                                <p class="text-sm mt-1" style="color: #000000;">{{ $member->last_name }}</p>
+                            </div>
+                            @if($member->age)
+                            <div>
+                                <label class="text-sm font-medium" style="color: #6B7280;">Age</label>
+                                <p class="text-sm mt-1" style="color: #000000;">{{ $member->age }} years old</p>
+                            </div>
+                            @endif
+                            @if($member->gender)
+                            <div>
+                                <label class="text-sm font-medium" style="color: #6B7280;">Gender</label>
+                                <p class="text-sm mt-1" style="color: #000000;">{{ $member->gender }}</p>
+                            </div>
+                            @endif
                             <div>
                                 <label class="text-sm font-medium flex items-center gap-2" style="color: #6B7280;">
                                     📧 Email

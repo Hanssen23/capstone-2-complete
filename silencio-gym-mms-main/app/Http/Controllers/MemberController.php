@@ -24,7 +24,9 @@ class MemberController extends Controller
                 'attendances' => function ($query) {
                     $query->latest()->limit(1);
                 },
-            ]);
+            ])
+            // Show all members to admin/employee users, including unverified ones
+            ->where('status', '!=', 'deleted'); // Only exclude members marked as deleted
 
         // Filter by membership type if provided and valid
         if (in_array($selectedMembership, ['basic', 'premium', 'vip'])) {
@@ -51,12 +53,12 @@ class MemberController extends Controller
             ->orderBy('created_at', 'desc')
             ->paginate(20)
             ->withQueryString();
-        
+
         // Check if this is an employee request
         if (request()->is('employee/*')) {
             return view('employee.members', compact('members', 'selectedMembership', 'search'));
         }
-        
+
         return view('members.list', compact('members', 'selectedMembership', 'search'));
     }
 
@@ -79,13 +81,23 @@ class MemberController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'first_name' => 'required|string|max:255',
-            'last_name' => 'required|string|max:255',
+            'first_name' => 'required|string|max:255|regex:/^[A-Z][a-zA-Z\s]*$/',
+            'middle_name' => 'nullable|string|max:255|regex:/^[A-Z][a-zA-Z\s]*$/',
+            'last_name' => 'required|string|max:255|regex:/^[A-Z][a-zA-Z\s]*$/',
+            'age' => 'required|integer|min:1|max:120',
+            'gender' => 'required|in:Male,Female,Other,Prefer not to say',
             'mobile_number' => 'required|string|max:20',
-            'email' => 'required|email|unique:members,email|unique:users,email',
+            'email' => 'required|email|unique:members,email,NULL,id,deleted_at,NULL|unique:users,email',
             'password' => 'nullable|string|min:6|confirmed',
             'role' => 'nullable|in:member,admin,employee',
         ], [
+            'first_name.regex' => 'First name must start with a capital letter and can only contain letters and spaces',
+            'middle_name.regex' => 'Middle name must start with a capital letter and can only contain letters and spaces',
+            'last_name.regex' => 'Last name must start with a capital letter and can only contain letters and spaces',
+            'age.integer' => 'Age must be a valid number',
+            'age.min' => 'Age must be at least 1',
+            'age.max' => 'Age must not exceed 120',
+            'gender.in' => 'Please select a valid gender option',
             'email.unique' => 'This email is already registered',
         ]);
 
@@ -103,7 +115,7 @@ class MemberController extends Controller
         $availableUid = Member::getAvailableUid();
         
         if (!$availableUid) {
-            $redirectRoute = request()->is('employee/*') ? 'employee.members' : 'members.index';
+            $redirectRoute = request()->is('employee/*') ? 'employee.members.index' : 'members.index';
             return redirect()->route($redirectRoute)
                 ->with('error', 'No UIDs available in the pool. Please contact administrator.');
         }
@@ -117,7 +129,10 @@ class MemberController extends Controller
             'membership' => null, // No plan assigned initially
             'subscription_status' => 'not_subscribed',
             'first_name' => $request->first_name,
+            'middle_name' => $request->middle_name,
             'last_name' => $request->last_name,
+            'age' => $request->age,
+            'gender' => $request->gender,
             'mobile_number' => $mobileNumber,
             'email' => $request->email,
             'status' => 'active',
@@ -137,7 +152,7 @@ class MemberController extends Controller
             throw $e; // Re-throw the exception
         }
 
-        $redirectRoute = request()->is('employee/*') ? 'employee.members' : 'members.index';
+        $redirectRoute = request()->is('employee/*') ? 'employee.members.index' : 'members.index';
         return redirect()->route($redirectRoute)
             ->with('success', 'Member created successfully!');
     }
@@ -181,27 +196,51 @@ class MemberController extends Controller
 
         // Check if this is an employee request
         if (request()->is('employee/*')) {
-            // Employee can only edit name fields
+            // Employee can only edit name and personal info fields
             $request->validate([
-                'first_name' => 'required|string|max:255',
-                'last_name' => 'required|string|max:255',
+                'first_name' => 'required|string|max:255|regex:/^[A-Z][a-zA-Z\s]*$/',
+                'middle_name' => 'nullable|string|max:255|regex:/^[A-Z][a-zA-Z\s]*$/',
+                'last_name' => 'required|string|max:255|regex:/^[A-Z][a-zA-Z\s]*$/',
+                'age' => 'required|integer|min:1|max:120',
+                'gender' => 'required|in:Male,Female,Other,Prefer not to say',
+            ], [
+                'first_name.regex' => 'First name must start with a capital letter and can only contain letters and spaces',
+                'middle_name.regex' => 'Middle name must start with a capital letter and can only contain letters and spaces',
+                'last_name.regex' => 'Last name must start with a capital letter and can only contain letters and spaces',
+                'age.integer' => 'Age must be a valid number',
+                'age.min' => 'Age must be at least 1',
+                'age.max' => 'Age must not exceed 120',
+                'gender.in' => 'Please select a valid gender option',
             ]);
 
             $member->update([
                 'first_name' => $request->first_name,
+                'middle_name' => $request->middle_name,
                 'last_name' => $request->last_name,
+                'age' => $request->age,
+                'gender' => $request->gender,
             ]);
         } else {
             // Admin can edit all fields
             $request->validate([
                 'uid' => 'required|string|unique:members,uid,' . $id,
                 'member_number' => 'required|string|unique:members,member_number,' . $id,
-                'first_name' => 'required|string|max:255',
-                'last_name' => 'required|string|max:255',
-                'email' => 'required|email|unique:members,email,' . $id . '|unique:users,email',
+                'first_name' => 'required|string|max:255|regex:/^[A-Z][a-zA-Z\s]*$/',
+                'middle_name' => 'nullable|string|max:255|regex:/^[A-Z][a-zA-Z\s]*$/',
+                'last_name' => 'required|string|max:255|regex:/^[A-Z][a-zA-Z\s]*$/',
+                'age' => 'required|integer|min:1|max:120',
+                'gender' => 'required|in:Male,Female,Other,Prefer not to say',
+                'email' => 'required|email|unique:members,email,' . $id . ',id,deleted_at,NULL|unique:users,email',
                 'mobile_number' => 'nullable|string|max:20',
                 // membership is not validated as it's automatically set during payment processing
             ], [
+                'first_name.regex' => 'First name must start with a capital letter and can only contain letters and spaces',
+                'middle_name.regex' => 'Middle name must start with a capital letter and can only contain letters and spaces',
+                'last_name.regex' => 'Last name must start with a capital letter and can only contain letters and spaces',
+                'age.integer' => 'Age must be a valid number',
+                'age.min' => 'Age must be at least 1',
+                'age.max' => 'Age must not exceed 120',
+                'gender.in' => 'Please select a valid gender option',
                 'email.unique' => 'This email is already registered',
             ]);
 
@@ -209,35 +248,62 @@ class MemberController extends Controller
                 'uid' => $request->uid,
                 'member_number' => $request->member_number,
                 'first_name' => $request->first_name,
+                'middle_name' => $request->middle_name,
                 'last_name' => $request->last_name,
+                'age' => $request->age,
+                'gender' => $request->gender,
                 'email' => $request->email,
                 'mobile_number' => $request->mobile_number,
                 // membership is not updated as it's automatically set during payment processing
             ]);
         }
 
-        $redirectRoute = request()->is('employee/*') ? 'employee.members' : 'members.index';
+        $redirectRoute = request()->is('employee/*') ? 'employee.members.index' : 'members.index';
         return redirect()->route($redirectRoute)
             ->with('success', 'Member updated successfully!');
     }
 
     /**
      * Remove the specified resource from storage.
+     * This performs a HARD DELETE - the member record will be completely removed.
      */
     public function destroy(string $id)
     {
-        $member = Member::findOrFail($id);
-        
-        // Return the UID to the pool before deleting the member
-        if ($member->uid) {
-            Member::returnUidToPool($member->uid);
-        }
-        
-        $member->delete();
+        try {
+            $member = Member::findOrFail($id);
 
-        $redirectRoute = request()->is('employee/*') ? 'employee.members.index' : 'members.index';
-        return redirect()->route($redirectRoute)
-            ->with('success', 'Member deleted successfully!');
+            // Store member info for logging before deletion
+            $memberInfo = [
+                'id' => $member->id,
+                'member_number' => $member->member_number,
+                'email' => $member->email,
+                'full_name' => $member->full_name,
+                'uid' => $member->uid
+            ];
+
+            // Note: UID is automatically returned to pool via Member model's boot() method
+            // Related data will be handled by database foreign key constraints:
+            // - payments, attendances, active_sessions, membership_periods: CASCADE DELETE
+            // - rfid_logs: SET NULL
+            $member->delete();
+
+            \Log::info('Member hard deleted successfully', $memberInfo);
+
+            $redirectRoute = request()->is('employee/*') ? 'employee.members.index' : 'members.index';
+            return redirect()->route($redirectRoute)
+                ->with('success', 'Member deleted permanently. The email address can now be used for new registrations.');
+
+        } catch (\Exception $e) {
+            \Log::error('Member deletion error', [
+                'member_id' => $id,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            $redirectRoute = request()->is('employee/*') ? 'employee.members.index' : 'members.index';
+            return redirect()->route($redirectRoute)
+                ->with('error', 'Failed to delete member: ' . $e->getMessage());
+        }
     }
 
     /**

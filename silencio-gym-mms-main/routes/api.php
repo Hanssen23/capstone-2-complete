@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\RfidController;
+use App\Http\Controllers\MembershipController;
 
 // Public RFID API Routes (no middleware)
 Route::post('/rfid/tap', [RfidController::class, 'handleCardTap']);
@@ -16,4 +17,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/rfid/stop', [RfidController::class, 'stopRfidReader']);
     Route::get('/rfid/status', [RfidController::class, 'getRfidStatus']);
     Route::get('/rfid/consistency-check', [RfidController::class, 'checkDataConsistency']);
+
+    // Member selection API for real-time updates
+    Route::get('/members/selection', [MembershipController::class, 'getMembersForSelection']);
 });

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Deployment Diagnostic</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; background: #f5f5f5; }
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        h1 { color: #333; }
+        .test { margin: 20px 0; padding: 15px; border-left: 4px solid #2563EB; background: #f8f9fa; }
+        .success { border-left-color: #10B981; }
+        .error { border-left-color: #EF4444; }
+        .code { background: #1f2937; color: #10B981; padding: 10px; border-radius: 4px; font-family: monospace; margin: 10px 0; }
+        button { background: #2563EB; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; margin: 5px; }
+        button:hover { background: #1D4ED8; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Deployment Diagnostic Tool</h1>
+        <p>This page helps verify that all changes are deployed correctly.</p>
+        
+        <div class="test">
+            <h3>Test 1: Check if you're seeing cached version</h3>
+            <p>Current timestamp: <strong id="timestamp"></strong></p>
+            <p>If this timestamp doesn't update when you refresh, you're seeing a cached version.</p>
+            <button onclick="location.reload(true)">Hard Refresh</button>
+        </div>
+        
+        <div class="test">
+            <h3>Test 2: Signup Modal Test</h3>
+            <p>Click the button below. If a modal appears, the signup modal is working.</p>
+            <button onclick="testModal()">Test Signup Modal</button>
+            <div id="modalResult" class="code" style="display:none;"></div>
+        </div>
+        
+        <div class="test">
+            <h3>Test 3: Browser Cache Status</h3>
+            <p>Random number (changes on each load): <strong id="random"></strong></p>
+            <p>If this number is the same after refresh, you have caching issues.</p>
+        </div>
+        
+        <div class="test">
+            <h3>Instructions to Fix Caching Issues:</h3>
+            <ol>
+                <li><strong>Hard Refresh:</strong> Press Ctrl + Shift + R</li>
+                <li><strong>Clear Cache:</strong> Press Ctrl + Shift + Delete, select "Cached images and files", click Clear</li>
+                <li><strong>Use Incognito:</strong> Press Ctrl + Shift + N and test there</li>
+            </ol>
+        </div>
+        
+        <div class="test">
+            <h3>Quick Links:</h3>
+            <button onclick="window.location.href='/login'">Go to Login Page</button>
+            <button onclick="window.location.href='/register'">Go to Register Page</button>
+            <button onclick="window.location.href='/members/create'">Go to Create Member</button>
+        </div>
+    </div>
+    
+    <!-- Hidden Modal for Testing -->
+    <div id="testSignupModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:9999; align-items:center; justify-content:center;">
+        <div style="background:white; padding:30px; border-radius:8px; max-width:500px;">
+            <h2>✅ Modal is Working!</h2>
+            <p>This confirms that JavaScript is working correctly.</p>
+            <p><strong>Please Read:</strong></p>
+            <ul style="text-align:left;">
+                <li>Please make sure to input a <strong>valid email address</strong>.</li>
+                <li>Once done creating the account, please <strong>verify it</strong> by clicking/tapping on <strong>"Verify Email Address"</strong> sent to you by mail from <strong>Silencio Gym Management System</strong>.</li>
+            </ul>
+            <button onclick="closeTestModal()">Close</button>
+        </div>
+    </div>
+    
+    <script>
+        // Update timestamp
+        document.getElementById('timestamp').textContent = new Date().toLocaleString();
+        
+        // Update random number
+        document.getElementById('random').textContent = Math.floor(Math.random() * 1000000);
+        
+        // Test modal function
+        function testModal() {
+            const modal = document.getElementById('testSignupModal');
+            modal.style.display = 'flex';
+            document.getElementById('modalResult').style.display = 'block';
+            document.getElementById('modalResult').textContent = '✅ Modal opened successfully! JavaScript is working.';
+        }
+        
+        function closeTestModal() {
+            document.getElementById('testSignupModal').style.display = 'none';
+        }
+        
+        // Log to console
+        console.log('Diagnostic page loaded at:', new Date().toLocaleString());
+        console.log('Random number:', document.getElementById('random').textContent);
+    </script>
+</body>
+</html>
+

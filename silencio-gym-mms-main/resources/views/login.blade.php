@@ -1,4 +1,10 @@
 <x-layout>
+    <!-- FORCE RECOMPILE: {{ time() }} -->
+    <!-- Force browser cache refresh -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+
     <div class="flex items-center justify-center min-h-screen w-full p-2 sm:p-4 relative">
         <!-- Background Image -->
         <div class="absolute inset-0 z-0">
@@ -46,7 +52,7 @@
                     <div class="flex flex-col gap-2 sm:gap-3 mb-3 sm:mb-4 lg:mb-5">
                         <a href="{{ route('member.register') }}" class="text-xs sm:text-sm text-blue-600 hover:underline text-center">Sign up</a>
                         <div class="flex items-center justify-center">
-                            <a href="#" class="text-xs sm:text-sm text-blue-600 hover:underline">Forgot password?</a>
+                            <a href="{{ route('member.password.request') }}" class="text-xs sm:text-sm text-blue-600 hover:underline">Set/Reset Password</a>
                         </div>
                     </div>
                     <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-xs sm:text-sm w-full px-4 sm:px-5 py-2 sm:py-3 lg:py-2.5 text-center min-h-[40px] sm:min-h-[44px]">Login</button>

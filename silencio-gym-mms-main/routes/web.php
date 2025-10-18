@@ -8,6 +8,7 @@ use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\AnalyticsController;
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\EmployeeController;
+use App\Http\Controllers\EmployeeAuthController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\MemberAuthController;
 use App\Http\Controllers\MembershipController;
@@ -21,9 +22,18 @@ Route::get('/login', [AuthController::class, 'showLogin'])->name('login.show');
 Route::post('/login', [AuthController::class, 'login'])->name('login.post');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-// Employee Authentication Routes
-Route::get('/employee/login', [AuthController::class, 'showEmployeeLogin'])->name('employee.auth.login.show');
-Route::post('/employee/login', [AuthController::class, 'employeeLogin'])->name('employee.auth.login');
+// Test route to verify view system
+Route::get('/test-login-view', function() {
+    return view('login');
+})->name('test.login.view');
+
+// Redirect employee login to main login (all users use same login page)
+Route::get('/employee/login', function () {
+    return redirect()->route('login.show');
+})->name('employee.auth.login.show');
+Route::post('/employee/login', function () {
+    return redirect()->route('login.show');
+})->name('employee.auth.login');
 
 // CSRF Token refresh endpoint
 Route::get('/csrf-token', function() {
@@ -33,6 +43,21 @@ Route::get('/csrf-token', function() {
 // Member self-registration
 Route::get('/register', [MemberAuthController::class, 'showRegister'])->name('member.register');
 Route::post('/register', [MemberAuthController::class, 'register'])->name('member.register.post');
+
+// Member email verification routes
+Route::get('/member/verify-email', [\App\Http\Controllers\MemberEmailVerificationController::class, 'notice'])
+    ->name('member.verification.notice');
+Route::get('/member/verify-email/{id}/{hash}', [\App\Http\Controllers\MemberEmailVerificationController::class, 'verify'])
+    ->middleware(['signed'])
+    ->name('member.verification.verify');
+Route::post('/member/email/verification-notification', [\App\Http\Controllers\MemberEmailVerificationController::class, 'resend'])
+    ->name('member.verification.resend');
+
+// Member password reset routes
+Route::get('/password/reset', [\App\Http\Controllers\MemberPasswordResetController::class, 'create'])->name('member.password.request');
+Route::post('/password/email', [\App\Http\Controllers\MemberPasswordResetController::class, 'store'])->name('member.password.email');
+Route::get('/password/reset/{token}', [\App\Http\Controllers\MemberPasswordResetController::class, 'edit'])->name('member.password.reset');
+Route::post('/password/reset', [\App\Http\Controllers\MemberPasswordResetController::class, 'update'])->name('member.password.update');
 
 // Public RFID Routes (for hardware integration) - bypass all middleware
 Route::post('/rfid/tap', [RfidController::class, 'handleCardTap'])->withoutMiddleware(['web', 'auth']);
@@ -78,8 +103,8 @@ Route::middleware(['auth'])->group(function () {
     // Member Routes
     Route::prefix('members')->name('members.')->group(function () {
         Route::get('/', [MemberController::class, 'index'])->name('index');
-        Route::get('/create', [MemberController::class, 'create'])->name('create');
-        Route::post('/', [MemberController::class, 'store'])->name('store');
+        // Route::get('/create', [MemberController::class, 'create'])->name('create'); // DISABLED - Members can only self-register
+        // Route::post('/', [MemberController::class, 'store'])->name('store'); // DISABLED - Members can only self-register
         Route::get('/{id}', [MemberController::class, 'show'])->name('show');
         Route::get('/{id}/edit', [MemberController::class, 'edit'])->name('edit');
         Route::put('/{id}', [MemberController::class, 'update'])->name('update');
@@ -89,6 +114,7 @@ Route::middleware(['auth'])->group(function () {
 
     // Membership Management Routes
     Route::get('/membership/manage-member', [MembershipController::class, 'manageMember'])->name('membership.manage-member');
+    Route::post('/membership/check-active-membership', [MembershipController::class, 'checkActiveMembership'])->name('membership.check-active-membership');
     Route::post('/membership/process-payment', [MembershipController::class, 'processPayment'])->name('membership.process-payment');
     Route::get('/membership/plans', [MembershipController::class, 'index'])->name('membership.plans.index');
 
@@ -114,6 +140,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/{id}/print', [PaymentController::class, 'print'])->name('print');
         Route::get('/{id}/details', [PaymentController::class, 'details'])->name('details');
         Route::get('/export/csv', [PaymentController::class, 'exportCsv'])->name('export_csv');
+        Route::get('/preview/csv', [PaymentController::class, 'previewCsv'])->name('preview_csv');
     });
 
     // Analytics Routes (remaining protected routes)
@@ -134,14 +161,24 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/bulk-action', [AccountController::class, 'bulkAction'])->name('bulk-action');
     });
 
+    // Auto-Deletion Management Routes (Admin only)
+    Route::prefix('auto-deletion')->name('auto-deletion.')->middleware('admin.only')->group(function () {
+        Route::get('/', [\App\Http\Controllers\AutoDeletionController::class, 'index'])->name('index');
+        Route::post('/settings', [\App\Http\Controllers\AutoDeletionController::class, 'updateSettings'])->name('update-settings');
+        Route::post('/run-process', [\App\Http\Controllers\AutoDeletionController::class, 'runProcess'])->name('run-process');
+        Route::get('/logs', [\App\Http\Controllers\AutoDeletionController::class, 'logs'])->name('logs');
+        Route::post('/exclude-member', [\App\Http\Controllers\AutoDeletionController::class, 'excludeMember'])->name('exclude-member');
+        Route::post('/remove-exclusion', [\App\Http\Controllers\AutoDeletionController::class, 'removeExclusion'])->name('remove-exclusion');
+    });
+
     // Employee Routes
     Route::prefix('employee')->name('employee.')->group(function () {
         Route::get('/dashboard', [EmployeeController::class, 'dashboard'])->name('dashboard');
         Route::get('/dashboard/stats', [DashboardController::class, 'getStats'])->name('dashboard.stats');
         Route::get('/rfid-monitor', [EmployeeController::class, 'rfidMonitor'])->name('rfid-monitor');
         Route::get('/members', [EmployeeController::class, 'members'])->name('members.index');
-        Route::get('/members/create', [EmployeeController::class, 'createMember'])->name('members.create');
-        Route::post('/members', [MemberController::class, 'store'])->name('members.store');
+        // Route::get('/members/create', [EmployeeController::class, 'createMember'])->name('members.create'); // DISABLED - Members can only self-register
+        // Route::post('/members', [MemberController::class, 'store'])->name('members.store'); // DISABLED - Members can only self-register
         Route::get('/members/{id}', [MemberController::class, 'show'])->name('members.show');
         Route::get('/members/{id}/edit', [MemberController::class, 'edit'])->name('members.edit');
         Route::put('/members/{id}', [MemberController::class, 'update'])->name('members.update');
@@ -178,11 +215,13 @@ Route::middleware(['auth'])->group(function () {
         // Employee Membership Routes
         Route::prefix('membership')->name('membership.')->group(function () {
             Route::get('/manage-member', [EmployeeController::class, 'manageMember'])->name('manage-member');
+            Route::post('/check-active-membership', [MembershipController::class, 'checkActiveMembership'])->name('check-active-membership');
             Route::post('/process-payment', [EmployeeController::class, 'processPayment'])->name('process-payment');
             Route::get('/plans', [EmployeeController::class, 'plans'])->name('plans.index');
             Route::get('/payments', [EmployeeController::class, 'payments'])->name('payments');
             Route::get('/payments/{id}/details', [EmployeeController::class, 'paymentDetails'])->name('payments.details');
             Route::get('/payments/export/csv', [EmployeeController::class, 'exportPaymentsCsv'])->name('payments.export_csv');
+            Route::get('/payments/preview/csv', [EmployeeController::class, 'previewPaymentsCsv'])->name('payments.preview_csv');
             Route::get('/payments/{id}/print', [EmployeeController::class, 'printPayment'])->name('payments.print');
         });
         
@@ -198,8 +237,16 @@ Route::middleware(['auth'])->group(function () {
     });
 });
 
+// Member Reactivation Routes (public access with signed URLs)
+Route::prefix('member/reactivate')->name('member.reactivate.')->group(function () {
+    Route::get('/{member}', [\App\Http\Controllers\MemberReactivationController::class, 'show'])->name('show');
+    Route::post('/{member}', [\App\Http\Controllers\MemberReactivationController::class, 'reactivate'])->name('process');
+    Route::get('/{member}/quick', [\App\Http\Controllers\MemberReactivationController::class, 'quickReactivate'])->name('quick');
+    Route::get('/{member}/status', [\App\Http\Controllers\MemberReactivationController::class, 'status'])->name('status');
+});
+
 // Member routes (member guard)
-Route::middleware(['auth:member', 'member.only'])->group(function () {
+Route::middleware(['auth:member', 'member.only', 'track.member.activity'])->group(function () {
     Route::get('/member', [\App\Http\Controllers\MemberDashboardController::class, 'index'])->name('member.dashboard');
     Route::get('/member/plans', [\App\Http\Controllers\MemberDashboardController::class, 'plans'])->name('member.plans');
     Route::get('/member/accounts', [\App\Http\Controllers\MemberDashboardController::class, 'accounts'])->name('member.accounts');

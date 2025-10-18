@@ -49,39 +49,7 @@
                 </div>
             </div>
 
-            <!-- RFID Control Panel -->
-            <div class="mb-8">
-                <div class="bg-white rounded-lg border p-8" style="border-color: #E5E7EB; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
-                    <div class="flex items-center justify-between mb-6">
-                        <h2 class="text-2xl font-bold" style="color: #1E40AF;">RFID Control</h2>
-                        <div class="flex items-center gap-3">
-                            <div id="rfid-control-status-indicator" class="w-3 h-3 bg-red-500 rounded-full"></div>
-                            <span id="rfid-control-status-text" class="text-sm font-medium" style="color: #DC2626;">System Offline</span>
-                        </div>
-                    </div>
-                    
-                    <div class="flex items-center justify-center gap-6 flex-wrap">
-                        <button onclick="startRfidSystem()" id="start-rfid-control-btn" 
-                                class="px-8 py-4 text-white text-lg rounded-lg transition-colors flex items-center gap-3" 
-                                style="background-color: #059669;" 
-                                onmouseover="this.style.backgroundColor='#047857'" 
-                                onmouseout="this.style.backgroundColor='#059669'">
-                            <span class="text-xl">▶️</span>
-                            Start RFID
-                        </button>
-                        
-                        <button onclick="stopRfidSystem()" id="stop-rfid-control-btn" 
-                                class="px-8 py-4 text-white text-lg rounded-lg transition-colors flex items-center gap-3" 
-                                style="background-color: #DC2626;" 
-                                onmouseover="this.style.backgroundColor='#B91C1C'" 
-                                onmouseout="this.style.backgroundColor='#DC2626'">
-                            <span class="text-xl">⏹️</span>
-                            Stop RFID
-                        </button>
-                        
-                    </div>
-                </div>
-            </div>
+            <!-- RFID Control Panel Removed - RFID system runs automatically -->
 
             <!-- Currently Active Members -->
             <div class="mb-8">
@@ -102,8 +70,8 @@
                     <div class="flex items-center justify-between mb-6">
                         <h2 class="text-2xl font-bold" style="color: #1E40AF;">Recent RFID Activity</h2>
                         <div class="flex items-center gap-4">
-                            <select id="log-filter" 
-                                    class="px-4 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" 
+                            <select id="log-filter"
+                                    class="px-4 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                                     style="border-color: #E5E7EB;">
                                 <option value="">All Actions</option>
                                 <option value="check_in">Check-ins</option>
@@ -111,14 +79,6 @@
                                 <option value="unknown_card">Unknown Cards</option>
                                 <option value="expired_membership">Expired Memberships</option>
                             </select>
-                            <button onclick="refreshLogs()" 
-                                    class="px-4 py-2 text-white text-sm rounded-lg transition-colors flex items-center gap-2" 
-                                    style="background-color: #2563EB;" 
-                                    onmouseover="this.style.backgroundColor='#1D4ED8'" 
-                                    onmouseout="this.style.backgroundColor='#2563EB'">
-                                <span class="text-lg">🔄</span>
-                                Refresh
-                            </button>
                         </div>
                     </div>
                     
@@ -614,24 +574,24 @@
                 if ('NDEFReader' in window) {
                     nfcSupported = true;
                     console.log('✅ Web NFC is supported');
-                    
+
                     // Check for Brave-specific issues
                     if (browser === 'brave') {
                         console.log('🦁 Brave browser detected - checking NFC configuration');
-                        
+
                         // Check if we're on HTTPS
                         if (location.protocol !== 'https:') {
                             console.log('⚠️ Brave requires HTTPS for NFC');
-                            showNotification('NFC requires HTTPS in Brave browser. Please use HTTPS or enable NFC in brave://flags', 'warning');
+                            // Notification removed - no longer showing Brave NFC warnings
                         }
                     }
                 } else {
                     nfcSupported = false;
                     console.log('❌ Web NFC is not supported');
-                    
+
                     if (browser === 'brave') {
                         console.log('🦁 Brave browser - NFC may be disabled in flags');
-                        showNotification('NFC is disabled in Brave. Enable it in brave://flags/#enable-web-nfc', 'info');
+                        // Notification removed - no longer showing Brave NFC warnings
                     }
                 }
             } catch (error) {
@@ -661,11 +621,7 @@
                 console.log('🌐 Starting NFC check-in on:', browser);
                 
                 if (!nfcSupported) {
-                    if (browser === 'brave') {
-                        showNotification('NFC is disabled in Brave. Enable it in brave://flags/#enable-web-nfc', 'error');
-                    } else {
-                        showNotification('NFC is not supported on this device', 'error');
-                    }
+                    showNotification('NFC is not supported on this device', 'error');
                     return;
                 }
 
@@ -680,17 +636,6 @@
                 button.disabled = true;
 
                 try {
-                    // Brave-specific checks
-                    if (browser === 'brave') {
-                        // Check HTTPS requirement
-                        if (location.protocol !== 'https:') {
-                            throw new Error('Brave requires HTTPS for NFC. Please use HTTPS or enable NFC in brave://flags');
-                        }
-                        
-                        // Check if NFC is enabled in flags
-                        console.log('🦁 Brave browser - checking NFC configuration');
-                    }
-                    
                     nfcReader = new NDEFReader();
                     await nfcReader.scan();
                     showNotification('NFC ready! Tap your phone to an NFC tag', 'success');
@@ -698,20 +643,8 @@
                     nfcReader.addEventListener('readingerror', handleNfcError);
                 } catch (error) {
                     console.error('NFC error:', error);
-                    
-                    // Brave-specific error handling
-                    if (browser === 'brave') {
-                        if (error.message.includes('HTTPS')) {
-                            showNotification('Brave requires HTTPS for NFC. Please use HTTPS or enable NFC in brave://flags', 'error');
-                        } else if (error.message.includes('permission')) {
-                            showNotification('NFC permission denied in Brave. Check brave://flags/#enable-web-nfc', 'error');
-                        } else {
-                            showNotification('NFC error in Brave: ' + error.message + '. Check brave://flags/#enable-web-nfc', 'error');
-                        }
-                    } else {
-                        showNotification('NFC initialization failed: ' + error.message, 'error');
-                    }
-                    
+                    showNotification('NFC initialization failed: ' + error.message, 'error');
+
                     button.innerHTML = originalText;
                     button.disabled = false;
                 }

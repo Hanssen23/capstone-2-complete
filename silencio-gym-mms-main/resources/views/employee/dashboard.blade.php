@@ -340,7 +340,9 @@
         
         // Calendar state
         let currentAttendancePeriod = 7;
+        let currentAttendanceDate = new Date(); // Track selected attendance date
         let currentRevenueDate = new Date();
+        let selectedRevenueDay = null; // Track selected revenue day
         let attendanceCalendarVisible = false;
         let revenueCalendarVisible = false;
 
@@ -553,22 +555,21 @@
         // Calendar generation functions
         function generateAttendanceCalendar() {
             const container = document.getElementById('attendanceCalendarDays');
-            const currentDate = new Date();
-            const year = currentDate.getFullYear();
-            const month = currentDate.getMonth();
-            
+            const year = currentAttendanceDate.getFullYear();
+            const month = currentAttendanceDate.getMonth();
+
             // Update calendar header
             document.getElementById('attendanceCalendarMonth').textContent = getMonthName(month);
             document.getElementById('attendanceCalendarYear').textContent = year;
-            
+
             // Generate calendar days
             const firstDay = new Date(year, month, 1);
             const lastDay = new Date(year, month + 1, 0);
             const daysInMonth = lastDay.getDate();
             const startingDay = firstDay.getDay(); // 0 = Sunday, 1 = Monday, etc.
-            
+
             let html = '';
-            
+
             // Previous month's trailing days
             const prevMonth = new Date(year, month - 1, 0);
             const prevMonthDays = prevMonth.getDate();
@@ -576,28 +577,29 @@
                 const day = prevMonthDays - i;
                 html += `<div class="calendar-day inactive">${day}</div>`;
             }
-            
+
             // Current month's days
+            const today = new Date();
             for (let day = 1; day <= daysInMonth; day++) {
-                const isToday = day === currentDate.getDate() && month === currentDate.getMonth() && year === currentDate.getFullYear();
-                const isSelected = day === 27; // Example selected day
+                const isToday = day === today.getDate() && month === today.getMonth() && year === today.getFullYear();
+                const isSelected = day === currentAttendanceDate.getDate() && month === currentAttendanceDate.getMonth() && year === currentAttendanceDate.getFullYear();
                 const classes = ['calendar-day'];
-                
+
                 if (isSelected) classes.push('selected');
                 if (isToday) classes.push('today');
-                
+
                 html += `<div class="${classes.join(' ')}" onclick="selectAttendanceDate(${day})">${day}</div>`;
             }
-            
+
             // Next month's leading days
             const totalCells = 42; // 6 rows × 7 columns
             const usedCells = startingDay + daysInMonth;
             const remainingDays = totalCells - usedCells;
-            
+
             for (let day = 1; day <= remainingDays; day++) {
                 html += `<div class="calendar-day inactive">${day}</div>`;
             }
-            
+
             container.innerHTML = html;
         }
 
@@ -627,14 +629,15 @@
             }
             
             // Current month's days
+            const today = new Date();
             for (let day = 1; day <= daysInMonth; day++) {
-                const isToday = day === new Date().getDate() && month === new Date().getMonth() && year === new Date().getFullYear();
-                const isSelected = day === 27; // Example selected day
+                const isToday = day === today.getDate() && month === today.getMonth() && year === today.getFullYear();
+                const isSelected = selectedRevenueDay === day && month === currentRevenueDate.getMonth() && year === currentRevenueDate.getFullYear();
                 const classes = ['calendar-day'];
-                
+
                 if (isSelected) classes.push('selected');
                 if (isToday) classes.push('today');
-                
+
                 html += `<div class="${classes.join(' ')}" onclick="selectRevenueDate(${day})">${day}</div>`;
             }
             
@@ -679,65 +682,80 @@
 
         // Calendar navigation
         function navigateAttendanceMonth(direction) {
-            const currentDate = new Date();
-            currentDate.setMonth(currentDate.getMonth() + direction);
+            currentAttendanceDate.setMonth(currentAttendanceDate.getMonth() + direction);
             generateAttendanceCalendar();
+            updateAttendanceDateText();
         }
 
         function navigateRevenueMonth(direction) {
             currentRevenueDate.setMonth(currentRevenueDate.getMonth() + direction);
+            selectedRevenueDay = null; // Reset selected day when changing month
             generateRevenueCalendar();
             updateRevenueDateText();
-            refreshRevenueChart();
         }
 
         // Date selection functions
         function selectAttendanceDate(day) {
+            // Update the current attendance date
+            currentAttendanceDate.setDate(day);
+
             // Update selected date styling
             const calendarDays = document.querySelectorAll('#attendanceCalendarDays .calendar-day');
             calendarDays.forEach(dayEl => {
                 dayEl.classList.remove('selected');
             });
-            
+
             // Highlight selected day
-            const selectedDay = Array.from(calendarDays).find(dayEl => 
+            const selectedDay = Array.from(calendarDays).find(dayEl =>
                 dayEl.textContent.trim() === day.toString() && !dayEl.classList.contains('inactive')
             );
             if (selectedDay) {
                 selectedDay.classList.add('selected');
             }
-            
-            // Close calendar and refresh chart
+
+            // Update display text and close calendar
+            updateAttendanceDateText();
             document.getElementById('attendanceCalendar').classList.add('hidden');
             attendanceCalendarVisible = false;
+
+            // Refresh chart with selected date
             refreshAttendanceChart();
         }
 
         function selectRevenueDate(day) {
+            // Store the selected day
+            selectedRevenueDay = day;
+            currentRevenueDate.setDate(day);
+
             // Update selected date styling
             const calendarDays = document.querySelectorAll('#revenueCalendarDays .calendar-day');
             calendarDays.forEach(dayEl => {
                 dayEl.classList.remove('selected');
             });
-            
+
             // Highlight selected day
-            const selectedDay = Array.from(calendarDays).find(dayEl => 
+            const selectedDay = Array.from(calendarDays).find(dayEl =>
                 dayEl.textContent.trim() === day.toString() && !dayEl.classList.contains('inactive')
             );
             if (selectedDay) {
                 selectedDay.classList.add('selected');
             }
-            
-            // Close calendar and refresh chart
+
+            // Update display text and close calendar
+            updateRevenueDateText();
             document.getElementById('revenueCalendar').classList.add('hidden');
             revenueCalendarVisible = false;
+
+            // Refresh chart with selected date
             refreshRevenueChart();
         }
 
         // Quick period selection
         function selectAttendanceQuickPeriod(days) {
             currentAttendancePeriod = days;
+            currentAttendanceDate = new Date(); // Reset to current date
             updateAttendanceDateText();
+            generateAttendanceCalendar();
             document.getElementById('attendanceCalendar').classList.add('hidden');
             attendanceCalendarVisible = false;
             refreshAttendanceChart();
@@ -745,7 +763,8 @@
 
         function selectRevenueQuickPeriod(period) {
             const currentDate = new Date();
-            
+            selectedRevenueDay = null; // Reset selected day
+
             switch (period) {
                 case 'current':
                     currentRevenueDate = new Date();
@@ -757,7 +776,7 @@
                     currentRevenueDate = new Date(currentDate.getFullYear(), 0, 1);
                     break;
             }
-            
+
             updateRevenueDateText();
             generateRevenueCalendar();
             document.getElementById('revenueCalendar').classList.add('hidden');
@@ -767,15 +786,26 @@
 
         // Text update functions
         function updateAttendanceDateText() {
-            const periodText = currentAttendancePeriod === 7 ? 'Last 7 days' : 
-                              currentAttendancePeriod === 14 ? 'Last 14 days' : 'Last 30 days';
-            document.getElementById('attendanceDateText').textContent = periodText;
+            if (currentAttendancePeriod) {
+                const periodText = currentAttendancePeriod === 7 ? 'Last 7 days' :
+                                  currentAttendancePeriod === 14 ? 'Last 14 days' : 'Last 30 days';
+                document.getElementById('attendanceDateText').textContent = periodText;
+            } else {
+                const monthName = getMonthName(currentAttendanceDate.getMonth());
+                const day = currentAttendanceDate.getDate();
+                const year = currentAttendanceDate.getFullYear();
+                document.getElementById('attendanceDateText').textContent = `${monthName} ${day}, ${year}`;
+            }
         }
 
         function updateRevenueDateText() {
             const monthName = getMonthName(currentRevenueDate.getMonth());
             const year = currentRevenueDate.getFullYear();
-            document.getElementById('revenueDateText').textContent = `${monthName} ${year}`;
+            if (selectedRevenueDay) {
+                document.getElementById('revenueDateText').textContent = `${monthName} ${selectedRevenueDay}, ${year}`;
+            } else {
+                document.getElementById('revenueDateText').textContent = `${monthName} ${year}`;
+            }
         }
 
         // Helper functions

@@ -1,0 +1,1 @@
+<x-payments-page :isEmployee="false" :payments="$payments" :completedCount="$completedCount" :totalRevenue="$totalRevenue" />

@@ -26,20 +26,23 @@ class EmployeeController extends Controller
         // Get search and filter parameters
         $search = $request->get('search');
         $selectedMembership = $request->get('membership');
-        
-        // Build the query
-        $query = \App\Models\Member::with(['currentMembershipPeriod', 'payments']);
-        
+
+        // Build the query - Show ALL members to employees (same as admin)
+        // Include unverified members so employees can see all registered members
+        $query = \App\Models\Member::with(['currentMembershipPeriod', 'payments'])
+            ->orderBy('created_at', 'desc'); // Show newest members first
+
         // Apply search filter
         if ($search) {
             $query->where(function($q) use ($search) {
                 $q->where('first_name', 'like', "%{$search}%")
                   ->orWhere('last_name', 'like', "%{$search}%")
                   ->orWhere('email', 'like', "%{$search}%")
-                  ->orWhere('uid', 'like', "%{$search}%");
+                  ->orWhere('uid', 'like', "%{$search}%")
+                  ->orWhere('mobile_number', 'like', "%{$search}%");
             });
         }
-        
+
         // Apply membership filter
         if ($selectedMembership) {
             $query->whereHas('currentMembershipPeriod', function($q) use ($selectedMembership) {
@@ -49,10 +52,10 @@ class EmployeeController extends Controller
                   ->where('status', 'completed');
             });
         }
-        
+
         // Get paginated results
-        $members = $query->paginate(15);
-        
+        $members = $query->paginate(20); // Match admin pagination
+
         return view('employee.members.index', compact('members', 'search', 'selectedMembership'));
     }
 
@@ -138,17 +141,73 @@ class EmployeeController extends Controller
     // Employee Membership Methods
     public function manageMember()
     {
-        $members = Member::with('currentMembershipPeriod')->get();
-        $planTypes = config('membership.plan_types');
+        // Get all members for payment processing (including unverified ones)
+        $members = Member::with('currentMembershipPeriod')
+            ->where('status', '!=', 'deleted')
+            ->get();
+
+        // Get plan types from database instead of config file
+        $planTypes = MembershipPlan::all()->keyBy('name')->map(function($plan) {
+            return [
+                'id' => $plan->id,
+                'name' => $plan->name,
+                'base_price' => $plan->price,
+                'description' => $plan->description,
+                'duration_days' => $plan->duration_days,
+            ];
+        })->toArray();
+
+        // Convert to lowercase keys to match config format (basic, vip, premium)
+        $planTypesFormatted = [];
+        foreach ($planTypes as $name => $plan) {
+            $planTypesFormatted[strtolower($name)] = $plan;
+        }
+
         $durationTypes = config('membership.duration_types');
-        
-        return view('membership.manage-member', compact('members', 'planTypes', 'durationTypes'));
+
+        return view('membership.manage-member', compact('members', 'planTypesFormatted', 'durationTypes'));
     }
 
     public function processPayment(Request $request)
     {
-        // Payment processing logic for employees
-        return response()->json(['success' => true, 'message' => 'Payment processed successfully']);
+        $request->validate([
+            'member_id' => 'required|exists:members,id',
+            'plan_type' => 'required|string',
+            'duration_type' => 'required|string',
+            'amount' => 'required|numeric|min:0',
+            'start_date' => 'required|date',
+            'notes' => 'nullable|string',
+        ]);
+
+        // Employees cannot override - always check for active membership
+        $member = Member::with(['membershipPeriods' => function($query) {
+            $query->active();
+        }])->findOrFail($request->member_id);
+
+        $activeMembership = $member->membershipPeriods()
+            ->where('status', 'active')
+            ->where('start_date', '<=', now())
+            ->where('expiration_date', '>', now())
+            ->first();
+
+        if ($activeMembership) {
+            // Get plan name from database
+            $plan = MembershipPlan::where('name', ucfirst($activeMembership->plan_type))->first();
+            $planName = $plan ? $plan->name : ucfirst($activeMembership->plan_type);
+
+            return response()->json([
+                'success' => false,
+                'error' => 'ACTIVE_MEMBERSHIP_EXISTS',
+                'message' => "Cannot process payment. This member already has an active membership plan: {$planName} (Expires: {$activeMembership->expiration_date->format('F j, Y')})",
+                'active_plan' => [
+                    'name' => $planName,
+                    'expiration_date' => $activeMembership->expiration_date->format('F j, Y')
+                ]
+            ], 422);
+        }
+
+        // If no active membership, delegate to MembershipController
+        return app(MembershipController::class)->processPayment($request);
     }
 
     public function plans()
@@ -171,10 +230,163 @@ class EmployeeController extends Controller
         ]);
     }
 
-    public function exportPaymentsCsv()
+    public function exportPaymentsCsv(Request $request)
     {
-        // CSV export logic for employee payments
-        return response()->download('employee-payments.csv');
+        $query = Payment::with('member');
+
+        // Apply same filters as payments page
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->whereHas('member', function($q) use ($search) {
+                $q->where('first_name', 'like', "%{$search}%")
+                  ->orWhere('last_name', 'like', "%{$search}%")
+                  ->orWhere('email', 'like', "%{$search}%")
+                  ->orWhere('uid', 'like', "%{$search}%");
+            })->orWhere('id', 'like', "%{$search}%");
+        }
+
+        if ($request->filled('plan_type')) {
+            $query->where('plan_type', $request->plan_type);
+        }
+
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        if ($request->filled('date')) {
+            $query->whereDate('payment_date', $request->date);
+        }
+
+        $payments = $query->orderBy('created_at', 'desc')->get();
+
+        $filename = 'employee_payments_' . date('Y-m-d_H-i-s') . '.csv';
+
+        $headers = [
+            'Content-Type' => 'text/csv',
+            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+        ];
+
+        $callback = function() use ($payments) {
+            $file = fopen('php://output', 'w');
+
+            // CSV headers
+            fputcsv($file, [
+                'Payment ID',
+                'Member Name',
+                'Member Email',
+                'Member UID',
+                'Plan Type',
+                'Duration',
+                'Amount',
+                'Payment Date',
+                'Payment Time',
+                'Membership Start',
+                'Membership End',
+                'Status',
+                'Notes'
+            ]);
+
+            // CSV data
+            foreach ($payments as $payment) {
+                fputcsv($file, [
+                    $payment->id,
+                    $payment->member ? $payment->member->full_name : 'N/A',
+                    $payment->member ? $payment->member->email : 'N/A',
+                    $payment->member ? $payment->member->uid : 'N/A',
+                    ucfirst($payment->plan_type),
+                    ucfirst($payment->duration_type),
+                    number_format($payment->amount, 2),
+                    $payment->payment_date ? $payment->payment_date->format('Y-m-d') : 'N/A',
+                    $payment->payment_time ?? 'N/A',
+                    $payment->membership_start_date ? $payment->membership_start_date->format('Y-m-d') : 'N/A',
+                    $payment->membership_expiration_date ? $payment->membership_expiration_date->format('Y-m-d') : 'N/A',
+                    ucfirst($payment->status),
+                    $payment->notes ?? ''
+                ]);
+            }
+
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
+    }
+
+    public function previewPaymentsCsv(Request $request)
+    {
+        $query = Payment::with('member');
+
+        // Apply same filters as payments page
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->whereHas('member', function($q) use ($search) {
+                $q->where('first_name', 'like', "%{$search}%")
+                  ->orWhere('last_name', 'like', "%{$search}%")
+                  ->orWhere('email', 'like', "%{$search}%")
+                  ->orWhere('uid', 'like', "%{$search}%");
+            })->orWhere('id', 'like', "%{$search}%");
+        }
+
+        if ($request->filled('plan_type')) {
+            $query->where('plan_type', $request->plan_type);
+        }
+
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        if ($request->filled('date')) {
+            $query->whereDate('payment_date', $request->date);
+        }
+
+        // Limit to first 10 rows for preview
+        $payments = $query->orderBy('created_at', 'desc')->limit(10)->get();
+        $totalCount = $query->count();
+
+        $csvData = [];
+
+        // CSV headers
+        $csvData[] = [
+            'Payment ID',
+            'Member Name',
+            'Member Email',
+            'Member UID',
+            'Plan Type',
+            'Duration',
+            'Amount',
+            'Payment Date',
+            'Payment Time',
+            'Membership Start',
+            'Membership End',
+            'Status',
+            'Notes'
+        ];
+
+        // CSV data (preview only)
+        foreach ($payments as $payment) {
+            $csvData[] = [
+                $payment->id,
+                $payment->member ? $payment->member->full_name : 'N/A',
+                $payment->member ? $payment->member->email : 'N/A',
+                $payment->member ? $payment->member->uid : 'N/A',
+                ucfirst($payment->plan_type),
+                ucfirst($payment->duration_type),
+                number_format($payment->amount, 2),
+                $payment->payment_date ? $payment->payment_date->format('Y-m-d') : 'N/A',
+                $payment->payment_time ?? 'N/A',
+                $payment->membership_start_date ? $payment->membership_start_date->format('Y-m-d') : 'N/A',
+                $payment->membership_expiration_date ? $payment->membership_expiration_date->format('Y-m-d') : 'N/A',
+                ucfirst($payment->status),
+                $payment->notes ?? ''
+            ];
+        }
+
+        return response()->json([
+            'success' => true,
+            'preview_data' => $csvData,
+            'total_records' => $totalCount,
+            'preview_records' => count($csvData) - 1, // Exclude header
+            'headers' => $csvData[0]
+        ]);
     }
 
     public function printPayment($id)

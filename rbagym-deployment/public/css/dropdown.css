@@ -1,0 +1,96 @@
+/* Dropdown Styles - Updated for Sidebar */
+.dropdown-content {
+    background-color: #1f2937; /* gray-800 */
+    border-radius: 0.375rem;
+    margin-top: 0.25rem;
+    overflow: hidden;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+}
+
+.dropdown-content a {
+    text-decoration: none;
+    color: inherit;
+}
+
+.dropdown-content a:hover {
+    background-color: #374151; /* gray-700 */
+}
+
+/* Ensure dropdown content is visible when not hidden */
+.dropdown-content:not(.hidden) {
+    display: block !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+
+/* Smooth transitions for dropdown arrow */
+.dropdown-arrow {
+    transition: transform 0.2s ease-in-out;
+}
+
+/* Legacy support for old dropdown classes */
+.dropdown-item {
+    position: relative;
+}
+
+.dropdown-toggle {
+    position: relative;
+}
+
+/* Ensure compatibility with new nav-dropdown classes */
+.nav-dropdown-content {
+    background-color: #1f2937; /* gray-800 */
+    border-radius: 0.5rem;
+    margin-top: 0.25rem;
+    overflow: hidden;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+}
+
+.nav-dropdown-content a {
+    text-decoration: none;
+    color: inherit;
+}
+
+.nav-dropdown-content a:hover {
+    background-color: #374151; /* gray-700 */
+}
+
+/* Ensure nav-dropdown content is visible when not hidden */
+.nav-dropdown-content:not(.hidden) {
+    display: block !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+
+/* Dropdown positioning for sidebar */
+.sidebar .nav-dropdown-content,
+.sidebar .dropdown-content {
+    position: relative;
+    top: auto;
+    left: auto;
+    right: auto;
+    margin-top: 0.25rem;
+    margin-left: 0;
+    margin-right: 0;
+}
+
+/* Ensure dropdown content is always visible when open */
+.nav-dropdown-content,
+.dropdown-content {
+    transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out;
+}
+
+.nav-dropdown-content.hidden,
+.dropdown-content.hidden {
+    display: none !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+} 

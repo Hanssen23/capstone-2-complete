@@ -7,14 +7,20 @@
             <!-- Member Selection -->
             <div class="mb-6 sm:mb-8">
                 <div class="bg-white rounded-lg border p-4 sm:p-6 lg:p-8" style="border-color: #E5E7EB; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
-                    <h2 class="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8" style="color: #1E40AF;">Select Member</h2>
-                    
-                    <!-- Search Bar -->
+                    <div class="mb-6 sm:mb-8">
+                        <h2 class="text-2xl sm:text-3xl font-bold" style="color: #1E40AF;">Select Member</h2>
+                    </div>
+
+                    <!-- Search Bar with RFID Support -->
                     <div class="mb-6 sm:mb-8">
                         <div class="relative">
-                            <input type="text" id="memberSearch" placeholder="Search by name, email, or member number..." 
-                                   class="w-full px-3 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-sm sm:text-base min-h-[44px]" 
-                                   style="border-color: #E5E7EB; color: #000000;">
+                            <input type="text" id="memberSearch" placeholder="Search by name, email, or member number..."
+                                   class="w-full pl-4 pr-12 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-sm sm:text-base min-h-[44px] text-gray-700 placeholder-gray-400">
+                            <div class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                                </svg>
+                            </div>
                         </div>
                     </div>
 
@@ -135,9 +141,9 @@
                             
                             <!-- Plan Cards -->
                             <div class="space-y-3 sm:space-y-4 mb-6 sm:mb-8">
-                                    @foreach(config('membership.plan_types') as $key => $plan)
-                                <div class="plan-card bg-white border rounded-lg p-4 sm:p-6 cursor-pointer transition-all duration-200 hover:shadow-md" 
-                                     style="border-color: #E5E7EB;" 
+                                    @foreach($planTypesFormatted as $key => $plan)
+                                <div class="plan-card bg-white border rounded-lg p-4 sm:p-6 cursor-pointer transition-all duration-200 hover:shadow-md"
+                                     style="border-color: #E5E7EB;"
                                      data-plan="{{ $key }}"
                                      onclick="selectPlan('{{ $key }}')">
                                     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
@@ -145,12 +151,12 @@
                                             <div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 mb-2">
                                                 <h4 class="text-base sm:text-lg font-bold" style="color: #000000;">{{ $plan['name'] }}</h4>
                                                 @if($key === 'basic')
-                                                <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full text-white" 
+                                                <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full text-white"
                                                       style="background-color: #059669;">
                                                     Basic
                                                 </span>
                                                 @elseif($key === 'vip' || $key === 'premium')
-                                                <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full text-white" 
+                                                <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full text-white"
                                                       style="background-color: #F59E0B;">
                                                     {{ $key === 'vip' ? 'VIP' : 'Premium' }}
                                                 </span>
@@ -160,9 +166,9 @@
                                             <div class="text-base sm:text-lg font-bold" style="color: #000000;">₱{{ number_format($plan['base_price'], 2) }}/month</div>
                                         </div>
                                         <div class="flex justify-end sm:ml-4">
-                                            <button class="select-plan-btn px-4 py-2 border rounded-lg font-medium transition-colors min-h-[44px] w-full sm:w-auto" 
-                                                    style="border-color: #2563EB; color: #2563EB;" 
-                                                    onmouseover="this.style.backgroundColor='#2563EB'; this.style.color='#FFFFFF'" 
+                                            <button class="select-plan-btn px-4 py-2 border rounded-lg font-medium transition-colors min-h-[44px] w-full sm:w-auto"
+                                                    style="border-color: #2563EB; color: #2563EB;"
+                                                    onmouseover="this.style.backgroundColor='#2563EB'; this.style.color='#FFFFFF'"
                                                     onmouseout="this.style.backgroundColor='transparent'; this.style.color='#2563EB'">
                                                 Select
                                             </button>
@@ -249,15 +255,34 @@
 
                                 <div>
                                     <label class="block text-sm font-medium mb-3" style="color: #6B7280;">Final Payment Amount</label>
-                                    <input type="number" id="paymentAmount" name="amount" step="0.01" min="0" 
-                                           class="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors bg-gray-50 min-h-[44px]" 
+                                    <input type="number" id="paymentAmount" name="amount" step="0.01" min="0"
+                                           class="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors bg-gray-50 min-h-[44px]"
                                            style="border-color: #E5E7EB;" readonly>
                                 </div>
-                                
+
+                                <div>
+                                    <label class="block text-sm font-medium mb-3" style="color: #6B7280;">Amount Tendered</label>
+                                    <input type="number" id="amountTendered" name="amount_tendered" step="0.01" min="0"
+                                           class="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors min-h-[44px]"
+                                           style="border-color: #E5E7EB;"
+                                           placeholder="Enter amount received from customer"
+                                           oninput="calculateChange(); clearAmountTenderedError();">
+                                    <p class="text-xs text-gray-600 mt-1">Enter the amount of cash received from the customer</p>
+                                    <p id="amountTenderedError" class="text-xs text-red-600 mt-1 hidden">Please input amount tendered</p>
+                                </div>
+
+                                <div>
+                                    <label class="block text-sm font-medium mb-3" style="color: #6B7280;">Change Amount</label>
+                                    <input type="number" id="changeAmount" name="change_amount" step="0.01" min="0"
+                                           class="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors bg-gray-50 min-h-[44px]"
+                                           style="border-color: #E5E7EB;" readonly>
+                                    <p class="text-xs text-gray-600 mt-1">Change to return to customer</p>
+                                </div>
+
                                 <div>
                                     <label class="block text-sm font-medium mb-3" style="color: #6B7280;">Notes (Optional)</label>
-                                    <textarea name="notes" rows="3" placeholder="Any additional notes about this payment..." 
-                                              class="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors resize-none min-h-[44px]" 
+                                    <textarea name="notes" rows="3" placeholder="Any additional notes about this payment..."
+                                              class="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors resize-none min-h-[44px]"
                                               style="border-color: #E5E7EB;"></textarea>
                                 </div>
 
@@ -323,22 +348,7 @@
         // Set default start date to today
         document.getElementById('startDate').value = new Date().toISOString().split('T')[0];
 
-        // Member search functionality
-        document.getElementById('memberSearch').addEventListener('input', function() {
-            const searchTerm = this.value.toLowerCase();
-            const memberCards = document.querySelectorAll('.member-card');
-            
-            memberCards.forEach(card => {
-                const memberData = JSON.parse(card.dataset.member);
-                const searchText = `${memberData.full_name} ${memberData.email} ${memberData.member_number}`.toLowerCase();
-                
-                if (searchText.includes(searchTerm)) {
-                    card.style.display = '';
-                } else {
-                    card.style.display = 'none';
-                }
-            });
-        });
+        // Member search functionality is now handled by updateMemberListDisplay()
 
         // Member selection
         function selectMember(cardElement) {
@@ -346,13 +356,25 @@
             document.querySelectorAll('.member-card').forEach(card => {
                 card.style.borderColor = '#E5E7EB';
             });
-            
+
             // Highlight selected member
             cardElement.style.borderColor = '#059669';
-            
+
             selectedMember = JSON.parse(cardElement.dataset.member);
             displayMemberInfo();
             showPlanSelectionForm();
+
+            // Auto-scroll to Plan Selection & Payment section
+            setTimeout(() => {
+                const planSection = document.getElementById('planSelectionForm');
+                if (planSection) {
+                    planSection.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                    console.log('Auto-scrolled to plan selection form');
+                }
+            }, 300); // Small delay to ensure form is visible
         }
 
         // Plan selection
@@ -400,7 +422,16 @@
         }
 
         function displayMemberInfo() {
-            document.getElementById('memberName').textContent = selectedMember.full_name;
+            // Handle both full_name and separate first_name/last_name
+            let memberName = selectedMember.full_name;
+            if (!memberName && selectedMember.first_name && selectedMember.last_name) {
+                memberName = `${selectedMember.first_name} ${selectedMember.middle_name || ''} ${selectedMember.last_name}`.replace(/\s+/g, ' ').trim();
+            }
+            if (!memberName) {
+                memberName = 'Unknown Member';
+            }
+
+            document.getElementById('memberName').textContent = memberName;
             document.getElementById('memberNumber').textContent = `Member #: ${selectedMember.member_number}`;
             document.getElementById('memberEmail').textContent = selectedMember.email;
         }
@@ -415,22 +446,22 @@
 
         function updatePriceCalculation() {
             if (selectedPlanType && selectedDurationType) {
-                const planTypes = @json(config('membership.plan_types'));
-                const durationTypes = @json(config('membership.duration_types'));
-                
+                const planTypes = @json($planTypesFormatted);
+                const durationTypes = @json($durationTypes);
+
                 const basePrice = planTypes[selectedPlanType].base_price;
                 const multiplier = durationTypes[selectedDurationType].multiplier;
                 const originalPrice = basePrice * multiplier;
-                
+
                 // Set original amount
                 document.getElementById('originalAmount').value = originalPrice.toFixed(2);
-                
+
                 // Calculate discount
                 calculateDiscount();
-                
+
                 document.getElementById('totalPrice').textContent = `₱${originalPrice.toFixed(2)}`;
             document.getElementById('priceBreakdown').textContent = `${planTypes[selectedPlanType].name} (₱${basePrice}/month) × ${durationTypes[selectedDurationType].name} (${multiplier}x)`;
-                
+
                 // Enable confirm button
                 document.getElementById('confirmPaymentBtn').disabled = false;
             }
@@ -438,33 +469,44 @@
 
         function calculateDiscount() {
             const originalAmount = parseFloat(document.getElementById('originalAmount').value) || 0;
-            const isPwd = document.getElementById('isPwd').checked;
-            const isSeniorCitizen = document.getElementById('isSeniorCitizen').checked;
-            
+            const isPwdCheckbox = document.getElementById('isPwd');
+            const isSeniorCitizenCheckbox = document.getElementById('isSeniorCitizen');
+            const isPwd = isPwdCheckbox.checked;
+            const isSeniorCitizen = isSeniorCitizenCheckbox.checked;
+
+            // Make discount options mutually exclusive - only one can be selected
+            if (isPwd && isSeniorCitizen) {
+                // If both are checked, uncheck the other one
+                if (event && event.target === isPwdCheckbox) {
+                    isSeniorCitizenCheckbox.checked = false;
+                } else if (event && event.target === isSeniorCitizenCheckbox) {
+                    isPwdCheckbox.checked = false;
+                }
+            }
+
             let discountPercentage = 0;
             let discountDescriptions = [];
-            
-            if (isPwd) {
-                discountPercentage += 20;
+
+            // Only one discount can be applied at a time
+            if (isPwdCheckbox.checked) {
+                discountPercentage = 20;
                 discountDescriptions.push('PWD (20%)');
-            }
-            
-            if (isSeniorCitizen) {
-                discountPercentage += 20;
+            } else if (isSeniorCitizenCheckbox.checked) {
+                discountPercentage = 20;
                 discountDescriptions.push('Senior Citizen (20%)');
             }
-            
+
             const discountAmount = (originalAmount * discountPercentage) / 100;
             const finalAmount = originalAmount - discountAmount;
-            
+
             // Update discount fields
             document.getElementById('discountAmount').value = discountAmount.toFixed(2);
             document.getElementById('paymentAmount').value = finalAmount.toFixed(2);
-            
+
             // Show/hide discount info
             const discountInfo = document.getElementById('discountInfo');
             const discountBreakdown = document.getElementById('discountBreakdown');
-            
+
             if (discountPercentage > 0) {
                 discountInfo.classList.remove('hidden');
                 discountBreakdown.innerHTML = `
@@ -475,6 +517,40 @@
             } else {
                 discountInfo.classList.add('hidden');
             }
+
+            // Recalculate change when discount changes
+            calculateChange();
+        }
+
+        function calculateChange() {
+            const finalAmount = parseFloat(document.getElementById('paymentAmount').value) || 0;
+            const amountTendered = parseFloat(document.getElementById('amountTendered').value) || 0;
+
+            // Calculate change
+            const change = amountTendered - finalAmount;
+
+            // Update change amount field
+            const changeAmountField = document.getElementById('changeAmount');
+            if (change >= 0) {
+                changeAmountField.value = change.toFixed(2);
+                changeAmountField.style.color = '#059669'; // Green for positive change
+            } else {
+                changeAmountField.value = '0.00';
+                changeAmountField.style.color = '#DC2626'; // Red for insufficient amount
+            }
+        }
+
+        // Function to clear amount tendered error
+        function clearAmountTenderedError() {
+            const errorMsg = document.getElementById('amountTenderedError');
+            if (errorMsg) {
+                errorMsg.classList.add('hidden');
+            }
+            // Remove red border if exists
+            const input = document.getElementById('amountTendered');
+            if (input) {
+                input.style.borderColor = '#E5E7EB';
+            }
         }
 
         function showReceiptPreview() {
@@ -483,11 +559,28 @@
                 return;
             }
 
-            const planTypes = @json(config('membership.plan_types'));
-            const durationTypes = @json(config('membership.duration_types'));
+            // Validate amount tendered
+            const amountTenderedInput = document.getElementById('amountTendered');
+            const amountTendered = parseFloat(amountTenderedInput.value) || 0;
+
+            if (amountTendered <= 0) {
+                // Show inline error message
+                const errorMsg = document.getElementById('amountTenderedError');
+                if (errorMsg) {
+                    errorMsg.classList.remove('hidden');
+                }
+                // Add red border to input
+                amountTenderedInput.style.borderColor = '#EF4444';
+                amountTenderedInput.focus();
+                return;
+            }
+
+            const planTypes = @json($planTypesFormatted);
+            const durationTypes = @json($durationTypes);
             const originalAmount = parseFloat(document.getElementById('originalAmount').value) || 0;
             const discountAmount = parseFloat(document.getElementById('discountAmount').value) || 0;
             const finalAmount = parseFloat(document.getElementById('paymentAmount').value) || 0;
+            const changeAmount = parseFloat(document.getElementById('changeAmount').value) || 0;
             const isPwd = document.getElementById('isPwd').checked;
             const isSeniorCitizen = document.getElementById('isSeniorCitizen').checked;
             const startDate = document.getElementById('startDate').value;
@@ -498,17 +591,19 @@
             const durationDays = durationTypes[selectedDurationType].days;
             const expiration = new Date(start.getTime() + (durationDays * 24 * 60 * 60 * 1000));
 
-            // Create modal
+            // Create modal without background overlay - appears as floating popup
             const modal = document.createElement('div');
-            modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-2 sm:p-4';
+            modal.id = 'receiptPreviewModal';
+            modal.className = 'fixed inset-0 flex items-center justify-center';
+            modal.style.cssText = 'z-index: 9000; background-color: rgba(0, 0, 0, 0.5);';
             modal.innerHTML = `
-                <div class="bg-white rounded-xl shadow-lg max-w-2xl w-full max-h-[90vh] overflow-auto transform transition-all duration-300 scale-95 opacity-0 border border-gray-200" 
+                <div class="bg-white rounded-lg shadow-2xl w-[700px] max-w-[90vw] max-h-[90vh] overflow-auto transform transition-all duration-300 scale-95 opacity-0 border border-gray-300"
                      id="receiptModalContent"
-                     style="box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);">
-                    <!-- Modal Header -->
+                     style="box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(0, 0, 0, 0.05); z-index: 9001;">
+                    <!-- Modal Header with Close Button -->
                     <div class="flex justify-between items-center p-4 border-b border-gray-200">
                         <h3 class="text-lg font-semibold text-gray-900">Payment Receipt</h3>
-                        <button onclick="closeReceiptPreview()" class="text-gray-400 hover:text-gray-600 transition-colors">
+                        <button onclick="window.closeReceiptPreviewModal()" type="button" class="text-gray-400 hover:text-gray-600 transition-colors cursor-pointer">
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                             </svg>
@@ -516,133 +611,164 @@
                     </div>
 
                     <!-- Receipt Content -->
-                    <div class="p-4 sm:p-6">
-                        <!-- Header Section -->
+                    <div class="p-6">
+                        <!-- Header Section with Logo and Gym Info -->
+                        <div class="text-center mb-6 border-b border-gray-200 pb-4">
+                            <div class="flex justify-center mb-3">
+                                <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center border-2 border-orange-500 shadow-lg">
+                                    <img src="{{ asset('images/rba-logo/rba logo.png') }}" alt="RBA Logo" class="w-12 h-12 object-contain">
+                                </div>
+                            </div>
+                            <h2 class="text-xl font-bold text-gray-900 mb-1">Ripped Body Anytime</h2>
+                            <p class="text-sm text-gray-600 mb-1">Blk. 168 Deparo, City of Caloocan</p>
+                            <p class="text-sm text-gray-600 mb-1">Caloocan, Philippines, 1400</p>
+                            <p class="text-sm text-gray-600">Contact: +63 123 456 7890</p>
+                        </div>
+
+                        <!-- Payment Receipt Title -->
                         <div class="text-center mb-6">
-                            <img src="{{ asset('images/rba-logo/rba logo.png') }}" alt="RBA Logo" class="w-24 h-auto mx-auto mb-4" style="width: 100px; height: auto;">
-                            <h2 class="text-2xl font-bold text-gray-900 mb-2">Ripped Body Anytime</h2>
-                            <p class="text-sm text-gray-600 leading-relaxed">
-                                Block 7 Lot 2 Sto. Tomas Village,<br>
-                                Brgy. 168 Deparo, City of Caloocan,<br>
-                                Caloocan, Philippines, 1400
-                            </p>
-                            <div class="mt-4">
-                                <p class="text-xs text-gray-500 uppercase tracking-wide">Payment Receipt</p>
-                                <p class="text-sm font-semibold text-gray-700">Receipt #Preview</p>
+                            <h3 class="text-lg font-semibold text-gray-900 mb-2">Payment Receipt</h3>
+                            <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+                                <p class="text-3xl font-bold text-green-600 mb-1">₱${finalAmount.toFixed(2)}</p>
+                                <p class="text-sm text-gray-600">${planTypes[selectedPlanType].name} Membership | ${durationTypes[selectedDurationType].name}</p>
                             </div>
                         </div>
 
                         <!-- Payment Details Section -->
-                        <div class="mb-6">
-                            <h4 class="text-sm font-semibold text-gray-900 mb-3">Payment Details</h4>
-                            <div class="space-y-2">
-                                <div class="flex justify-between text-sm">
-                                    <span class="text-gray-600">Payment ID:</span>
-                                    <span class="font-medium text-gray-900">#Preview</span>
+                        <div class="mb-6 bg-gray-50 rounded-lg p-4">
+                            <h4 class="text-base font-semibold text-gray-900 mb-3 flex items-center">
+                                <svg class="w-5 h-5 text-blue-600 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z"/>
+                                </svg>
+                                Payment Details
+                            </h4>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <p class="text-sm text-gray-600">Receipt ID</p>
+                                    <p class="font-semibold text-gray-900">RBA-${Date.now().toString().slice(-6)}</p>
                                 </div>
-                                <div class="flex justify-between text-sm">
-                                    <span class="text-gray-600">Date:</span>
-                                    <span class="font-medium text-gray-900">${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}</span>
+                                <div>
+                                    <p class="text-sm text-gray-600">Date</p>
+                                    <p class="font-semibold text-gray-900">${new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</p>
                                 </div>
-                                <div class="flex justify-between text-sm">
-                                    <span class="text-gray-600">Time:</span>
-                                    <span class="font-medium text-gray-900">${new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true })}</span>
+                                <div>
+                                    <p class="text-sm text-gray-600">Time</p>
+                                    <p class="font-semibold text-gray-900">${new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true })}</p>
                                 </div>
-                                <div class="flex justify-between text-sm">
-                                    <span class="text-gray-600">Payment Method:</span>
-                                    <span class="font-medium text-gray-900">Cash</span>
+                                <div>
+                                    <p class="text-sm text-gray-600">Payment Method</p>
+                                    <p class="font-semibold text-gray-900">Cash</p>
                                 </div>
                             </div>
                         </div>
 
                         <!-- Membership Details Section -->
-                        <div class="mb-6">
-                            <h4 class="text-sm font-semibold text-gray-900 mb-3">Membership Details</h4>
-                            <div class="space-y-2">
-                                <div class="flex justify-between text-sm">
-                                    <span class="text-gray-600">Plan Type:</span>
-                                    <span class="font-medium text-gray-900">${planTypes[selectedPlanType].name}</span>
+                        <div class="mb-6 bg-blue-50 rounded-lg p-4">
+                            <h4 class="text-base font-semibold text-gray-900 mb-3 flex items-center">
+                                <svg class="w-5 h-5 text-blue-600 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                                </svg>
+                                Membership Details
+                            </h4>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <p class="text-sm text-gray-600">Member Name</p>
+                                    <p class="font-semibold text-gray-900">${selectedMember.first_name} ${selectedMember.last_name}</p>
                                 </div>
-                                <div class="flex justify-between text-sm">
-                                    <span class="text-gray-600">Duration:</span>
-                                    <span class="font-medium text-gray-900">${durationTypes[selectedDurationType].name}</span>
+                                <div>
+                                    <p class="text-sm text-gray-600">Plan Type</p>
+                                    <p class="font-semibold text-gray-900">${planTypes[selectedPlanType].name}</p>
                                 </div>
-                                <div class="flex justify-between text-sm">
-                                    <span class="text-gray-600">Start Date:</span>
-                                    <span class="font-medium text-gray-900">${new Date(startDate).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}</span>
+                                <div>
+                                    <p class="text-sm text-gray-600">Duration</p>
+                                    <p class="font-semibold text-gray-900">${durationTypes[selectedDurationType].name}</p>
                                 </div>
-                                <div class="flex justify-between text-sm">
-                                    <span class="text-gray-600">Expiration Date:</span>
-                                    <span class="font-medium text-gray-900">${expiration.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}</span>
+                                <div>
+                                    <p class="text-sm text-gray-600">Start Date</p>
+                                    <p class="font-semibold text-gray-900">${new Date(startDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</p>
+                                </div>
+                                <div class="col-span-2">
+                                    <p class="text-sm text-gray-600">Expiration Date</p>
+                                    <p class="font-semibold text-green-600">${expiration.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</p>
                                 </div>
                             </div>
                         </div>
 
                         <!-- Payment Summary Section -->
-                        <div class="border-t border-gray-200 pt-4">
-                            <div class="space-y-2">
+                        <div class="mb-6 bg-green-50 rounded-lg p-4 border border-green-200">
+                            <h4 class="text-base font-semibold text-gray-900 mb-3 flex items-center">
+                                <svg class="w-5 h-5 text-green-600 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M7 18c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12L8.1 13h7.45c.75 0 1.41-.41 1.75-1.03L21.7 4H5.21l-.94-2H1zm16 16c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/>
+                                </svg>
+                                Payment Summary
+                            </h4>
+                            <div class="space-y-3">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-gray-700">Original Amount</span>
+                                    <span class="font-semibold text-gray-900">₱${originalAmount.toFixed(2)}</span>
+                                </div>
                                 ${originalAmount !== finalAmount ? `
-                                    <div class="flex justify-between text-sm">
-                                        <span class="text-gray-600">Original Amount:</span>
-                                        <span class="font-medium text-gray-900">₱${originalAmount.toFixed(2)}</span>
+                                    <div class="flex justify-between items-center text-red-600">
+                                        <span>Discount Applied</span>
+                                        <span class="font-semibold">-₱${discountAmount.toFixed(2)}</span>
                                     </div>
-                                    <div class="flex justify-between text-sm text-red-600">
-                                        <span>Discount (${isPwd && isSeniorCitizen ? 'PWD + Senior Citizen' : isPwd ? 'PWD' : 'Senior Citizen'}):</span>
-                                        <span class="font-medium">-₱${discountAmount.toFixed(2)}</span>
+                                    <div class="flex justify-between items-center text-sm text-gray-600">
+                                        <span>Discount Type</span>
+                                        <span>${isPwd ? 'PWD Discount' : isSeniorCitizen ? 'Senior Citizen Discount' : 'Special Discount'}</span>
                                     </div>
                                 ` : ''}
-                                <div class="flex justify-between text-sm font-semibold">
-                                    <span class="text-gray-900">Total:</span>
-                                    <span class="text-green-600">₱${finalAmount.toFixed(2)}</span>
+                                <div class="border-t border-green-300 pt-3">
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-lg font-bold text-gray-900">Total Amount</span>
+                                        <span class="text-2xl font-bold text-green-600">₱${finalAmount.toFixed(2)}</span>
+                                    </div>
                                 </div>
-                                <div class="flex justify-between text-sm">
-                                    <span class="text-gray-600">Amount Received:</span>
-                                    <span class="font-medium text-gray-900">₱${finalAmount.toFixed(2)}</span>
-                                </div>
-                                <div class="flex justify-between text-sm">
-                                    <span class="text-gray-600">Change:</span>
-                                    <span class="font-medium text-gray-900">₱0.00</span>
-                                </div>
+                                ${amountTendered > 0 ? `
+                                    <div class="flex justify-between items-center text-sm border-t border-green-200 pt-2">
+                                        <span class="text-gray-700">Amount Tendered</span>
+                                        <span class="font-semibold text-gray-900">₱${amountTendered.toFixed(2)}</span>
+                                    </div>
+                                    <div class="flex justify-between items-center text-sm">
+                                        <span class="text-gray-700">Change</span>
+                                        <span class="font-semibold ${changeAmount > 0 ? 'text-green-600' : 'text-gray-900'}">₱${changeAmount.toFixed(2)}</span>
+                                    </div>
+                                ` : ''}
                             </div>
                         </div>
 
-                        ${notes ? `
-                            <div class="mt-4 pt-4 border-t border-gray-200">
-                                <div class="flex justify-between text-sm">
-                                    <span class="text-gray-600">Notes:</span>
-                                    <span class="font-medium text-gray-900 text-right max-w-xs">${notes}</span>
-                                </div>
+                        <!-- Footer Message -->
+                        <div class="text-center border-t border-gray-200 pt-4 mt-6">
+                            <div class="mb-3">
+                                <p class="text-sm font-medium text-gray-700 mb-1">Thank you for choosing Ripped Body Anytime!</p>
+                                <p class="text-xs text-gray-500">Your fitness journey starts here</p>
                             </div>
-                        ` : ''}
-
-                        <!-- Footer -->
-                        <div class="mt-6 pt-4 border-t border-gray-200 text-center">
-                            <p class="text-sm text-gray-600 mb-2">Cashier Name: Admin User</p>
-                            <p class="text-sm font-medium text-gray-900 mb-2">Thank you for choosing Ripped Body Anytime!</p>
-                            <p class="text-xs text-gray-500">Generated on ${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })} at ${new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true })}</p>
+                            <div class="text-xs text-gray-400 space-y-1">
+                                <p>Generated on ${new Date().toLocaleDateString('en-US', {
+                                    weekday: 'long',
+                                    year: 'numeric',
+                                    month: 'long',
+                                    day: 'numeric'
+                                })}</p>
+                                <p>Powered by Silencio Gym Management System</p>
+                            </div>
                         </div>
                     </div>
 
                     <!-- Modal Footer -->
-                    <div class="flex flex-col sm:flex-row justify-end gap-3 p-4 sm:p-6 border-t border-gray-200 bg-gray-50">
-                        <button onclick="closeReceiptPreview()" class="w-full sm:w-auto px-4 py-2 bg-gray-100 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-200 transition-all duration-200 font-medium">
-                            Cancel
-                        </button>
-                        <button onclick="processPayment()" class="w-full sm:w-auto px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-all duration-200 font-medium">
+                    <div class="p-4 border-t border-gray-200 bg-gray-50">
+                        <button onclick="window.handlePaymentConfirmationClick()" type="button" class="w-full px-6 py-4 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-all duration-200 font-semibold text-base shadow-lg hover:shadow-xl transform hover:scale-105">
+                            <svg class="w-5 h-5 inline mr-2" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                            </svg>
                             Confirm Payment & Activate Membership
                         </button>
                     </div>
                 </div>
             `;
             document.body.appendChild(modal);
-            
-            // Add click outside to close
-            modal.addEventListener('click', function(e) {
-                if (e.target === modal) {
-                    closeReceiptPreview();
-                }
-            });
-            
+
+            // No click outside to close since there's no background overlay
+
             // Trigger animation
             setTimeout(() => {
                 const content = document.getElementById('receiptModalContent');
@@ -653,46 +779,137 @@
             }, 10);
         }
 
+        // Define window-level functions for modal buttons
+        window.closeReceiptPreviewModal = function() {
+            console.log('closeReceiptPreviewModal called');
+            closeReceiptPreview();
+        };
+
+        window.handlePaymentConfirmationClick = async function() {
+            console.log('handlePaymentConfirmationClick called');
+            await handlePaymentConfirmation();
+        };
+
         function closeReceiptPreview() {
-            const modal = document.querySelector('.fixed.inset-0');
+            console.log('closeReceiptPreview called');
+            const modal = document.querySelector('.fixed.inset-0.flex');
             const content = document.getElementById('receiptModalContent');
-            
+
+            console.log('Modal element:', modal);
+            console.log('Content element:', content);
+
             if (content) {
                 // Trigger close animation
                 content.classList.remove('scale-100', 'opacity-100');
                 content.classList.add('scale-95', 'opacity-0');
-                
+
                 setTimeout(() => {
                     if (modal) {
+                        console.log('Removing modal from DOM');
                         modal.remove();
                     }
                 }, 300);
             } else if (modal) {
+                console.log('Removing modal immediately (no content element)');
                 modal.remove();
+            } else {
+                console.error('No modal found to close!');
             }
         }
 
-        function processPayment() {
+        // Handler for payment confirmation button click
+        async function handlePaymentConfirmation() {
+            console.log('Payment confirmation clicked');
+            console.log('Selected member:', selectedMember);
+
+            try {
+                await processPayment();
+            } catch (error) {
+                console.error('Error in payment confirmation:', error);
+                alert('An error occurred. Please check the console for details.');
+            }
+        }
+
+        async function processPayment() {
+            console.log('processPayment called');
+
+            // First, check for active membership
+            console.log('Checking active membership for member ID:', selectedMember.id);
+            const membershipCheck = await PaymentValidation.checkActiveMembership(selectedMember.id);
+            console.log('Membership check result:', membershipCheck);
+
+            if (membershipCheck.has_active_plan) {
+                console.log('Active plan found, showing override warning');
+
+                // Force immediate close of receipt modal to prevent z-index conflicts
+                const receiptModal = document.getElementById('receiptPreviewModal');
+                if (receiptModal) {
+                    console.log('Force closing receipt modal');
+                    receiptModal.remove(); // Immediate removal
+                }
+
+                // Also try the standard close function as backup
+                if (typeof closeReceiptPreview === 'function') {
+                    closeReceiptPreview();
+                }
+
+                // Small delay to ensure receipt modal is fully closed before showing warning
+                setTimeout(() => {
+                    const message = `This member already has an active membership plan: ${membershipCheck.plan_name} (Expires: ${membershipCheck.expiration_date}). The new membership will override the current one.`;
+                    console.log('Showing override confirmation modal');
+                    PaymentValidation.showAdminWarning(message);
+                }, 100);
+
+                return;
+            }
+
+            console.log('No active plan found, proceeding with payment');
+            // If no active membership, proceed with payment
+            executePayment(false);
+        }
+
+        // Function to execute payment with optional admin override
+        window.processPaymentWithOverride = function() {
+            console.log('processPaymentWithOverride called - executing payment with admin override');
+            executePayment(true);
+        };
+
+        function executePayment(adminOverride = false) {
+            console.log('executePayment called with adminOverride:', adminOverride);
+
+            const isPwd = document.getElementById('isPwd').checked;
+            const isSeniorCitizen = document.getElementById('isSeniorCitizen').checked;
+
+            // Only one discount can be applied at a time (mutually exclusive)
+            const discountPercentage = isPwd ? 20 : (isSeniorCitizen ? 20 : 0);
+
             const formData = {
                 member_id: selectedMember.id,
                 plan_type: selectedPlanType,
                 duration_type: selectedDurationType,
                 amount: document.getElementById('paymentAmount').value,
+                amount_tendered: document.getElementById('amountTendered').value || null,
+                change_amount: document.getElementById('changeAmount').value || 0,
                 start_date: document.getElementById('startDate').value,
                 notes: document.querySelector('textarea[name="notes"]').value,
-                is_pwd: document.getElementById('isPwd').checked ? 1 : 0,
-                is_senior_citizen: document.getElementById('isSeniorCitizen').checked ? 1 : 0,
+                is_pwd: isPwd ? 1 : 0,
+                is_senior_citizen: isSeniorCitizen ? 1 : 0,
                 discount_amount: document.getElementById('discountAmount').value,
-                discount_percentage: document.getElementById('isPwd').checked && document.getElementById('isSeniorCitizen').checked ? 40 : 
-                                   (document.getElementById('isPwd').checked || document.getElementById('isSeniorCitizen').checked ? 20 : 0),
+                discount_percentage: discountPercentage,
+                admin_override: adminOverride,
+                override_reason: adminOverride ? 'Admin override for duplicate membership plan' : null,
                 _token: '{{ csrf_token() }}'
             };
 
+            console.log('Payment data:', formData);
+
             // Show loading state
-            const confirmBtn = document.querySelector('button[onclick="processPayment()"]');
-            const originalText = confirmBtn.innerHTML;
-            confirmBtn.innerHTML = '<svg class="animate-spin w-4 h-4 inline mr-2" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>Processing...';
-            confirmBtn.disabled = true;
+            const confirmBtn = document.querySelector('button[onclick="window.handlePaymentConfirmationClick()"]');
+            const originalText = confirmBtn ? confirmBtn.innerHTML : '';
+            if (confirmBtn) {
+                confirmBtn.innerHTML = '<svg class="animate-spin w-4 h-4 inline mr-2" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>Processing...';
+                confirmBtn.disabled = true;
+            }
 
             fetch('{{ route("membership.process-payment") }}', {
                 method: 'POST',
@@ -705,27 +922,152 @@
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    document.getElementById('planSelectionForm').classList.add('hidden');
-                    document.getElementById('successMessage').classList.remove('hidden');
-                    
+                    // Close the receipt preview modal first
+                    closeReceiptPreview();
+
+                    // Show regular success message (same for both regular and override payments)
+                    showPaymentSuccessMessage(data);
+
                     // Store payment ID for receipt generation
                     window.lastPaymentId = data.payment_id;
-                    
-                    // Auto-close receipt modal after 1 second and redirect to payments
+
+                    // Reload the page after a short delay to refresh member data and prevent freezing
                     setTimeout(() => {
-                        window.location.href = '{{ route("membership.payments.index") }}';
-                    }, 1000);
+                        window.location.reload();
+                    }, 2000); // 2 second delay to show success message
                 } else {
-                    alert('Error: ' + data.message);
-                    confirmBtn.innerHTML = originalText;
-                    confirmBtn.disabled = false;
+                    // Handle validation errors
+                    if (data.error === 'ACTIVE_MEMBERSHIP_EXISTS') {
+                        if (PaymentValidation.isAdmin) {
+                            PaymentValidation.showAdminWarning(data.message);
+                        } else {
+                            PaymentValidation.showEmployeeError(data.message);
+                        }
+                    } else {
+                        alert('Error: ' + data.message);
+                    }
+                    if (confirmBtn) {
+                        confirmBtn.innerHTML = originalText;
+                        confirmBtn.disabled = false;
+                    }
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
                 alert('An error occurred while processing the payment');
-                confirmBtn.innerHTML = originalText;
-                confirmBtn.disabled = false;
+                if (confirmBtn) {
+                    confirmBtn.innerHTML = originalText;
+                    confirmBtn.disabled = false;
+                }
+            });
+        }
+
+        function showPaymentSuccessMessage(data) {
+            // Get member name safely
+            let memberName = selectedMember.full_name;
+            if (!memberName && selectedMember.first_name && selectedMember.last_name) {
+                memberName = `${selectedMember.first_name} ${selectedMember.middle_name || ''} ${selectedMember.last_name}`.replace(/\s+/g, ' ').trim();
+            }
+            if (!memberName) {
+                memberName = 'Member';
+            }
+
+            // Create success notification
+            const notification = document.createElement('div');
+            notification.className = 'fixed top-4 right-4 bg-green-500 text-white px-6 py-4 rounded-lg shadow-lg z-50 transform translate-x-full transition-transform duration-300';
+            notification.innerHTML = `
+                <div class="flex items-center gap-3">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                    <div>
+                        <div class="font-semibold">Payment Successful!</div>
+                        <div class="text-sm">Membership activated for ${memberName}</div>
+                        <div class="text-xs mt-1">Payment ID: ${data.payment_id}</div>
+                        <div class="text-xs mt-1">Page will refresh in 2 seconds...</div>
+                    </div>
+                </div>
+            `;
+
+            document.body.appendChild(notification);
+
+            // Animate in
+            setTimeout(() => {
+                notification.classList.remove('translate-x-full');
+            }, 100);
+        }
+
+        function resetPaymentForm() {
+            // Reset payment-specific fields only
+            document.getElementById('paymentAmount').value = '';
+            document.getElementById('originalAmount').value = '';
+            document.getElementById('discountAmount').value = '';
+            document.getElementById('amountTendered').value = '';
+            document.getElementById('changeAmount').value = '';
+            document.getElementById('startDate').value = new Date().toISOString().split('T')[0];
+            document.querySelector('textarea[name="notes"]').value = '';
+            document.getElementById('isPwd').checked = false;
+            document.getElementById('isSeniorCitizen').checked = false;
+
+            // Reset plan and duration selections
+            selectedPlanType = null;
+            selectedDurationType = null;
+
+            // Reset UI for plan selection
+            document.querySelectorAll('.plan-type-card').forEach(card => {
+                card.classList.remove('ring-2', 'ring-blue-500', 'bg-blue-50');
+            });
+
+            document.querySelectorAll('.duration-card').forEach(card => {
+                card.classList.remove('ring-2', 'ring-blue-500', 'bg-blue-50');
+            });
+
+            // Hide discount info
+            document.getElementById('discountInfo').classList.add('hidden');
+
+            // Reset price display
+            document.getElementById('totalPrice').textContent = '₱0.00';
+            document.getElementById('priceBreakdown').textContent = 'Select plan and duration';
+
+            // Update confirm button
+            updateConfirmButton();
+        }
+
+        function updateConfirmButton() {
+            const confirmBtn = document.getElementById('confirmPaymentBtn');
+            if (confirmBtn) {
+                if (selectedPlanType && selectedDurationType && selectedMember) {
+                    confirmBtn.disabled = false;
+                } else {
+                    confirmBtn.disabled = true;
+                }
+            }
+        }
+
+        function updateMemberDisplay(memberId) {
+            // Refresh the member card to show updated membership status
+            // This could be enhanced to make an AJAX call to get updated member data
+            console.log('Member display updated for ID:', memberId);
+
+            // For now, just show a visual indicator that the member was updated
+            const memberCards = document.querySelectorAll('.member-card');
+            memberCards.forEach(card => {
+                const memberIdElement = card.querySelector('[data-member-id]');
+                if (memberIdElement && memberIdElement.dataset.memberId == memberId) {
+                    // Add a temporary success indicator
+                    const indicator = document.createElement('div');
+                    indicator.className = 'absolute top-2 right-2 bg-green-500 text-white text-xs px-2 py-1 rounded-full';
+                    indicator.textContent = 'Updated';
+                    card.style.position = 'relative';
+                    card.appendChild(indicator);
+
+                    // Remove indicator after 3 seconds
+                    setTimeout(() => {
+                        if (indicator.parentNode) {
+                            indicator.parentNode.removeChild(indicator);
+                        }
+                    }, 3000);
+                }
             });
         }
 
@@ -784,5 +1126,240 @@
                 alert('No payment ID available for receipt generation');
             }
         }
+
+        // Member search functionality
+        let memberListData = [];
+
+        // Load members from existing DOM elements
+        function loadMembersFromDOM() {
+            const existingCards = document.querySelectorAll('.member-card[data-member]');
+            memberListData = Array.from(existingCards).map(card => {
+                return JSON.parse(card.dataset.member);
+            });
+        }
+
+        // Update member list display with enhanced search
+        function updateMemberListDisplay() {
+            const memberResults = document.getElementById('memberResults');
+            const searchInput = document.getElementById('memberSearch');
+            if (!memberResults || !searchInput) return;
+
+            // Store current search term
+            const searchTerm = searchInput.value.toLowerCase().trim();
+
+            // Clear existing content
+            memberResults.innerHTML = '';
+
+            // Filter members based on search term and exclude inactive members
+            const filteredMembers = memberListData.filter(member => {
+                // Exclude deleted members
+                if (member.status === 'deleted') {
+                    return false;
+                }
+
+                // If no search term, show all active members
+                if (!searchTerm) return true;
+
+                // Search across multiple fields with better matching
+                const fullName = (member.full_name || '').toLowerCase();
+                const email = (member.email || '').toLowerCase();
+                const memberNumber = (member.member_number || '').toLowerCase();
+                const phone = (member.mobile_number || '').toLowerCase();
+
+                // Check if search term matches any field
+                return fullName.includes(searchTerm) ||
+                       email.includes(searchTerm) ||
+                       memberNumber.includes(searchTerm) ||
+                       phone.includes(searchTerm);
+            });
+
+            // Sort results: exact matches first, then partial matches
+            if (searchTerm) {
+                filteredMembers.sort((a, b) => {
+                    const aFullName = (a.full_name || '').toLowerCase();
+                    const bFullName = (b.full_name || '').toLowerCase();
+
+                    // Exact match gets priority
+                    const aExact = aFullName === searchTerm ? 0 : 1;
+                    const bExact = bFullName === searchTerm ? 0 : 1;
+
+                    if (aExact !== bExact) return aExact - bExact;
+
+                    // Then by name starts with search term
+                    const aStarts = aFullName.startsWith(searchTerm) ? 0 : 1;
+                    const bStarts = bFullName.startsWith(searchTerm) ? 0 : 1;
+
+                    return aStarts - bStarts;
+                });
+            }
+
+            // Generate member cards
+            filteredMembers.forEach((member, index) => {
+                const memberCard = createMemberCard(member, searchTerm);
+                memberResults.appendChild(memberCard);
+
+                // Add animation delay for smooth appearance
+                memberCard.style.animation = `fadeIn 0.3s ease-in-out ${index * 0.05}s both`;
+            });
+
+            // Show message if no members found
+            if (filteredMembers.length === 0) {
+                const noResultsDiv = document.createElement('div');
+                noResultsDiv.className = 'text-center py-12 text-gray-500';
+                noResultsDiv.innerHTML = searchTerm ?
+                    `<div class="space-y-2">
+                        <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                        </svg>
+                        <p class="text-lg font-medium">No members found</p>
+                        <p class="text-sm">Try searching with a different name, email, or member number</p>
+                    </div>` :
+                    '<p class="text-lg">No members available.</p>';
+                memberResults.appendChild(noResultsDiv);
+            } else if (searchTerm) {
+                // Show result count when searching
+                const resultCount = document.createElement('div');
+                resultCount.className = 'text-sm text-gray-600 mb-4 px-2';
+                resultCount.innerHTML = `Found <strong>${filteredMembers.length}</strong> member${filteredMembers.length !== 1 ? 's' : ''}`;
+                memberResults.insertBefore(resultCount, memberResults.firstChild);
+            }
+        }
+
+        // Helper function to highlight search term in text
+        function highlightSearchTerm(text, searchTerm) {
+            if (!searchTerm || !text) return text;
+
+            const regex = new RegExp(`(${searchTerm})`, 'gi');
+            return text.replace(regex, '<mark style="background-color: #fef08a; font-weight: 600;">$1</mark>');
+        }
+
+        // Create member card element with search highlighting
+        function createMemberCard(member, searchTerm = '') {
+            const memberCard = document.createElement('div');
+            memberCard.className = 'member-card bg-white border rounded-lg p-4 sm:p-6 cursor-pointer transition-all duration-200 hover:shadow-md hover:border-blue-400';
+            memberCard.style.borderColor = '#E5E7EB';
+            memberCard.dataset.member = JSON.stringify(member);
+            memberCard.onclick = () => selectMember(memberCard);
+
+            // Determine membership status badge
+            let statusBadge = '';
+            let statusColor = '';
+
+            if (member.current_membership_period) {
+                if (member.current_membership_period.is_expired) {
+                    statusBadge = 'Expired';
+                    statusColor = 'bg-red-100 text-red-800';
+                } else {
+                    statusBadge = 'Active';
+                    statusColor = 'bg-green-100 text-green-800';
+                }
+            } else {
+                statusBadge = 'Not Subscribed';
+                statusColor = 'bg-gray-100 text-gray-800';
+            }
+
+            // Highlight search terms in member data
+            const highlightedName = highlightSearchTerm(member.full_name, searchTerm);
+            const highlightedEmail = highlightSearchTerm(member.email, searchTerm);
+            const highlightedNumber = highlightSearchTerm(member.member_number, searchTerm);
+            const highlightedPhone = highlightSearchTerm(member.mobile_number, searchTerm);
+
+            memberCard.innerHTML = `
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                    <div class="flex-1">
+                        <div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 mb-2">
+                            <h3 class="text-base sm:text-lg font-semibold" style="color: #000000;">${highlightedName}</h3>
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${statusColor}">
+                                ${statusBadge}
+                            </span>
+                        </div>
+                        <div class="text-sm text-gray-600 space-y-1">
+                            <div><strong>Member #:</strong> ${highlightedNumber}</div>
+                            <div><strong>Email:</strong> ${highlightedEmail}</div>
+                            <div><strong>Phone:</strong> ${highlightedPhone || 'N/A'}</div>
+                        </div>
+                    </div>
+                    <div class="flex-shrink-0">
+                        <button class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200">
+                            Select
+                        </button>
+                    </div>
+                </div>
+            `;
+
+            return memberCard;
+        }
+
+
+        // Debounce timer for search
+        let searchDebounceTimer = null;
+
+        // Initialize search functionality when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            const memberSearchInput = document.getElementById('memberSearch');
+
+            if (memberSearchInput) {
+                // Set up search functionality with debounce for better performance
+                memberSearchInput.addEventListener('input', function(e) {
+                    // Clear previous timer
+                    if (searchDebounceTimer) {
+                        clearTimeout(searchDebounceTimer);
+                    }
+
+                    // Set new timer for instant search (no delay)
+                    searchDebounceTimer = setTimeout(function() {
+                        updateMemberListDisplay();
+                    }, 50); // 50ms debounce for very responsive search
+                });
+
+                // Add keyboard shortcuts
+                memberSearchInput.addEventListener('keydown', function(e) {
+                    // Ctrl+A or Cmd+A to select all text
+                    if ((e.ctrlKey || e.metaKey) && e.key === 'a') {
+                        e.preventDefault();
+                        this.select();
+                    }
+
+                    // Escape to clear search
+                    if (e.key === 'Escape') {
+                        this.value = '';
+                        updateMemberListDisplay();
+                        this.focus();
+                    }
+                });
+
+                // Focus on search input when page loads
+                memberSearchInput.focus();
+            }
+
+            // Load initial data from existing DOM
+            loadMembersFromDOM();
+
+            console.log('✅ Member search page initialized with RFID support');
+        });
+
+        // Add CSS animation for fade-in effect
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes fadeIn {
+                from {
+                    opacity: 0;
+                    transform: translateY(-10px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            mark {
+                padding: 0.125rem 0.25rem;
+                border-radius: 0.25rem;
+            }
+        `;
+        document.head.appendChild(style);
     </script>
+
+    {{-- Include payment validation modals --}}
+    @include('components.payment-validation-modals')
 </x-layout>

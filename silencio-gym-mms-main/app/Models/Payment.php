@@ -11,6 +11,8 @@ class Payment extends Model
     protected $fillable = [
         'member_id',
         'amount',
+        'amount_tendered',
+        'change_amount',
         'payment_date',
         'payment_time',
         'status',
@@ -32,6 +34,8 @@ class Payment extends Model
         'membership_start_date' => 'date',
         'membership_expiration_date' => 'date',
         'amount' => 'decimal:2',
+        'amount_tendered' => 'decimal:2',
+        'change_amount' => 'decimal:2',
         'is_pwd' => 'boolean',
         'is_senior_citizen' => 'boolean',
         'discount_amount' => 'decimal:2',

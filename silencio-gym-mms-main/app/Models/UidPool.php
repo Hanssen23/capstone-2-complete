@@ -25,32 +25,53 @@ class UidPool extends Model
      */
     public static function getAvailableUid(): ?string
     {
-        $uidPool = self::where('status', 'available')->first();
-        
-        if ($uidPool) {
-            $uidPool->update([
-                'status' => 'assigned',
-                'assigned_at' => now(),
-            ]);
-            
-            return $uidPool->uid;
-        }
-        
-        // If no UIDs available, try to generate some new ones
-        self::generateNewUids();
-        
-        // Try again after generating new UIDs
-        $uidPool = self::where('status', 'available')->first();
-        if ($uidPool) {
-            $uidPool->update([
-                'status' => 'assigned',
-                'assigned_at' => now(),
-            ]);
-            
-            return $uidPool->uid;
-        }
-        
-        return null;
+        // Use database transaction with locking to prevent race conditions
+        return \DB::transaction(function () {
+            // Lock the row for update to prevent concurrent access
+            $uidPool = self::where('status', 'available')
+                ->lockForUpdate()
+                ->first();
+
+            if ($uidPool) {
+                $uidPool->update([
+                    'status' => 'assigned',
+                    'assigned_at' => now(),
+                ]);
+
+                \Log::info('UID assigned from pool', [
+                    'uid' => $uidPool->uid,
+                    'assigned_at' => now()
+                ]);
+
+                return $uidPool->uid;
+            }
+
+            // If no UIDs available, try to generate some new ones
+            \Log::info('No UIDs available, generating new ones');
+            self::generateNewUids();
+
+            // Try again after generating new UIDs
+            $uidPool = self::where('status', 'available')
+                ->lockForUpdate()
+                ->first();
+
+            if ($uidPool) {
+                $uidPool->update([
+                    'status' => 'assigned',
+                    'assigned_at' => now(),
+                ]);
+
+                \Log::info('UID assigned from newly generated pool', [
+                    'uid' => $uidPool->uid,
+                    'assigned_at' => now()
+                ]);
+
+                return $uidPool->uid;
+            }
+
+            \Log::error('Failed to get available UID even after generating new ones');
+            return null;
+        });
     }
 
     /**
@@ -88,23 +109,55 @@ class UidPool extends Model
     }
 
     /**
-     * Return a UID to the pool
+     * Return a UID back to the pool
      */
     public static function returnUid(string $uid): bool
     {
         $uidPool = self::where('uid', $uid)->first();
-        
+
         if ($uidPool) {
             $uidPool->update([
                 'status' => 'available',
                 'returned_at' => now(),
             ]);
-            
+
+            \Log::info('UID returned to pool', [
+                'uid' => $uid,
+                'returned_at' => now()
+            ]);
+
             return true;
         }
-        
+
         return false;
     }
+
+    /**
+     * Reset a specific UID to available status
+     */
+    public static function resetUid(string $uid): bool
+    {
+        $uidPool = self::where('uid', $uid)->first();
+
+        if ($uidPool) {
+            $uidPool->update([
+                'status' => 'available',
+                'assigned_at' => null,
+                'returned_at' => now(),
+            ]);
+
+            \Log::info('UID reset to available', [
+                'uid' => $uid,
+                'reset_at' => now()
+            ]);
+
+            return true;
+        }
+
+        return false;
+    }
+
+
 
     /**
      * Check if a UID is available

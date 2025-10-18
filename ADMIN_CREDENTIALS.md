@@ -1,20 +1,27 @@
 # 🔐 Admin Login Credentials
 
-## **Admin User Created Successfully!**
+## **✅ Admin User Verified & Working!**
 
-### **Login Details:**
+### **🎯 CORRECT Login Details:**
 - **URL**: http://156.67.221.184/login
 - **Email**: admin@silencio.gym
 - **Password**: admin123
 
+### **✅ Status:** TESTED & CONFIRMED WORKING
+
 ---
 
-## **How to Login:**
+## **📋 How to Login:**
 
 1. Go to: http://156.67.221.184/login
-2. Enter email: `admin@silencio.gym`
-3. Enter password: `admin123`
+2. Enter email: `admin@silencio.gym` (exactly as shown)
+3. Enter password: `admin123` (exactly as shown)
 4. Click "Login"
+
+### **⚠️ Important Notes:**
+- Use the exact email: `admin@silencio.gym` (NOT `admin@silencio-gym.com`)
+- Password is case-sensitive: `admin123`
+- Clear browser cache if you have login issues
 
 ---
 

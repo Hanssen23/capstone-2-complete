@@ -13,17 +13,17 @@ return [
     'plan_types' => [
         'basic' => [
             'name' => 'Basic',
-            'base_price' => 50.00,
+            'base_price' => 900.00,
             'description' => 'Basic gym access with standard facilities',
         ],
         'vip' => [
             'name' => 'VIP',
-            'base_price' => 100.00,
+            'base_price' => 1250.00,
             'description' => 'Premium access with additional amenities',
         ],
         'premium' => [
             'name' => 'Premium',
-            'base_price' => 150.00,
+            'base_price' => 950.00,
             'description' => 'Full access with all premium features',
         ],
     ],

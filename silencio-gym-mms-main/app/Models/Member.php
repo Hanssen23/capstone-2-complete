@@ -10,19 +10,26 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Auth\Passwords\CanResetPassword;
+use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 
-class Member extends Authenticatable
+class Member extends Authenticatable implements MustVerifyEmail, CanResetPasswordContract
 {
-    use Notifiable;
+    use Notifiable, CanResetPassword;
     protected $fillable = [
         'uid',
         'member_number',
         'membership',
         'subscription_status',
         'first_name',
+        'middle_name',
         'last_name',
+        'age',
+        'gender',
         'mobile_number',
         'email',
+        'email_verified_at',
         'password',
         'status',
         'role',
@@ -32,13 +39,27 @@ class Member extends Authenticatable
         'accepted_terms_at',
         'current_plan_type',
         'current_duration_type',
+        'last_login_at',
+        'last_activity_at',
+        'exclude_from_auto_deletion',
+        'exclusion_reason',
     ];
 
     protected $casts = [
-        'membership_starts_at' => 'date',
-        'membership_expires_at' => 'date',
+        'membership_starts_at' => 'datetime',
+        'membership_expires_at' => 'datetime',
         'accepted_terms_at' => 'datetime',
+        'email_verified_at' => 'datetime',
+        'last_login_at' => 'datetime',
+        'last_activity_at' => 'datetime',
+        'exclude_from_auto_deletion' => 'boolean',
+        'password' => 'hashed',
     ];
+
+    /**
+     * Append full_name to JSON serialization
+     */
+    protected $appends = ['full_name'];
 
     /**
      * Boot the model
@@ -87,18 +108,23 @@ class Member extends Authenticatable
 
     public function getIsActiveAttribute(): bool
     {
-        return $this->status === 'active' && 
-               ($this->membership_expires_at === null || Carbon::parse($this->membership_expires_at)->isFuture());
+        return $this->status === 'active' &&
+               ($this->membership_expires_at === null || $this->membership_expires_at->isFuture());
     }
 
     public function getIsExpiredAttribute(): bool
     {
-        return $this->membership_expires_at !== null && Carbon::parse($this->membership_expires_at)->isPast();
+        return $this->membership_expires_at !== null && $this->membership_expires_at->isPast();
     }
 
     public function getFullNameAttribute(): string
     {
-        return trim($this->first_name . ' ' . $this->last_name);
+        $name = $this->first_name;
+        if ($this->middle_name) {
+            $name .= ' ' . $this->middle_name;
+        }
+        $name .= ' ' . $this->last_name;
+        return trim($name);
     }
 
     /**
@@ -144,9 +170,9 @@ class Member extends Authenticatable
      */
     public function hasActiveSubscription(): bool
     {
-        return $this->subscription_status === 'active' && 
+        return $this->subscription_status === 'active' &&
                $this->current_plan_type !== null &&
-               ($this->membership_expires_at === null || Carbon::parse($this->membership_expires_at)->isFuture());
+               ($this->membership_expires_at === null || $this->membership_expires_at->isFuture());
     }
 
     /**
@@ -257,6 +283,56 @@ class Member extends Authenticatable
         return $this->currentMembershipPeriod && $this->currentMembershipPeriod->is_active;
     }
 
+    /**
+     * Send the email verification notification.
+     */
+    public function sendEmailVerificationNotification()
+    {
+        $this->notify(new \App\Notifications\MemberEmailVerification);
+    }
+
+    /**
+     * Send the password reset notification.
+     */
+    public function sendPasswordResetNotification($token)
+    {
+        $this->notify(new \App\Notifications\MemberPasswordReset($token));
+    }
+
+    /**
+     * Get the email address that should be used for verification.
+     */
+    public function getEmailForVerification()
+    {
+        return $this->email;
+    }
+
+    /**
+     * Get the email address that should be used for password reset.
+     */
+    public function getEmailForPasswordReset()
+    {
+        return $this->email;
+    }
+
+    /**
+     * Determine if the user has verified their email address.
+     */
+    public function hasVerifiedEmail()
+    {
+        return ! is_null($this->email_verified_at);
+    }
+
+    /**
+     * Mark the given user's email as verified.
+     */
+    public function markEmailAsVerified()
+    {
+        return $this->forceFill([
+            'email_verified_at' => $this->freshTimestamp(),
+        ])->save();
+    }
+
     public function scopeActive($query)
     {
         return $query->where('status', 'active');
@@ -362,5 +438,166 @@ class Member extends Authenticatable
     public function getOnlineStatusAttribute(): string
     {
         return $this->isInGym() ? 'Online' : 'Offline';
+    }
+
+    /**
+     * Update last login timestamp
+     */
+    public function updateLastLogin(): void
+    {
+        $this->update([
+            'last_login_at' => now(),
+            'last_activity_at' => now(),
+        ]);
+    }
+
+    /**
+     * Update last activity timestamp
+     */
+    public function updateLastActivity(): void
+    {
+        $this->update(['last_activity_at' => now()]);
+    }
+
+    /**
+     * Check if member is eligible for auto-deletion
+     */
+    public function isEligibleForAutoDeletion(): bool
+    {
+        // Skip if excluded from auto-deletion
+        if ($this->exclude_from_auto_deletion) {
+            return false;
+        }
+
+        // Note: Hard delete is now used, so no need to check for soft delete
+
+        return true;
+    }
+
+    /**
+     * Get days since last login
+     */
+    public function getDaysSinceLastLogin(): ?int
+    {
+        if (!$this->last_login_at) {
+            return null;
+        }
+
+        return $this->last_login_at->diffInDays(now());
+    }
+
+    /**
+     * Get days since last activity
+     */
+    public function getDaysSinceLastActivity(): ?int
+    {
+        if (!$this->last_activity_at) {
+            return null;
+        }
+
+        return $this->last_activity_at->diffInDays(now());
+    }
+
+    /**
+     * Get days since membership expired
+     */
+    public function getDaysSinceMembershipExpired(): ?int
+    {
+        if (!$this->membership_expires_at || $this->membership_expires_at->isFuture()) {
+            return null;
+        }
+
+        return $this->membership_expires_at->diffInDays(now());
+    }
+
+    /**
+     * Get days since account creation (for unverified emails)
+     */
+    public function getDaysSinceCreation(): int
+    {
+        return $this->created_at->diffInDays(now());
+    }
+
+    /**
+     * Check if member has recent RFID activity
+     */
+    public function hasRecentRfidActivity(int $days = 30): bool
+    {
+        return $this->rfidLogs()
+            ->where('timestamp', '>=', now()->subDays($days))
+            ->exists();
+    }
+
+
+
+    /**
+     * Check if member has outstanding payments
+     */
+    public function hasOutstandingPayments(): bool
+    {
+        return $this->payments()
+            ->where('status', 'pending')
+            ->exists();
+    }
+
+    /**
+     * Mark member for deletion warning
+     */
+    public function markForDeletionWarning(string $warningType = 'first'): void
+    {
+        $field = $warningType === 'final' ? 'final_warning_sent_at' : 'deletion_warning_sent_at';
+        $this->update([$field => now()]);
+    }
+
+    /**
+     * Check if deletion warning was sent
+     */
+    public function hasDeletionWarningSent(string $warningType = 'first'): bool
+    {
+        $field = $warningType === 'final' ? 'final_warning_sent_at' : 'deletion_warning_sent_at';
+        return !is_null($this->$field);
+    }
+
+    /**
+     * Get deletion eligibility reasons
+     */
+    public function getDeletionEligibilityReasons(): array
+    {
+        $reasons = [];
+        $settings = \App\Models\AutoDeletionSettings::first();
+
+        if (!$settings || !$settings->is_enabled) {
+            return $reasons;
+        }
+
+        // Check no login threshold
+        $daysSinceLogin = $this->getDaysSinceLastLogin();
+        if ($daysSinceLogin && $daysSinceLogin >= $settings->no_login_threshold_days) {
+            $reasons[] = "No login for {$daysSinceLogin} days (threshold: {$settings->no_login_threshold_days})";
+        }
+
+        // Check expired membership
+        $daysSinceExpired = $this->getDaysSinceMembershipExpired();
+        if ($daysSinceExpired && $daysSinceExpired >= $settings->expired_membership_grace_days) {
+            $reasons[] = "Membership expired {$daysSinceExpired} days ago (grace period: {$settings->expired_membership_grace_days})";
+        }
+
+        // Check unverified email
+        if (!$this->hasVerifiedEmail()) {
+            $daysSinceCreation = $this->getDaysSinceCreation();
+            if ($daysSinceCreation >= $settings->unverified_email_threshold_days) {
+                $reasons[] = "Email unverified for {$daysSinceCreation} days (threshold: {$settings->unverified_email_threshold_days})";
+            }
+        }
+
+        // Check inactive status
+        if ($this->status === 'inactive') {
+            $daysSinceLastActivity = $this->getDaysSinceLastActivity();
+            if ($daysSinceLastActivity && $daysSinceLastActivity >= $settings->inactive_status_threshold_days) {
+                $reasons[] = "Inactive status for {$daysSinceLastActivity} days (threshold: {$settings->inactive_status_threshold_days})";
+            }
+        }
+
+        return $reasons;
     }
 }

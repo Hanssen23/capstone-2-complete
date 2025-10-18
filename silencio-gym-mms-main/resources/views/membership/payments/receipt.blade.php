@@ -512,14 +512,16 @@
                     <span class="amount">₱{{ number_format($payment->amount, 2) }}</span>
                 </div>
             @endif
-            <div class="total-row">
-                <span>Amount Received:</span>
-                <span class="amount">₱{{ number_format($payment->amount, 2) }}</span>
-            </div>
-            <div class="total-row">
-                <span>Change:</span>
-                <span class="amount">₱0.00</span>
-            </div>
+            @if($payment->amount_tendered)
+                <div class="total-row">
+                    <span>Amount Tendered:</span>
+                    <span class="amount">₱{{ number_format($payment->amount_tendered, 2) }}</span>
+                </div>
+                <div class="total-row">
+                    <span>Change:</span>
+                    <span class="amount">₱{{ number_format($payment->change_amount ?? 0, 2) }}</span>
+                </div>
+            @endif
         </div>
 
         <!-- Cashier Section -->

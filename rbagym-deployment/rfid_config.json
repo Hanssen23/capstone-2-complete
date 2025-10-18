@@ -1,0 +1,62 @@
+{
+  "api": {
+    "url": "http://156.67.221.184",
+    "endpoint": "/api/rfid/tap",
+    "timeout": 3,
+    "retry_attempts": 3,
+    "retry_delay": 1.0
+  },
+  "reader": {
+    "device_id": "main_reader",
+    "read_delay": 0.3,
+    "duplicate_prevention_seconds": 1.5,
+    "auto_start": true,
+    "concurrent_reads": true,
+    "performance_mode": true
+  },
+  "hardware": {
+    "auto_detect": true,
+    "fallback_mode": true,
+    "protocol_priority": [
+      "T0",
+      "T1",
+      "RAW"
+    ],
+    "connection_retries": 3
+  },
+  "feedback": {
+    "success_sound": true,
+    "error_sound": true,
+    "led_indicator": true,
+    "verbose_logging": false,
+    "log_level": "INFO"
+  },
+  "logging": {
+    "enabled": true,
+    "log_file": "storage/logs/rfid_activity.log",
+    "rotation_size": "10MB",
+    "retention_days": 7,
+    "console_output": true
+  },
+  "performance": {
+    "max_cards_per_minute": 60,
+    "buffer_size": 100,
+    "cache_ttl": 300,
+    "optimize_memory": true
+  },
+  "security": {
+    "validate_cards": true,
+    "rate_limiting": true,
+    "blacklist_enabled": false,
+    "encrypted_communication": false
+  },
+  "monitoring": {
+    "health_checks": true,
+    "metrics_collection": true,
+    "alert_thresholds": {
+      "error_rate": 0.1,
+      "response_time": 5.0,
+      "card_read_rate": 10
+    }
+  }
+}

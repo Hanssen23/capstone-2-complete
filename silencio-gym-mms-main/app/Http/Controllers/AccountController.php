@@ -129,15 +129,17 @@ class AccountController extends Controller
         }
         
         $validator = Validator::make($request->all(), [
-            'first_name' => 'required|string|max:255',
-            'last_name' => 'required|string|max:255',
+            'first_name' => 'required|string|max:255|regex:/^[A-Za-z\s]+$/',
+            'last_name' => 'required|string|max:255|regex:/^[A-Za-z\s]+$/',
             'email' => 'required|string|email|max:255|unique:users,email|unique:members,email',
             'mobile_number' => 'nullable|string|regex:/^9\d{2}\s\d{3}\s\d{4}$/',
             'password' => 'required|string|min:8|confirmed',
             'role' => 'required|in:admin,employee',
         ], [
             'first_name.required' => 'First name is required',
+            'first_name.regex' => 'First name can only contain letters and spaces',
             'last_name.required' => 'Last name is required',
+            'last_name.regex' => 'Last name can only contain letters and spaces',
             'email.required' => 'Email is required',
             'email.email' => 'Please enter a valid email address',
             'email.unique' => 'This email is already registered',
@@ -166,10 +168,20 @@ class AccountController extends Controller
                 $mobileNumber = '+63' . preg_replace('/\D/', '', $request->mobile_number);
             }
 
+            // Build full name with middle name if provided
+            $fullName = $request->first_name;
+            if ($request->middle_name) {
+                $fullName .= ' ' . $request->middle_name;
+            }
+            $fullName .= ' ' . $request->last_name;
+
             $user = User::create([
-                'name' => $request->first_name . ' ' . $request->last_name, // Keep name for compatibility
+                'name' => $fullName, // Keep name for compatibility
                 'first_name' => $request->first_name,
+                'middle_name' => $request->middle_name,
                 'last_name' => $request->last_name,
+                'age' => $request->age,
+                'gender' => $request->gender,
                 'email' => $request->email,
                 'mobile_number' => $mobileNumber,
                 'password' => Hash::make($request->password),
@@ -248,16 +260,18 @@ class AccountController extends Controller
 
         // Different validation rules for employees vs admins
         $validationRules = [
-            'first_name' => 'required|string|max:255',
-            'last_name' => 'required|string|max:255',
+            'first_name' => 'required|string|max:255|regex:/^[A-Za-z\s]+$/',
+            'last_name' => 'required|string|max:255|regex:/^[A-Za-z\s]+$/',
             'email' => 'required|string|email|max:255|unique:users,email,' . $user->id . '|unique:members,email',
             'mobile_number' => 'nullable|string|regex:/^9\d{2}\s\d{3}\s\d{4}$/',
             'password' => 'nullable|string|min:8|confirmed',
         ];
-        
+
         $validationMessages = [
             'first_name.required' => 'First name is required',
+            'first_name.regex' => 'First name can only contain letters and spaces',
             'last_name.required' => 'Last name is required',
+            'last_name.regex' => 'Last name can only contain letters and spaces',
             'email.required' => 'Email is required',
             'email.email' => 'Please enter a valid email address',
             'email.unique' => 'This email is already registered',
@@ -297,14 +311,24 @@ class AccountController extends Controller
                 $mobileNumber = '+63' . preg_replace('/\D/', '', $request->mobile_number);
             }
 
+            // Build full name with middle name if provided
+            $fullName = $request->first_name;
+            if ($request->middle_name) {
+                $fullName .= ' ' . $request->middle_name;
+            }
+            $fullName .= ' ' . $request->last_name;
+
             $updateData = [
-                'name' => $request->first_name . ' ' . $request->last_name,
+                'name' => $fullName,
                 'first_name' => $request->first_name,
+                'middle_name' => $request->middle_name,
                 'last_name' => $request->last_name,
+                'age' => $request->age,
+                'gender' => $request->gender,
                 'email' => $request->email,
                 'mobile_number' => $mobileNumber,
             ];
-            
+
             // Only admins can change roles
             if ($currentUser->role === 'admin' && $request->has('role')) {
                 $updateData['role'] = $request->role;

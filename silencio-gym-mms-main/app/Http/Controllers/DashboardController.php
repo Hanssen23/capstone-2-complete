@@ -27,8 +27,9 @@ class DashboardController extends Controller
         $dashboardData = Cache::remember($cacheKey, 3600, function () use ($isEmployee) {
             // Get all counts in a single query where possible (SQLite compatible)
             $counts = DB::select("
-                SELECT 
+                SELECT
                     (SELECT COUNT(*) FROM active_sessions WHERE status = 'active') as active_sessions_count,
+                    (SELECT COUNT(*) FROM members) as total_members_count,
                     (SELECT COUNT(*) FROM members WHERE status = 'active') as active_members_count,
                     (SELECT COUNT(*) FROM attendances WHERE date(check_in_time) = date('now')) as today_attendance_count,
                     (SELECT COUNT(*) FROM attendances WHERE check_in_time >= date('now', 'weekday 0', '-7 days')) as week_attendance_count,
@@ -98,6 +99,7 @@ class DashboardController extends Controller
 
             return [
                 'currentActiveMembersCount' => $counts->active_sessions_count,
+                'totalMembersCount' => $counts->total_members_count,
                 'totalActiveMembersCount' => $counts->active_members_count,
                 'todayAttendance' => $counts->today_attendance_count,
                 'thisWeekAttendance' => $counts->week_attendance_count,
@@ -131,6 +133,7 @@ class DashboardController extends Controller
             $counts = DB::select("
                 SELECT
                     (SELECT COUNT(*) FROM active_sessions WHERE status = 'active') as active_sessions_count,
+                    (SELECT COUNT(*) FROM members) as total_members_count,
                     (SELECT COUNT(*) FROM members WHERE status = 'active') as active_members_count,
                     (SELECT COUNT(*) FROM attendances WHERE date(check_in_time) = date('now')) as today_attendance_count,
                     (SELECT COUNT(*) FROM attendances WHERE check_in_time >= date('now', 'weekday 0', '-7 days')) as week_attendance_count,
@@ -151,6 +154,7 @@ class DashboardController extends Controller
 
             return [
                 'current_active_members' => $counts->active_sessions_count,
+                'total_members' => $counts->total_members_count,
                 'total_active_members' => $counts->active_members_count,
                 'today_attendance' => $counts->today_attendance_count,
                 'this_week_attendance' => $counts->week_attendance_count,

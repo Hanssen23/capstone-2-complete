@@ -107,11 +107,29 @@ class MemberDashboardController extends Controller
         $member = Auth::guard('member')->user();
 
         $request->validate([
+            'first_name' => 'required|string|max:255|regex:/^[A-Z][a-zA-Z\s]*$/',
+            'middle_name' => 'nullable|string|max:255|regex:/^[A-Z][a-zA-Z\s]*$/',
+            'last_name' => 'required|string|max:255|regex:/^[A-Z][a-zA-Z\s]*$/',
+            'age' => 'required|integer|min:1|max:120',
+            'gender' => 'required|in:Male,Female,Other,Prefer not to say',
             'email' => 'required|email|unique:members,email,' . $member->id,
             'mobile_number' => 'nullable|string|max:20',
+        ], [
+            'first_name.regex' => 'First name must start with a capital letter and can only contain letters and spaces',
+            'middle_name.regex' => 'Middle name must start with a capital letter and can only contain letters and spaces',
+            'last_name.regex' => 'Last name must start with a capital letter and can only contain letters and spaces',
+            'age.integer' => 'Age must be a valid number',
+            'age.min' => 'Age must be at least 1',
+            'age.max' => 'Age must not exceed 120',
+            'gender.in' => 'Please select a valid gender option',
         ]);
 
         $member->update([
+            'first_name' => $request->first_name,
+            'middle_name' => $request->middle_name,
+            'last_name' => $request->last_name,
+            'age' => $request->age,
+            'gender' => $request->gender,
             'email' => $request->email,
             'mobile_number' => $request->mobile_number,
         ]);

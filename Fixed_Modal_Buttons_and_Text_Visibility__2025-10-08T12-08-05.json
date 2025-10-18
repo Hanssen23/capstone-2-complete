@@ -1,0 +1,310 @@
+{
+  "version": "1.0.0",
+  "exportedAt": "2025-10-08T12:08:05.845Z",
+  "conversation": {
+    "id": "92376657-f7ae-4012-9b94-55690d4af8fd",
+    "name": "Fixed Modal Buttons and Text Visibility\n",
+    "createdAtIso": "2025-10-08T05:19:15.579Z",
+    "lastInteractedAtIso": "2025-10-08T05:51:02.684Z",
+    "chatHistory": [],
+    "feedbackStates": {
+      "temp-fe-11bf3296-388e-4216-89cf-dc1336d12626": {
+        "selectedRating": 0,
+        "feedbackNote": ""
+      },
+      "temp-fe-31d92786-d676-4cec-9818-82647044cc76": {
+        "selectedRating": 0,
+        "feedbackNote": ""
+      },
+      "temp-fe-683f06ff-b155-457e-8272-4f7f49a93939": {
+        "selectedRating": 0,
+        "feedbackNote": ""
+      },
+      "temp-fe-76ef1fae-a66c-485c-b7d2-405af03bbdae": {
+        "selectedRating": 0,
+        "feedbackNote": ""
+      },
+      "temp-fe-dd42bdb5-39e5-451d-81ca-0f08502576e0": {
+        "selectedRating": 0,
+        "feedbackNote": ""
+      },
+      "temp-fe-b07dc28e-d10b-424c-87a7-71489f2a6a70": {
+        "selectedRating": 0,
+        "feedbackNote": ""
+      },
+      "temp-fe-b4556991-8e5b-4276-8c9a-d6bf300c9030": {
+        "selectedRating": 0,
+        "feedbackNote": ""
+      },
+      "temp-fe-565b620f-a2d1-4288-ba9c-e1992ce291bd": {
+        "selectedRating": 0,
+        "feedbackNote": ""
+      },
+      "temp-fe-df1a51e8-6e52-40fd-8cdd-4bbbf10068aa": {
+        "selectedRating": 0,
+        "feedbackNote": ""
+      },
+      "temp-fe-e731a19e-dfd1-4f2b-b4b0-583d29e7cac7": {
+        "selectedRating": 0,
+        "feedbackNote": ""
+      },
+      "temp-fe-25aced7e-f645-4b51-b1c3-f90dc8b419ba": {
+        "selectedRating": 0,
+        "feedbackNote": ""
+      },
+      "temp-fe-a8a42893-afe5-4907-b212-e5b7fed210d2": {
+        "selectedRating": 0,
+        "feedbackNote": ""
+      },
+      "temp-fe-77f759a6-441e-4490-b99b-e9567b3d00fc": {
+        "selectedRating": 0,
+        "feedbackNote": ""
+      },
+      "temp-fe-2bb97bdb-6f6b-4531-99e9-cc0994be962f": {
+        "selectedRating": 0,
+        "feedbackNote": ""
+      },
+      "temp-fe-1273b9cd-add7-43b0-a910-3e9b287dce92": {
+        "selectedRating": 0,
+        "feedbackNote": ""
+      },
+      "temp-fe-ec03d154-1891-4d16-9f6d-5f9fd6c96907": {
+        "selectedRating": 0,
+        "feedbackNote": ""
+      },
+      "temp-fe-9c17e7b8-0386-4032-81e0-d45ae04d1772": {
+        "selectedRating": 0,
+        "feedbackNote": ""
+      },
+      "temp-fe-486dfcfb-a79f-464d-9077-9f0c39dc4777": {
+        "selectedRating": 0,
+        "feedbackNote": ""
+      },
+      "temp-fe-23b55b71-bf9f-4262-9742-2ee64c393aa7": {
+        "selectedRating": 0,
+        "feedbackNote": ""
+      },
+      "temp-fe-1f79af7f-2c2e-4a6a-a5f3-99471c95abc0": {
+        "selectedRating": 0,
+        "feedbackNote": ""
+      },
+      "temp-fe-7a1054f7-046d-47ec-aa85-b973ff012c6f": {
+        "selectedRating": 0,
+        "feedbackNote": ""
+      },
+      "temp-fe-f9917936-2f29-482e-ba52-f4a02ef846db": {
+        "selectedRating": 0,
+        "feedbackNote": ""
+      },
+      "temp-fe-a2715108-1f90-4783-b7a2-e3fdf10b19dd": {
+        "selectedRating": 0,
+        "feedbackNote": ""
+      },
+      "temp-fe-6d982a7c-f0a9-419e-9518-d7b576a2cb1d": {
+        "selectedRating": 0,
+        "feedbackNote": ""
+      },
+      "temp-fe-db6f449c-41dc-4d65-8f4b-89e02973cc13": {
+        "selectedRating": 0,
+        "feedbackNote": ""
+      },
+      "temp-fe-b9f394b1-68f6-4372-b8e0-17153adc9073": {
+        "selectedRating": 0,
+        "feedbackNote": ""
+      },
+      "temp-fe-aa2dbe3b-bac7-4b9f-be3e-87147a9236de": {
+        "selectedRating": 0,
+        "feedbackNote": ""
+      },
+      "temp-fe-a433de4c-d447-4c45-9022-aabaf024455e": {
+        "selectedRating": 0,
+        "feedbackNote": ""
+      },
+      "temp-fe-6454a1a4-edfa-4530-8392-780b01fd1993": {
+        "selectedRating": 0,
+        "feedbackNote": ""
+      },
+      "temp-fe-e51f6116-ccbc-412d-88e8-f2d5bb7ab1c0": {
+        "selectedRating": 0,
+        "feedbackNote": ""
+      },
+      "temp-fe-b046d96e-2d4e-4301-92d0-ff7a6e86be42": {
+        "selectedRating": 0,
+        "feedbackNote": ""
+      },
+      "temp-fe-31e1b6ab-d5b4-44dc-9714-8b8ba55f1262": {
+        "selectedRating": 0,
+        "feedbackNote": ""
+      },
+      "temp-fe-a62eec91-3746-43e1-825a-4356e2a60ac8": {
+        "selectedRating": 0,
+        "feedbackNote": ""
+      },
+      "temp-fe-5b4df713-75b3-4f3d-a4ae-b81b27586664": {
+        "selectedRating": 0,
+        "feedbackNote": ""
+      },
+      "temp-fe-1c4280f4-e0fa-4fc1-b7e4-59886a5f994d": {
+        "selectedRating": 0,
+        "feedbackNote": ""
+      },
+      "temp-fe-f162a6e9-2758-4824-9938-1e095de90aa3": {
+        "selectedRating": 0,
+        "feedbackNote": ""
+      },
+      "temp-fe-fe88ee57-9e2c-41b5-8607-637629cdfd19": {
+        "selectedRating": 0,
+        "feedbackNote": ""
+      },
+      "temp-fe-bfa7370a-f6ea-4e9d-bcd0-98084e021720": {
+        "selectedRating": 0,
+        "feedbackNote": ""
+      },
+      "temp-fe-2bfa774d-f7ae-4745-aedb-9ece5a90196d": {
+        "selectedRating": 0,
+        "feedbackNote": ""
+      },
+      "temp-fe-a39f4e1f-4d64-47bf-9710-acc41e4fcb0f": {
+        "selectedRating": 0,
+        "feedbackNote": ""
+      },
+      "temp-fe-09ced470-8f0b-4aee-b5d9-d23ef534d7e8": {
+        "selectedRating": 0,
+        "feedbackNote": ""
+      },
+      "temp-fe-0f02ab4e-4836-4c4a-bab2-0a1247127f4e": {
+        "selectedRating": 0,
+        "feedbackNote": ""
+      },
+      "temp-fe-5e53e649-bf0a-4d1c-8215-1edc4bb33165": {
+        "selectedRating": 0,
+        "feedbackNote": ""
+      },
+      "temp-fe-fae24e8a-a827-4158-8ff8-017b89fab674": {
+        "selectedRating": 0,
+        "feedbackNote": ""
+      },
+      "temp-fe-4c1cfd2f-e712-4f9d-9a87-fdab77f2f125": {
+        "selectedRating": 0,
+        "feedbackNote": ""
+      },
+      "temp-fe-0e87f141-f71f-4760-a33d-7dad460970a5": {
+        "selectedRating": 0,
+        "feedbackNote": ""
+      },
+      "temp-fe-8e47cec3-e216-4add-ba4d-2bd6f7106012": {
+        "selectedRating": 0,
+        "feedbackNote": ""
+      },
+      "temp-fe-f14aea71-5da9-415f-a15c-21d36f981b7e": {
+        "selectedRating": 0,
+        "feedbackNote": ""
+      },
+      "temp-fe-e118f6f7-7b68-4f06-8d1b-c20d4ec09c80": {
+        "selectedRating": 0,
+        "feedbackNote": ""
+      },
+      "temp-fe-d5944452-493d-4880-975d-642cf5179977": {
+        "selectedRating": 0,
+        "feedbackNote": ""
+      },
+      "temp-fe-43a7f3d0-1fea-47aa-b1bb-b7a58e61adfd": {
+        "selectedRating": 0,
+        "feedbackNote": ""
+      },
+      "temp-fe-a894fc55-0062-41a9-929f-2a578f6f7b64": {
+        "selectedRating": 0,
+        "feedbackNote": ""
+      },
+      "temp-fe-5d59784c-1214-46fd-8e62-f1898ca581c6": {
+        "selectedRating": 0,
+        "feedbackNote": ""
+      },
+      "temp-fe-892a3450-cde1-401b-a6f6-7d7532f01e9d": {
+        "selectedRating": 0,
+        "feedbackNote": ""
+      },
+      "temp-fe-42d410a6-be13-4f0d-9e6d-e517d7c74f25": {
+        "selectedRating": 0,
+        "feedbackNote": ""
+      },
+      "temp-fe-5d827800-2b3c-4e02-baed-d5a9f9ed6ce5": {
+        "selectedRating": 0,
+        "feedbackNote": ""
+      },
+      "temp-fe-25af8650-d84c-45e5-b104-a0fd66431ce2": {
+        "selectedRating": 0,
+        "feedbackNote": ""
+      },
+      "temp-fe-12e1bd02-f435-45b8-9c9b-5eda86a7ce2a": {
+        "selectedRating": 0,
+        "feedbackNote": ""
+      },
+      "temp-fe-6a37c504-40cb-4f66-9553-6c26333f4a4a": {
+        "selectedRating": 0,
+        "feedbackNote": ""
+      },
+      "temp-fe-0972996a-91c3-4e76-9a77-8a61e61e4146": {
+        "selectedRating": 0,
+        "feedbackNote": ""
+      },
+      "temp-fe-e9ec83ea-7e26-4a46-8b23-816c09b67ac0": {
+        "selectedRating": 0,
+        "feedbackNote": ""
+      },
+      "temp-fe-021261a1-fdb5-4dc5-af5f-a78077d9149e": {
+        "selectedRating": 0,
+        "feedbackNote": ""
+      },
+      "temp-fe-0df92bf0-7e9d-44d9-8ea4-a40589a92514": {
+        "selectedRating": 0,
+        "feedbackNote": ""
+      },
+      "temp-fe-1b3e5578-54f1-4a9d-9889-eeda0bc8399c": {
+        "selectedRating": 0,
+        "feedbackNote": ""
+      },
+      "temp-fe-fb37af26-4e44-4c03-a642-dee1316c9019": {
+        "selectedRating": 0,
+        "feedbackNote": ""
+      },
+      "temp-fe-6eee897b-b699-43fe-ab23-cd0081822502": {
+        "selectedRating": 0,
+        "feedbackNote": ""
+      }
+    },
+    "toolUseStates": {},
+    "draftExchange": {
+      "request_message": "",
+      "rich_text_json_repr": {
+        "type": "doc",
+        "content": [
+          {
+            "type": "paragraph"
+          }
+        ]
+      },
+      "status": "draft"
+    },
+    "draftActiveContextIds": [
+      "c:\\Users\\hanss\\Documents\\silencio-gym-mms-mainfalse",
+      "agentMemories"
+    ],
+    "requestIds": [],
+    "isPinned": false,
+    "isShareable": true,
+    "extraData": {
+      "isAgentConversation": true,
+      "hasAgentOnboarded": true,
+      "hasDirtyEdits": true,
+      "baselineTimestamp": 0,
+      "hasTitleGenerated": true
+    },
+    "personaType": 0,
+    "rootTaskUuid": "67b1c3ff-f6cc-4b65-8b34-6526f86d5cf9"
+  },
+  "metadata": {
+    "exportedBy": "Augment Debug Utils",
+    "notes": "Exported from thread menu on 2025-10-08T12:08:05.845Z"
+  }
+}

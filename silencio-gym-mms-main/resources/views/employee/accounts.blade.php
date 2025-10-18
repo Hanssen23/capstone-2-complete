@@ -37,7 +37,19 @@
                                     <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                                 @enderror
                             </div>
-                            
+
+                            <!-- Middle Name -->
+                            <div>
+                                <label for="middle_name" class="block text-sm font-medium mb-2" style="color: #6B7280;">Middle Name</label>
+                                <input type="text" id="middle_name" name="middle_name" value="{{ old('middle_name', auth()->user()->middle_name) }}"
+                                       class="w-full px-3 py-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                       style="border-color: #E5E7EB; background-color: #F9FAFB; color: #000000;"
+                                       placeholder="Enter middle name (optional)">
+                                @error('middle_name')
+                                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                                @enderror
+                            </div>
+
                             <!-- Last Name -->
                             <div>
                                 <label for="last_name" class="block text-sm font-medium mb-2" style="color: #6B7280;">Last Name</label>
@@ -49,6 +61,27 @@
                                     <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                                 @enderror
                             </div>
+
+                            <!-- Age -->
+                            <div>
+                                <label for="age" class="block text-sm font-medium mb-2" style="color: #6B7280;">Age</label>
+                                <input type="number" id="age" name="age" value="{{ old('age', auth()->user()->age) }}" min="1" max="120"
+                                       class="w-full px-3 py-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                       style="border-color: #E5E7EB; background-color: #F9FAFB; color: #000000;"
+                                       placeholder="Enter age">
+                                @error('age')
+                                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                                @enderror
+                            </div>
+                        </div>
+
+                        <!-- Gender (Read-only) -->
+                        <div>
+                            <label class="block text-sm font-medium mb-2" style="color: #6B7280;">Gender</label>
+                            <div class="w-full px-3 py-3 border rounded-md bg-gray-100" style="border-color: #E5E7EB; color: #6B7280;">
+                                {{ auth()->user()->gender ?: 'Not specified' }}
+                            </div>
+                            <p class="text-xs text-gray-500 mt-1">Gender cannot be changed. Please contact an administrator.</p>
                         </div>
                         
                         <!-- Email -->
@@ -150,30 +183,44 @@
                         <div>
                             <label class="block text-sm font-medium mb-2" style="color: #6B7280;">Full Name</label>
                             <div class="px-3 py-2 bg-gray-50 border rounded-md" style="border-color: #E5E7EB;">
-                                {{ auth()->user()->first_name }} {{ auth()->user()->last_name }}
+                                {{ auth()->user()->first_name }} {{ auth()->user()->middle_name ? auth()->user()->middle_name . ' ' : '' }}{{ auth()->user()->last_name }}
                             </div>
-                            </div>
-                        
+                        </div>
+
                         <div>
                             <label class="block text-sm font-medium mb-2" style="color: #6B7280;">Email Address</label>
                             <div class="px-3 py-2 bg-gray-50 border rounded-md" style="border-color: #E5E7EB;">
                                 {{ auth()->user()->email }}
                             </div>
-                            </div>
-                        
+                        </div>
+
                         <div>
                             <label class="block text-sm font-medium mb-2" style="color: #6B7280;">Mobile Number</label>
                             <div class="px-3 py-2 bg-gray-50 border rounded-md" style="border-color: #E5E7EB;">
                                 {{ auth()->user()->mobile_number ?: 'Not provided' }}
                             </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium mb-2" style="color: #6B7280;">Age</label>
+                            <div class="px-3 py-2 bg-gray-50 border rounded-md" style="border-color: #E5E7EB;">
+                                {{ auth()->user()->age ?: 'Not provided' }}
                             </div>
-                        
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium mb-2" style="color: #6B7280;">Gender</label>
+                            <div class="px-3 py-2 bg-gray-50 border rounded-md" style="border-color: #E5E7EB;">
+                                {{ auth()->user()->gender ?: 'Not specified' }}
+                            </div>
+                        </div>
+
                         <div>
                             <label class="block text-sm font-medium mb-2" style="color: #6B7280;">Account Created</label>
                             <div class="px-3 py-2 bg-gray-50 border rounded-md" style="border-color: #E5E7EB;">
                                 {{ auth()->user()->created_at->format('M d, Y h:i A') }}
-                </div>
-            </div>
+                            </div>
+                        </div>
 
                         <div>
                             <label class="block text-sm font-medium mb-2" style="color: #6B7280;">Last Updated</label>

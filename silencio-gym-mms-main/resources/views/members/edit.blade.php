@@ -52,21 +52,72 @@
                             <!-- First Name Field -->
                             <div>
                                 <label for="first_name" class="block text-sm font-medium mb-2" style="color: #6B7280;">First Name</label>
-                                <input type="text" id="first_name" name="first_name" required 
-                                       class="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200" 
+                                <input type="text" id="first_name" name="first_name" required
+                                       class="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200"
                                        style="border-color: #E5E7EB;"
                                        placeholder="Enter first name"
                                        value="{{ old('first_name', $member->first_name) }}">
+                                @error('first_name')
+                                    <div class="text-red-500 text-sm mt-1">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            <!-- Middle Name Field -->
+                            <div>
+                                <label for="middle_name" class="block text-sm font-medium mb-2" style="color: #6B7280;">Middle Name</label>
+                                <input type="text" id="middle_name" name="middle_name"
+                                       class="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200"
+                                       style="border-color: #E5E7EB;"
+                                       placeholder="Enter middle name (optional)"
+                                       value="{{ old('middle_name', $member->middle_name) }}">
+                                @error('middle_name')
+                                    <div class="text-red-500 text-sm mt-1">{{ $message }}</div>
+                                @enderror
                             </div>
 
                             <!-- Last Name Field -->
                             <div>
                                 <label for="last_name" class="block text-sm font-medium mb-2" style="color: #6B7280;">Last Name</label>
-                                <input type="text" id="last_name" name="last_name" required 
-                                       class="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200" 
+                                <input type="text" id="last_name" name="last_name" required
+                                       class="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200"
                                        style="border-color: #E5E7EB;"
                                        placeholder="Enter last name"
                                        value="{{ old('last_name', $member->last_name) }}">
+                                @error('last_name')
+                                    <div class="text-red-500 text-sm mt-1">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            <!-- Age Field -->
+                            <div>
+                                <label for="age" class="block text-sm font-medium mb-2" style="color: #6B7280;">Age</label>
+                                <input type="number" id="age" name="age" required
+                                       class="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200"
+                                       style="border-color: #E5E7EB;"
+                                       placeholder="Enter age (1-120)"
+                                       value="{{ old('age', $member->age) }}"
+                                       min="1"
+                                       max="120">
+                                @error('age')
+                                    <div class="text-red-500 text-sm mt-1">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            <!-- Gender Field -->
+                            <div>
+                                <label for="gender" class="block text-sm font-medium mb-2" style="color: #6B7280;">Gender</label>
+                                <select id="gender" name="gender" required
+                                        class="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200"
+                                        style="border-color: #E5E7EB;">
+                                    <option value="">Select gender</option>
+                                    <option value="Male" {{ old('gender', $member->gender) == 'Male' ? 'selected' : '' }}>Male</option>
+                                    <option value="Female" {{ old('gender', $member->gender) == 'Female' ? 'selected' : '' }}>Female</option>
+                                    <option value="Other" {{ old('gender', $member->gender) == 'Other' ? 'selected' : '' }}>Other</option>
+                                    <option value="Prefer not to say" {{ old('gender', $member->gender) == 'Prefer not to say' ? 'selected' : '' }}>Prefer not to say</option>
+                                </select>
+                                @error('gender')
+                                    <div class="text-red-500 text-sm mt-1">{{ $message }}</div>
+                                @enderror
                             </div>
                         </div>
                     </div>

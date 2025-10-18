@@ -1,5 +1,4 @@
 <?php
-<?php
 
 namespace App\Services;
 
@@ -25,7 +24,7 @@ class DualAuthService
     /**
      * Authenticate user through dual database system
      */
-    public function authenticate(string $email, string $password, string $ipAddress = null): array
+    public function authenticate(string $email, string $password, ?string $ipAddress = null): array
     {
         try {
             $response = Http::timeout($this->timeout)->post("{$this->apiBaseUrl}/auth/login", [

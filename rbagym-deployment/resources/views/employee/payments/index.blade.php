@@ -1,0 +1,1 @@
+<x-payments-page :isEmployee="true" :payments="$payments" />

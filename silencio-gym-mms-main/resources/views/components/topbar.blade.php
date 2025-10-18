@@ -1,4 +1,4 @@
-<aside class="h-16 sm:h-20 flex justify-between items-center px-4 sm:px-6 py-3 sm:py-4 bg-white border-b border-gray-300">
+<aside class="sticky top-0 z-50 h-16 sm:h-20 flex justify-between items-center px-4 sm:px-6 py-3 sm:py-4 bg-white border-b border-gray-300 shadow-sm">
     <div class="flex items-center gap-2 sm:gap-4">
         <!-- Mobile Toggle Button -->
         <button class="sidebar-toggle lg:hidden cursor-pointer p-2 hover:bg-gray-100 rounded-lg transition-colors duration-200">

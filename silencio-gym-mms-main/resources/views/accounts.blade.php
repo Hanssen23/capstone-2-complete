@@ -17,7 +17,16 @@
                                    placeholder="Enter first name">
                             <div id="first-name-error" class="text-red-500 text-sm mt-1 hidden"></div>
                         </div>
-                        
+
+                        <div>
+                            <label for="account-middle-name" class="block text-sm font-medium mb-2" style="color: #6B7280; font-size: 0.875rem;">Middle Name</label>
+                            <input type="text" id="account-middle-name" name="middle_name"
+                                   class="w-full px-3 py-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                   style="border-color: #E5E7EB; background-color: #F9FAFB; color: #000000; font-size: 1rem;"
+                                   placeholder="Enter middle name (optional)">
+                            <div id="middle-name-error" class="text-red-500 text-sm mt-1 hidden"></div>
+                        </div>
+
                         <div>
                             <label for="account-last-name" class="block text-sm font-medium mb-2" style="color: #6B7280; font-size: 0.875rem;">Last Name</label>
                             <input type="text" id="account-last-name" name="last_name" required
@@ -26,7 +35,36 @@
                                    placeholder="Enter last name">
                             <div id="last-name-error" class="text-red-500 text-sm mt-1 hidden"></div>
                         </div>
-                        
+
+                        <div>
+                            <label for="account-age" class="block text-sm font-medium mb-2" style="color: #6B7280; font-size: 0.875rem;">Age</label>
+                            <input type="number" id="account-age" name="age" min="1" max="120"
+                                   class="w-full px-3 py-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                   style="border-color: #E5E7EB; background-color: #F9FAFB; color: #000000; font-size: 1rem;"
+                                   placeholder="Enter age">
+                            <div id="age-error" class="text-red-500 text-sm mt-1 hidden"></div>
+                        </div>
+
+                        <div>
+                            <label for="account-gender" class="block text-sm font-medium mb-2" style="color: #6B7280; font-size: 0.875rem;">Gender</label>
+                            <div class="relative">
+                                <select id="account-gender" name="gender"
+                                        class="w-full px-3 py-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent custom-select"
+                                        style="border-color: #E5E7EB; background-color: #F9FAFB; color: #6B7280; font-size: 1rem;">
+                                    <option value="" disabled selected style="color: #9CA3AF;">Select gender</option>
+                                    <option value="Male" style="color: #000000;">Male</option>
+                                    <option value="Female" style="color: #000000;">Female</option>
+                                    <option value="Other" style="color: #000000;">Other</option>
+                                </select>
+                                <div class="select-arrow">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#6B7280" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <polyline points="6 9 12 15 18 9"></polyline>
+                                    </svg>
+                                </div>
+                            </div>
+                            <div id="gender-error" class="text-red-500 text-sm mt-1 hidden"></div>
+                        </div>
+
                         <div>
                             <label for="account-email" class="block text-sm font-medium mb-2" style="color: #6B7280; font-size: 0.875rem;">Email</label>
                             <input type="email" id="account-email" name="email" required
@@ -123,8 +161,32 @@
                                 <input type="text" name="first_name" id="editAccountFirstName" class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200" style="border-color: #E5E7EB;" required>
                             </div>
                             <div class="mb-4">
+                                <label class="block text-sm font-semibold mb-2" style="color: #374151;">Middle Name</label>
+                                <input type="text" name="middle_name" id="editAccountMiddleName" class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200" style="border-color: #E5E7EB;" placeholder="Optional">
+                            </div>
+                            <div class="mb-4">
                                 <label class="block text-sm font-semibold mb-2" style="color: #374151;">Last Name</label>
                                 <input type="text" name="last_name" id="editAccountLastName" class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200" style="border-color: #E5E7EB;" required>
+                            </div>
+                            <div class="mb-4">
+                                <label class="block text-sm font-semibold mb-2" style="color: #374151;">Age</label>
+                                <input type="number" name="age" id="editAccountAge" min="1" max="120" class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200" style="border-color: #E5E7EB;" placeholder="Optional">
+                            </div>
+                            <div class="mb-4">
+                                <label class="block text-sm font-semibold mb-2" style="color: #374151;">Gender</label>
+                                <div class="relative">
+                                    <select name="gender" id="editAccountGender" class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 custom-select" style="border-color: #E5E7EB;">
+                                        <option value="">Select gender (optional)</option>
+                                        <option value="Male">Male</option>
+                                        <option value="Female">Female</option>
+                                        <option value="Other">Other</option>
+                                    </select>
+                                    <div class="select-arrow">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#6B7280" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <polyline points="6 9 12 15 18 9"></polyline>
+                                        </svg>
+                                    </div>
+                                </div>
                             </div>
                             <div class="mb-4">
                                 <label class="block text-sm font-semibold mb-2" style="color: #374151;">Email</label>
@@ -590,11 +652,14 @@
         // Handle create account form submission
         async function handleCreateAccount(e) {
             e.preventDefault();
-            
+
             const formData = new FormData(e.target);
             const accountData = {
                 first_name: formData.get('first_name'),
+                middle_name: formData.get('middle_name'),
                 last_name: formData.get('last_name'),
+                age: formData.get('age'),
+                gender: formData.get('gender'),
                 email: formData.get('email'),
                 mobile_number: formData.get('mobile_number'),
                 password: formData.get('password'),
@@ -956,9 +1021,12 @@
             // Populate edit modal
             document.getElementById('editAccountId').value = account.id;
             document.getElementById('editAccountFirstName').value = account.first_name || '';
+            document.getElementById('editAccountMiddleName').value = account.middle_name || '';
             document.getElementById('editAccountLastName').value = account.last_name || '';
+            document.getElementById('editAccountAge').value = account.age || '';
+            document.getElementById('editAccountGender').value = account.gender || '';
             document.getElementById('editAccountEmail').value = account.email;
-            
+
             // Format mobile number for display
             let mobileNumber = account.mobile_number || '';
             if (mobileNumber) {
@@ -969,7 +1037,7 @@
                 }
             }
             document.getElementById('editAccountMobileNumber').value = mobileNumber;
-            
+
             document.getElementById('editAccountPassword').value = '';
             document.getElementById('editAccountPasswordConfirmation').value = '';
             document.getElementById('editAccountRole').value = account.role;
@@ -1125,13 +1193,16 @@
         // Handle edit account form submission
         document.getElementById('editAccountForm').addEventListener('submit', async function(e) {
             e.preventDefault();
-            
+
             const formData = new FormData(this);
             const accountId = formData.get('account_id');
-            
+
             const data = {
                 first_name: formData.get('first_name'),
+                middle_name: formData.get('middle_name'),
                 last_name: formData.get('last_name'),
+                age: formData.get('age'),
+                gender: formData.get('gender'),
                 email: formData.get('email'),
                 mobile_number: formData.get('mobile_number'),
                 role: formData.get('role')

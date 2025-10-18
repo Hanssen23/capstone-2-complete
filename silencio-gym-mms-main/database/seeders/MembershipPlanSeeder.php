@@ -16,7 +16,7 @@ class MembershipPlanSeeder extends Seeder
             [
                 'name' => 'Basic',
                 'description' => 'Basic gym access with standard facilities',
-                'price' => 700.00, // Monthly ₱700.00
+                'price' => 900.00, // Monthly ₱900.00 (updated to match config)
                 'currency' => '₱',
                 'duration_days' => 30,
                 'features' => [
@@ -30,7 +30,7 @@ class MembershipPlanSeeder extends Seeder
             [
                 'name' => 'VIP',
                 'description' => 'Premium access with additional amenities',
-                'price' => 1900.00, // Example price for VIP
+                'price' => 1250.00, // Monthly ₱1,250.00 (updated to match config)
                 'currency' => '₱',
                 'duration_days' => 30,
                 'features' => [
@@ -46,7 +46,7 @@ class MembershipPlanSeeder extends Seeder
             [
                 'name' => 'Premium',
                 'description' => 'Full access with all premium features',
-                'price' => 3300.00, // Example price for Premium
+                'price' => 950.00, // Monthly ₱950.00 (updated to match config)
                 'currency' => '₱',
                 'duration_days' => 30,
                 'features' => [

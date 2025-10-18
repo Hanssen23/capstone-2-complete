@@ -25,14 +25,7 @@
                         <h1 class="text-2xl sm:text-3xl font-bold mb-2" style="color: #1E40AF;">All Memberships</h1>
                         <p class="text-base sm:text-lg" style="color: #6B7280;">Manage member accounts and memberships</p>
                     </div>
-                    <a href="{{ route('employee.members.create') }}" 
-                       class="w-full sm:w-auto px-4 sm:px-6 py-3 text-white rounded-lg font-medium transition-colors duration-200 flex items-center justify-center gap-2" 
-                       style="background-color: #2563EB;" 
-                       onmouseover="this.style.backgroundColor='#1D4ED8'" 
-                       onmouseout="this.style.backgroundColor='#2563EB'">
-                        <span class="text-lg sm:text-xl">➕</span>
-                            Add Member
-                    </a>
+                    <!-- Add Member Button Removed - Members can only self-register -->
                 </div>
                 
                 <!-- Filter Pills -->
@@ -194,15 +187,7 @@
                                     <div class="flex flex-col items-center">
                                         <div class="text-6xl mb-4">👥</div>
                                         <p class="text-lg font-medium mb-2" style="color: #000000;">No members found</p>
-                                        <p class="mb-4">Get started by adding your first member.</p>
-                                        <a href="{{ route('employee.members.create') }}" 
-                                           class="px-6 py-3 text-white rounded-lg font-medium transition-colors duration-200 flex items-center gap-2" 
-                                           style="background-color: #2563EB;" 
-                                           onmouseover="this.style.backgroundColor='#1D4ED8'" 
-                                           onmouseout="this.style.backgroundColor='#2563EB'">
-                                            <span class="text-xl">➕</span>
-                                            Add Member
-                                        </a>
+                                        <p class="mb-4">Members can register through the public registration page.</p>
                                     </div>
                                 </td>
                             </tr>
@@ -493,6 +478,141 @@
                 if (containerWidth < 1000) {
                     table.style.minWidth = Math.max(containerWidth, 500) + 'px';
                 }
+            }
+
+            // ============================================
+            // REAL-TIME SEARCH FILTERING (NO PAGE REFRESH)
+            // ============================================
+            const searchInput = document.getElementById('membersSearchInput');
+            const searchForm = document.getElementById('membersSearchForm');
+            const tableRows = document.querySelectorAll('.members-table tbody tr');
+            const filterPills = document.querySelectorAll('a[href*="membership="]');
+
+            // Prevent form submission (we're doing client-side filtering)
+            if (searchForm) {
+                searchForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    applyFilters();
+                });
+            }
+
+            // Add event listener for real-time search
+            if (searchInput) {
+                searchInput.addEventListener('input', debounce(applyFilters, 300));
+            }
+
+            // Make filter pills work with client-side filtering
+            filterPills.forEach(pill => {
+                pill.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const url = new URL(this.href);
+                    const membership = url.searchParams.get('membership');
+                    applyFilters(membership);
+
+                    // Update active pill styling
+                    filterPills.forEach(p => {
+                        p.classList.remove('text-white');
+                        p.classList.add('text-gray-600');
+                        p.style.backgroundColor = '#F3F4F6';
+                    });
+                    this.classList.remove('text-gray-600');
+                    this.classList.add('text-white');
+                    this.style.backgroundColor = '#1E40AF';
+                });
+            });
+
+            function applyFilters(membershipFilter = null) {
+                const searchTerm = searchInput ? searchInput.value.toLowerCase().trim() : '';
+
+                // Get current membership filter from URL or parameter
+                const urlParams = new URLSearchParams(window.location.search);
+                const currentMembership = membershipFilter !== null ? membershipFilter : urlParams.get('membership');
+
+                let visibleCount = 0;
+
+                tableRows.forEach(row => {
+                    // Skip empty state row
+                    if (row.querySelector('td[colspan]')) {
+                        return;
+                    }
+
+                    // Get row data
+                    const uid = row.querySelector('td:nth-child(1)')?.textContent.toLowerCase() || '';
+                    const memberNumber = row.querySelector('td:nth-child(2)')?.textContent.toLowerCase() || '';
+                    const membership = row.querySelector('td:nth-child(3) span')?.textContent.toLowerCase() || '';
+                    const fullName = row.querySelector('td:nth-child(4)')?.textContent.toLowerCase() || '';
+                    const mobile = row.querySelector('td:nth-child(5)')?.textContent.toLowerCase() || '';
+                    const email = row.querySelector('td:nth-child(6)')?.textContent.toLowerCase() || '';
+
+                    // Apply filters
+                    let showRow = true;
+
+                    // Search filter
+                    if (searchTerm) {
+                        const searchableText = `${uid} ${memberNumber} ${fullName} ${mobile} ${email}`;
+                        if (!searchableText.includes(searchTerm)) {
+                            showRow = false;
+                        }
+                    }
+
+                    // Membership filter
+                    if (currentMembership && currentMembership !== '') {
+                        if (!membership.includes(currentMembership.toLowerCase())) {
+                            showRow = false;
+                        }
+                    }
+
+                    // Show/hide row
+                    if (showRow) {
+                        row.style.display = '';
+                        visibleCount++;
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+
+                // Show "no results" message if no rows visible
+                updateNoResultsMessage(visibleCount);
+            }
+
+            function updateNoResultsMessage(visibleCount) {
+                const tbody = document.querySelector('.members-table tbody');
+                let noResultsRow = tbody.querySelector('.no-results-row');
+
+                if (visibleCount === 0) {
+                    if (!noResultsRow) {
+                        noResultsRow = document.createElement('tr');
+                        noResultsRow.className = 'no-results-row';
+                        noResultsRow.innerHTML = `
+                            <td colspan="7" class="px-6 py-12 text-center text-gray-500">
+                                <div class="flex flex-col items-center">
+                                    <div class="text-6xl mb-4">👥</div>
+                                    <p class="text-lg font-medium mb-2" style="color: #000000;">No members found</p>
+                                    <p class="mb-4">Try adjusting your search or filters</p>
+                                </div>
+                            </td>
+                        `;
+                        tbody.appendChild(noResultsRow);
+                    }
+                    noResultsRow.style.display = '';
+                } else {
+                    if (noResultsRow) {
+                        noResultsRow.style.display = 'none';
+                    }
+                }
+            }
+
+            // Debounce function to limit how often filtering runs
+            function debounce(func, wait) {
+                let timeout;
+                return function executedFunction(...args) {
+                    const later = () => {
+                        clearTimeout(timeout);
+                        func(...args);
+                    };
+                    clearTimeout(timeout);
+                    timeout = setTimeout(later, wait);
+                };
             }
         });
     </script>

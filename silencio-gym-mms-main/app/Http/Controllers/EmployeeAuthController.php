@@ -14,22 +14,27 @@ class EmployeeAuthController extends Controller
      */
     public function showLogin()
     {
-        // If already logged in as employee, redirect to employee dashboard
-        if (Auth::check() && Auth::user()->isEmployee()) {
-            return redirect()->route('employee.dashboard');
+        // Check if logged in via web guard (admin/employee)
+        if (Auth::guard('web')->check()) {
+            $user = Auth::guard('web')->user();
+
+            // If already logged in as employee, redirect to employee dashboard
+            if ($user->isEmployee()) {
+                return redirect()->route('employee.dashboard');
+            }
+
+            // If logged in as admin, redirect to admin dashboard
+            if ($user->isAdmin()) {
+                return redirect()->route('dashboard');
+            }
         }
-        
-        // If logged in as admin, redirect to admin dashboard
-        if (Auth::check() && Auth::user()->isAdmin()) {
-            return redirect()->route('dashboard');
-        }
-        
-        // If logged in as member, redirect to member dashboard
-        if (Auth::check() && Auth::user()->role === 'member') {
+
+        // Check if logged in via member guard
+        if (Auth::guard('member')->check()) {
             return redirect()->route('member.dashboard');
         }
 
-        return view('auth.login');
+        return view('auth.employee-login');
     }
 
     /**
@@ -74,7 +79,7 @@ class EmployeeAuthController extends Controller
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
-        
-        return redirect()->route('employee.login');
+
+        return redirect()->route('employee.auth.login.show');
     }
 }

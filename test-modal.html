@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Signup Modal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 p-8">
+    <div class="max-w-2xl mx-auto bg-white p-8 rounded-lg shadow-lg">
+        <h1 class="text-2xl font-bold mb-6">Signup Modal Test</h1>
+        
+        <div class="mb-6 p-4 bg-blue-50 border border-blue-200 rounded">
+            <h2 class="font-bold mb-2">Instructions:</h2>
+            <ol class="list-decimal list-inside space-y-2">
+                <li>Click the "Test Signup Modal" button below</li>
+                <li>The modal should appear with the signup instructions</li>
+                <li>If it works here, the code is correct on the server</li>
+                <li>If it doesn't work on the login page, clear your browser cache</li>
+            </ol>
+        </div>
+
+        <button onclick="showSignupModal(event)" class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 font-medium">
+            Test Signup Modal (Click Me!)
+        </button>
+
+        <div class="mt-6 p-4 bg-green-50 border border-green-200 rounded">
+            <h2 class="font-bold mb-2">How to Clear Browser Cache:</h2>
+            <ul class="list-disc list-inside space-y-1">
+                <li><strong>Hard Refresh:</strong> Ctrl + Shift + R</li>
+                <li><strong>Clear Cache:</strong> Ctrl + Shift + Delete</li>
+                <li><strong>Incognito Mode:</strong> Ctrl + Shift + N</li>
+            </ul>
+        </div>
+
+        <div class="mt-6">
+            <a href="/login" class="text-blue-600 hover:underline">← Go to Login Page</a>
+        </div>
+    </div>
+
+    <!-- Signup Information Modal -->
+    <div id="signupModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-lg shadow-xl max-w-md w-full p-6 relative">
+            <!-- Close Button -->
+            <button onclick="closeSignupModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-2xl font-bold">
+                ×
+            </button>
+
+            <!-- Modal Content -->
+            <div class="mb-4">
+                <h3 class="text-xl font-bold text-gray-900 mb-4">Please Read:</h3>
+                <div class="space-y-3 text-sm text-gray-700">
+                    <p class="flex items-start">
+                        <span class="text-blue-600 mr-2">•</span>
+                        <span>Please make sure to input a <strong>valid email address</strong>.</span>
+                    </p>
+                    <p class="flex items-start">
+                        <span class="text-blue-600 mr-2">•</span>
+                        <span>Once done creating the account, please <strong>verify it</strong> by clicking/tapping on <strong>"Verify Email Address"</strong> sent to you by mail from <strong>Silencio Gym Management System</strong>.</span>
+                    </p>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex gap-3 mt-6">
+                <button onclick="closeSignupModal()" class="flex-1 px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 font-medium">
+                    Cancel
+                </button>
+                <a href="/register" class="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium text-center">
+                    Continue to Sign Up
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Signup Modal Script -->
+    <script>
+        console.log('✅ Signup modal script loaded - Test Page Version');
+
+        function showSignupModal(event) {
+            console.log('✅ showSignupModal called');
+            event.preventDefault();
+            const modal = document.getElementById('signupModal');
+            console.log('✅ Modal element:', modal);
+            if (modal) {
+                modal.classList.remove('hidden');
+                document.body.style.overflow = 'hidden';
+                console.log('✅ Modal should now be visible');
+                alert('✅ Modal opened successfully! The code is working on the server.');
+            } else {
+                console.error('❌ Modal element not found!');
+                alert('❌ Modal element not found!');
+            }
+        }
+
+        function closeSignupModal() {
+            const modal = document.getElementById('signupModal');
+            if (modal) {
+                modal.classList.add('hidden');
+                document.body.style.overflow = 'auto';
+                console.log('✅ Modal closed');
+            }
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('signupModal')?.addEventListener('click', function(event) {
+            if (event.target === this) {
+                closeSignupModal();
+            }
+        });
+
+        // Close modal with Escape key
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeSignupModal();
+            }
+        });
+
+        console.log('✅ All event listeners attached');
+    </script>
+</body>
+</html>
+

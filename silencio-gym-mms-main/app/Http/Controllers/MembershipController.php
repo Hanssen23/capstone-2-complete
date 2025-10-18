@@ -33,16 +33,102 @@ class MembershipController extends Controller
      */
     public function manageMember()
     {
-        $members = Member::with('currentMembershipPeriod')->get();
-        $planTypes = config('membership.plan_types');
+        // Get all members for payment processing (including unverified ones)
+        $members = Member::with('currentMembershipPeriod')
+            ->where('status', '!=', 'deleted') // Only exclude members marked as deleted
+            ->get();
+
+        // Get plan types from database instead of config file
+        $planTypes = MembershipPlan::all()->keyBy('name')->map(function($plan) {
+            return [
+                'id' => $plan->id,
+                'name' => $plan->name,
+                'base_price' => $plan->price,
+                'description' => $plan->description,
+                'duration_days' => $plan->duration_days,
+            ];
+        })->toArray();
+
+        // Convert to lowercase keys to match config format (basic, vip, premium)
+        $planTypesFormatted = [];
+        foreach ($planTypes as $name => $plan) {
+            $planTypesFormatted[strtolower($name)] = $plan;
+        }
+
         $durationTypes = config('membership.duration_types');
-        
+
         // Check if this is an employee request
         if (request()->is('employee/*')) {
-            return view('membership.manage-member', compact('members', 'planTypes', 'durationTypes'));
+            return view('membership.manage-member', compact('members', 'planTypesFormatted', 'durationTypes'));
         }
-        
-        return view('membership.manage-member', compact('members', 'planTypes', 'durationTypes'));
+
+        return view('membership.manage-member', compact('members', 'planTypesFormatted', 'durationTypes'));
+    }
+
+    /**
+     * Get updated member list for real-time updates
+     */
+    public function getMembersForSelection()
+    {
+        try {
+            // Get all active members for real-time selection
+            // Note: Using hard delete now, so no need for withoutTrashed()
+            $members = Member::with('currentMembershipPeriod')
+                ->where('status', '!=', 'deleted') // Check status field for inactive members
+                ->orderBy('created_at', 'desc')
+                ->get()
+                ->map(function ($member) {
+                    return [
+                        'id' => $member->id,
+                        'uid' => $member->uid,
+                        'member_number' => $member->member_number,
+                        'first_name' => $member->first_name,
+                        'middle_name' => $member->middle_name,
+                        'last_name' => $member->last_name,
+                        'full_name' => $member->full_name,
+                        'email' => $member->email,
+                        'mobile_number' => $member->mobile_number,
+                        'membership_status' => $member->membership_status,
+                        'status' => $member->status, // Include status for debugging
+                        'current_membership_period' => $member->currentMembershipPeriod ? [
+                            'id' => $member->currentMembershipPeriod->id,
+                            'plan_type' => $member->currentMembershipPeriod->plan_type,
+                            'duration_type' => $member->currentMembershipPeriod->duration_type,
+                            'status' => $member->currentMembershipPeriod->status,
+                            'expiration_date' => $member->currentMembershipPeriod->expiration_date?->format('Y-m-d'),
+                            'is_expired' => $member->currentMembershipPeriod->is_expired ?? false,
+                        ] : null,
+                        'created_at' => $member->created_at->format('Y-m-d H:i:s'),
+                        'deleted_at' => $member->deleted_at, // Include for debugging
+                    ];
+                });
+
+            \Log::info('Members fetched for selection', [
+                'total_count' => $members->count(),
+                'timestamp' => now()->format('Y-m-d H:i:s')
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'members' => $members,
+                'count' => $members->count(),
+                'last_updated' => now()->format('Y-m-d H:i:s')
+            ]);
+
+        } catch (\Exception $e) {
+            \Log::error('Error fetching members for selection', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'error' => 'Failed to fetch members',
+                'members' => [],
+                'count' => 0,
+                'last_updated' => now()->format('Y-m-d H:i:s')
+            ], 500);
+        }
     }
 
     /**
@@ -78,6 +164,47 @@ class MembershipController extends Controller
     }
 
     /**
+     * Check if member has active membership plan
+     */
+    public function checkActiveMembership(Request $request)
+    {
+        $request->validate([
+            'member_id' => 'required|exists:members,id',
+        ]);
+
+        $member = Member::with(['currentMembershipPeriod', 'membershipPeriods' => function($query) {
+            $query->active()->orderBy('expiration_date', 'desc');
+        }])->findOrFail($request->member_id);
+
+        // Check for active membership periods
+        $activeMembership = $member->membershipPeriods()
+            ->where('status', 'active')
+            ->where('start_date', '<=', now())
+            ->where('expiration_date', '>', now())
+            ->orderBy('expiration_date', 'desc')
+            ->first();
+
+        if ($activeMembership) {
+            $planTypes = config('membership.plan_types');
+            $planName = $planTypes[$activeMembership->plan_type]['name'] ?? $activeMembership->plan_type;
+
+            return response()->json([
+                'has_active_plan' => true,
+                'plan_name' => $planName,
+                'plan_type' => $activeMembership->plan_type,
+                'duration_type' => $activeMembership->duration_type,
+                'expiration_date' => $activeMembership->expiration_date->format('F j, Y'),
+                'days_remaining' => $activeMembership->days_until_expiration,
+                'membership_period_id' => $activeMembership->id
+            ]);
+        }
+
+        return response()->json([
+            'has_active_plan' => false
+        ]);
+    }
+
+    /**
      * Process payment and create membership period
      */
     public function processPayment(Request $request)
@@ -89,9 +216,61 @@ class MembershipController extends Controller
             'amount' => 'required|numeric|min:0',
             'start_date' => 'required|date',
             'notes' => 'nullable|string',
+            'is_pwd' => 'nullable|boolean',
+            'is_senior_citizen' => 'nullable|boolean',
+            'discount_amount' => 'nullable|numeric|min:0',
+            'discount_percentage' => 'nullable|numeric|min:0|max:100',
+            'admin_override' => 'nullable|boolean',
+            'override_reason' => 'nullable|string',
         ]);
 
+        // Check for active membership if not admin override
+        if (!$request->admin_override) {
+            $member = Member::with(['membershipPeriods' => function($query) {
+                $query->active();
+            }])->findOrFail($request->member_id);
+
+            $activeMembership = $member->membershipPeriods()
+                ->where('status', 'active')
+                ->where('start_date', '<=', now())
+                ->where('expiration_date', '>', now())
+                ->first();
+
+            if ($activeMembership) {
+                $planTypes = config('membership.plan_types');
+                $planName = $planTypes[$activeMembership->plan_type]['name'] ?? $activeMembership->plan_type;
+
+                return response()->json([
+                    'success' => false,
+                    'error' => 'ACTIVE_MEMBERSHIP_EXISTS',
+                    'message' => "Cannot process payment. This member already has an active membership plan: {$planName} (Expires: {$activeMembership->expiration_date->format('F j, Y')})",
+                    'active_plan' => [
+                        'name' => $planName,
+                        'expiration_date' => $activeMembership->expiration_date->format('F j, Y')
+                    ]
+                ], 422);
+            }
+        }
+
         try {
+            // Log admin override if applicable
+            if ($request->admin_override && auth()->check()) {
+                \Log::info('Admin override for duplicate membership plan', [
+                    'admin_id' => auth()->id(),
+                    'admin_email' => auth()->user()->email,
+                    'member_id' => $request->member_id,
+                    'plan_type' => $request->plan_type,
+                    'duration_type' => $request->duration_type,
+                    'override_reason' => $request->override_reason,
+                    'timestamp' => now(),
+                    'ip_address' => $request->ip()
+                ]);
+            }
+
+            // Initialize variables outside transaction
+            $payment = null;
+            $membershipPeriod = null;
+
             // Use database transaction for faster processing
             \DB::transaction(function () use ($request, &$payment, &$membershipPeriod) {
                 // Calculate expiration date
@@ -101,10 +280,24 @@ class MembershipController extends Controller
                 $expirationDate = $startDate->copy()->addDays($durationDays);
                 $now = now()->setTimezone('Asia/Manila');
 
+                // If admin override, deactivate existing active memberships
+                if ($request->admin_override) {
+                    MembershipPeriod::where('member_id', $request->member_id)
+                        ->where('status', 'active')
+                        ->where('start_date', '<=', now())
+                        ->where('expiration_date', '>', now())
+                        ->update([
+                            'status' => 'overridden',
+                            'notes' => ($request->notes ? $request->notes . ' | ' : '') . 'Membership overridden by admin on ' . $now->format('Y-m-d H:i:s')
+                        ]);
+                }
+
                 // Create payment record with optimized data
                 $payment = Payment::create([
                     'member_id' => $request->member_id,
                     'amount' => $request->amount,
+                    'amount_tendered' => $request->amount_tendered ?? null,
+                    'change_amount' => $request->change_amount ?? 0.00,
                     'payment_date' => $now->toDateString(),
                     'payment_time' => $now->format('H:i:s'),
                     'status' => 'completed',
@@ -153,6 +346,15 @@ class MembershipController extends Controller
             ]);
 
         } catch (\Exception $e) {
+            \Log::error('Payment processing error', [
+                'member_id' => $request->member_id,
+                'plan_type' => $request->plan_type,
+                'duration_type' => $request->duration_type,
+                'amount' => $request->amount,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            
             return response()->json([
                 'success' => false,
                 'message' => 'Error processing payment: ' . $e->getMessage()
@@ -277,6 +479,89 @@ class MembershipController extends Controller
         };
 
         return response()->stream($callback, 200, $headers);
+    }
+
+    /**
+     * Preview CSV data before export
+     */
+    public function previewCsv(Request $request)
+    {
+        $query = Payment::with('member')
+            ->select([
+                'id',
+                'member_id',
+                'plan_type',
+                'duration_type',
+                'amount',
+                'payment_date',
+                'payment_time',
+                'membership_start_date',
+                'membership_expiration_date',
+                'status',
+                'notes'
+            ]);
+
+        // Apply the same filters as the payments page
+        if ($request->filled('plan_type') && $request->plan_type !== '') {
+            $query->where('plan_type', $request->plan_type);
+        }
+
+        if ($request->filled('date') && $request->date !== '') {
+            $query->whereDate('payment_date', $request->date);
+        }
+
+        if ($request->filled('search') && $request->search !== '') {
+            $search = $request->search;
+            $query->whereHas('member', function ($q) use ($search) {
+                $q->where('first_name', 'like', "%{$search}%")
+                    ->orWhere('last_name', 'like', "%{$search}%")
+                    ->orWhere('uid', 'like', "%{$search}%");
+            });
+        }
+
+        // Get total count and preview data
+        $totalCount = $query->count();
+        $payments = $query->orderBy('payment_date', 'desc')->limit(10)->get();
+
+        $csvData = [];
+
+        // CSV headers
+        $csvData[] = [
+            'Payment ID',
+            'Member Name',
+            'Member UID',
+            'Plan Type',
+            'Duration',
+            'Amount',
+            'Payment Date',
+            'Payment Time',
+            'Membership Start',
+            'Membership End'
+        ];
+
+        // Add payment data (preview only)
+        foreach ($payments as $payment) {
+            $csvData[] = [
+                $payment->id,
+                $payment->member->first_name . ' ' . $payment->member->last_name,
+                $payment->member->uid,
+                ucfirst($payment->plan_type),
+                ucfirst($payment->duration_type),
+                number_format($payment->amount, 2),
+                Carbon::parse($payment->payment_date)->format('m/d/Y'),
+                $payment->payment_time ? Carbon::parse($payment->payment_time)->format('h:i:s A') : 'N/A',
+                Carbon::parse($payment->membership_start_date)->format('m/d/Y'),
+                Carbon::parse($payment->membership_expiration_date)->format('m/d/Y')
+            ];
+        }
+
+        return response()->json([
+            'success' => true,
+            'preview_data' => $csvData,
+            'total_records' => $totalCount,
+            'preview_records' => count($csvData) - 1, // Exclude header
+            'headers' => $csvData[0]
+        ]);
     }
 
     /**

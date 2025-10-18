@@ -38,6 +38,13 @@
                                 </svg>
                                 <span class="text-sm sm:text-base">Manage Plans</span>
                             </a>
+                            <button onclick="previewCsv()" class="inline-flex items-center justify-center px-4 sm:px-6 py-3 text-white rounded-lg transition-colors shadow-sm min-h-[44px] w-full sm:w-auto" style="background-color: #7C3AED;" onmouseover="this.style.backgroundColor='#6D28D9'" onmouseout="this.style.backgroundColor='#7C3AED'">
+                                <svg class="w-4 h-4 sm:w-5 sm:h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                                </svg>
+                                <span class="text-sm sm:text-base">Preview CSV</span>
+                            </button>
                             <a href="{{ $isEmployee ? route('employee.membership.payments.export_csv', request()->query()) : route('membership.payments.export_csv', request()->query()) }}" class="inline-flex items-center justify-center px-4 sm:px-6 py-3 text-white rounded-lg transition-colors shadow-sm min-h-[44px] w-full sm:w-auto" style="background-color: #6B7280;" onmouseover="this.style.backgroundColor='#4B5563'" onmouseout="this.style.backgroundColor='#6B7280'">
                                 <svg class="w-4 h-4 sm:w-5 sm:h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
@@ -83,24 +90,31 @@
                     <div class="filter-section grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                         <div>
                             <label for="search" class="block text-sm font-medium text-gray-700 mb-2">Search</label>
-                            <input type="text" id="search" name="search" value="{{ request('search') }}" placeholder="Search by member name, payment ID..." class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                            <div class="relative">
+                                <input type="text" id="search" name="search" value="{{ request('search') }}" placeholder="Search by name, email, or member number..." class="w-full pl-4 pr-12 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-700 placeholder-gray-400">
+                                <div class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                                    </svg>
+                                </div>
+                            </div>
                         </div>
                         <div>
                             <label for="plan_type" class="block text-sm font-medium text-gray-700 mb-2">Plan Type</label>
-                            <select id="plan_type" name="plan_type" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                            <select id="plan_type" name="plan_type" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                                 <option value="">All Plans</option>
-                                <option value="basic" {{ request('plan_type') == 'basic' ? 'selected' : '' }}>Basic</option>
-                                <option value="premium" {{ request('plan_type') == 'premium' ? 'selected' : '' }}>Premium</option>
-                                <option value="vip" {{ request('plan_type') == 'vip' ? 'selected' : '' }}>VIP</option>
+                                @foreach(config('membership.plan_types') as $key => $plan)
+                                    <option value="{{ $key }}" {{ request('plan_type') == $key ? 'selected' : '' }}>{{ $plan['name'] }}</option>
+                                @endforeach
                             </select>
                         </div>
                         <div>
                             <label for="date" class="block text-sm font-medium text-gray-700 mb-2">Date</label>
-                            <input type="date" id="date" name="date" value="{{ request('date') }}" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                            <input type="date" id="date" name="date" value="{{ request('date') }}" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                         </div>
                         <div>
                             <label for="status" class="block text-sm font-medium text-gray-700 mb-2">Status</label>
-                            <select id="status" name="status" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                            <select id="status" name="status" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                                 <option value="">All Status</option>
                                 <option value="completed" {{ request('status') == 'completed' ? 'selected' : '' }}>Completed</option>
                                 <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Pending</option>
@@ -109,12 +123,9 @@
                         </div>
                     </div>
                     <div class="flex flex-col sm:flex-row gap-2 mt-4">
-                        <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors">
-                            Apply Filters
+                        <button type="button" onclick="clearAllFilters()" class="px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-colors text-center">
+                            Clear All Filters
                         </button>
-                        <a href="{{ $isEmployee ? route('employee.membership.payments') : route('membership.payments.index') }}" class="px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-colors text-center">
-                            Clear Filters
-                        </a>
                     </div>
                 </form>
             </div>
@@ -155,9 +166,9 @@
                                     <!-- PLAN & DURATION -->
                                     <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
                                         <div>
-                                            <span class="font-semibold">{{ ucfirst($payment->plan_type) }}</span>
+                                            <span class="font-semibold">{{ config('membership.plan_types.' . $payment->plan_type . '.name', ucfirst($payment->plan_type)) }}</span>
                                             <span class="text-gray-400 mx-1">+</span>
-                                            <span class="font-semibold">{{ ucfirst($payment->duration_type) }}</span>
+                                            <span class="font-semibold">{{ config('membership.duration_types.' . $payment->duration_type . '.name', ucfirst($payment->duration_type)) }}</span>
                                         </div>
                                     </td>
                                     
@@ -244,6 +255,51 @@
                         <div id="paymentDetailsContent" class="space-y-4">
                             <!-- Payment details will be loaded here -->
                         </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CSV Preview Modal -->
+    <div id="csvPreviewModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+        <div class="flex items-center justify-center min-h-screen p-2 sm:p-4">
+            <div class="bg-white rounded-lg shadow-xl max-w-6xl w-full max-h-[95vh] sm:max-h-[90vh] overflow-hidden">
+                <div class="flex items-center justify-between p-4 sm:p-6 border-b">
+                    <h3 class="text-base sm:text-lg font-semibold text-gray-900">CSV Preview</h3>
+                    <button onclick="closeCsvPreview()" class="text-gray-400 hover:text-gray-600 p-1">
+                        <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+
+                <div class="p-4 sm:p-6 overflow-y-auto max-h-[calc(95vh-140px)] sm:max-h-[calc(90vh-140px)]">
+                    <div id="csvPreviewInfo" class="mb-4 p-3 sm:p-4 bg-blue-50 rounded-lg">
+                        <p class="text-xs sm:text-sm text-blue-800">
+                            <span id="csvTotalRecords">0</span> total records will be exported.
+                            Showing first <span id="csvPreviewRecords">0</span> records as preview.
+                        </p>
+                    </div>
+
+                    <div class="overflow-auto max-h-64 sm:max-h-96 border rounded-lg">
+                        <table class="min-w-full divide-y divide-gray-200 text-xs sm:text-sm">
+                            <thead id="csvPreviewHeaders" class="bg-gray-50 sticky top-0">
+                                <!-- Headers will be populated by JavaScript -->
+                            </thead>
+                            <tbody id="csvPreviewData" class="bg-white divide-y divide-gray-200">
+                                <!-- Data will be populated by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="mt-4 sm:mt-6 flex flex-col sm:flex-row justify-between space-y-2 sm:space-y-0 sm:space-x-6">
+                        <a href="{{ $isEmployee ? route('employee.membership.payments.export_csv', request()->query()) : route('membership.payments.export_csv', request()->query()) }}" class="w-full sm:w-auto px-4 py-2 text-white bg-green-600 rounded-lg hover:bg-green-700 transition-colors text-center text-sm sm:text-base">
+                            Download CSV
+                        </a>
+                        <button onclick="closeCsvPreview()" class="w-full sm:w-auto px-4 py-2 text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 transition-colors text-sm sm:text-base">
+                            Close
+                        </button>
                     </div>
                 </div>
             </div>
@@ -486,6 +542,231 @@ function closePaymentDetailsModal() {
 document.getElementById('paymentDetailsModal').addEventListener('click', function(e) {
     if (e.target === this) {
         closePaymentDetailsModal();
+    }
+});
+
+// CSV Preview functionality
+function previewCsv() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const previewUrl = `{{ $isEmployee ? route('employee.membership.payments.preview_csv') : route('membership.payments.preview_csv') }}?${urlParams.toString()}`;
+
+    fetch(previewUrl, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+            'X-Requested-With': 'XMLHttpRequest'
+        },
+        credentials: 'same-origin'
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.success) {
+            displayCsvPreview(data);
+        } else {
+            alert('Error loading CSV preview');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Error loading CSV preview: ' + error.message);
+    });
+}
+
+function displayCsvPreview(data) {
+    // Update info
+    document.getElementById('csvTotalRecords').textContent = data.total_records;
+    document.getElementById('csvPreviewRecords').textContent = data.preview_records;
+
+    // Clear existing content
+    const headersContainer = document.getElementById('csvPreviewHeaders');
+    const dataContainer = document.getElementById('csvPreviewData');
+    headersContainer.innerHTML = '';
+    dataContainer.innerHTML = '';
+
+    // Add headers
+    const headerRow = document.createElement('tr');
+    data.headers.forEach(header => {
+        const th = document.createElement('th');
+        th.className = 'px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider';
+        th.textContent = header;
+        headerRow.appendChild(th);
+    });
+    headersContainer.appendChild(headerRow);
+
+    // Add data rows (skip first row which is headers)
+    for (let i = 1; i < data.preview_data.length; i++) {
+        const row = data.preview_data[i];
+        const tr = document.createElement('tr');
+        tr.className = i % 2 === 0 ? 'bg-white' : 'bg-gray-50';
+
+        row.forEach(cell => {
+            const td = document.createElement('td');
+            td.className = 'px-6 py-4 whitespace-nowrap text-sm text-gray-900';
+            td.textContent = cell;
+            tr.appendChild(td);
+        });
+
+        dataContainer.appendChild(tr);
+    }
+
+    // Show modal
+    document.getElementById('csvPreviewModal').classList.remove('hidden');
+}
+
+function closeCsvPreview() {
+    document.getElementById('csvPreviewModal').classList.add('hidden');
+}
+
+// ============================================
+// REAL-TIME FILTERING (NO PAGE REFRESH)
+// ============================================
+
+// Clear all filters function (accessible globally)
+function clearAllFilters() {
+    document.getElementById('search').value = '';
+    document.getElementById('plan_type').value = '';
+    document.getElementById('date').value = '';
+    document.getElementById('status').value = '';
+
+    // Show all rows
+    const tableRows = document.querySelectorAll('.payments-table tbody tr');
+    tableRows.forEach(row => {
+        if (!row.querySelector('td[colspan]')) {
+            row.style.display = '';
+        }
+    });
+
+    // Hide no results message
+    const noResultsRow = document.querySelector('.no-results-row');
+    if (noResultsRow) {
+        noResultsRow.style.display = 'none';
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('search');
+    const planTypeSelect = document.getElementById('plan_type');
+    const dateInput = document.getElementById('date');
+    const statusSelect = document.getElementById('status');
+    const tableRows = document.querySelectorAll('.payments-table tbody tr');
+
+    // Prevent form submission (we're doing client-side filtering)
+    const filterForm = document.getElementById('filterForm');
+    filterForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        applyFilters();
+    });
+
+    // Add event listeners for real-time filtering
+    searchInput.addEventListener('input', debounce(applyFilters, 300));
+    planTypeSelect.addEventListener('change', applyFilters);
+    dateInput.addEventListener('change', applyFilters);
+    statusSelect.addEventListener('change', applyFilters);
+
+    function applyFilters() {
+        const searchTerm = searchInput.value.toLowerCase().trim();
+        const selectedPlan = planTypeSelect.value.toLowerCase();
+        const selectedDate = dateInput.value;
+        const selectedStatus = statusSelect.value.toLowerCase();
+
+        let visibleCount = 0;
+
+        tableRows.forEach(row => {
+            // Skip empty state row
+            if (row.querySelector('td[colspan]')) {
+                return;
+            }
+
+            // Get row data
+            const memberName = row.querySelector('td:nth-child(1) .font-semibold')?.textContent.toLowerCase() || '';
+            const memberEmail = row.querySelector('td:nth-child(1) .text-gray-500')?.textContent.toLowerCase() || '';
+            const planText = row.querySelector('td:nth-child(2)')?.textContent.toLowerCase() || '';
+            const paymentDate = row.querySelector('td:nth-child(4) div:first-child')?.textContent || '';
+            const status = row.querySelector('td:nth-child(5) span')?.textContent.toLowerCase() || '';
+
+            // Apply filters
+            let showRow = true;
+
+            // Search filter (member name, email, or payment ID)
+            if (searchTerm && !memberName.includes(searchTerm) && !memberEmail.includes(searchTerm)) {
+                showRow = false;
+            }
+
+            // Plan type filter
+            if (selectedPlan && !planText.includes(selectedPlan)) {
+                showRow = false;
+            }
+
+            // Date filter
+            if (selectedDate && !paymentDate.includes(selectedDate)) {
+                showRow = false;
+            }
+
+            // Status filter
+            if (selectedStatus && !status.includes(selectedStatus)) {
+                showRow = false;
+            }
+
+            // Show/hide row
+            if (showRow) {
+                row.style.display = '';
+                visibleCount++;
+            } else {
+                row.style.display = 'none';
+            }
+        });
+
+        // Show "no results" message if no rows visible
+        updateNoResultsMessage(visibleCount);
+    }
+
+    function updateNoResultsMessage(visibleCount) {
+        const tbody = document.querySelector('.payments-table tbody');
+        let noResultsRow = tbody.querySelector('.no-results-row');
+
+        if (visibleCount === 0) {
+            if (!noResultsRow) {
+                noResultsRow = document.createElement('tr');
+                noResultsRow.className = 'no-results-row';
+                noResultsRow.innerHTML = `
+                    <td colspan="7" class="px-4 py-8 text-center text-gray-500">
+                        <div class="flex flex-col items-center">
+                            <svg class="w-12 h-12 text-gray-400 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            <p class="text-lg font-medium">No payments found</p>
+                            <p class="text-sm">Try adjusting your filters</p>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(noResultsRow);
+            }
+            noResultsRow.style.display = '';
+        } else {
+            if (noResultsRow) {
+                noResultsRow.style.display = 'none';
+            }
+        }
+    }
+
+    // Debounce function to limit how often filtering runs
+    function debounce(func, wait) {
+        let timeout;
+        return function executedFunction(...args) {
+            const later = () => {
+                clearTimeout(timeout);
+                func(...args);
+            };
+            clearTimeout(timeout);
+            timeout = setTimeout(later, wait);
+        };
     }
 });
 </script>

@@ -191,8 +191,18 @@
             }
             
             console.log('📡 RFID logs URL:', url.toString());
-            
-            fetch(url)
+
+            fetch(url, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                credentials: 'same-origin',
+                cache: 'no-cache'
+            })
                 .then(response => {
                     console.log('📡 RFID logs response status:', response.status);
                     if (!response.ok) {

@@ -181,7 +181,7 @@
         function loadRfidLogs(page = 1) {
             console.log('🔄 Loading RFID logs, page:', page);
             const filter = document.getElementById('log-filter').value;
-            const url = new URL('{{ route("rfid.logs") }}', window.location.origin);
+            const url = new URL('{{ route("rfid.logs") }}');
             
             if (filter) {
                 url.searchParams.set('action', filter);

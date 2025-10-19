@@ -197,20 +197,20 @@
         // Load RFID logs
         function loadRfidLogs(page = 1) {
             console.log('🔄 Loading RFID logs, page:', page);
-            
+
             try {
             const filter = document.getElementById('log-filter').value;
-            const url = new URL('{{ route("rfid.logs") }}', window.location.origin);
-            
+            const url = new URL('{{ route("rfid.logs") }}');
+
             if (filter) {
                 url.searchParams.set('action', filter);
             }
             if (page > 1) {
                 url.searchParams.set('page', page);
             }
-            
+
             console.log('📡 RFID logs URL:', url.toString());
-            
+
             fetch(url)
                 .then(response => {
                     console.log('📡 RFID logs response status:', response.status);

@@ -809,6 +809,7 @@
             currentAttendanceDate.setMonth(currentAttendanceDate.getMonth() + direction);
             generateAttendanceCalendar();
             updateAttendanceDateText();
+            refreshAttendanceChart(); // Refresh chart when month changes
         }
 
         function navigateRevenueMonth(direction) {
@@ -941,10 +942,14 @@
 
         // Refresh functions
         function refreshAttendanceChart() {
+            const month = currentAttendanceDate.getMonth() + 1;
+            const year = currentAttendanceDate.getFullYear();
+            const day = currentAttendanceDate.getDate();
+
             @if(auth()->check() && auth()->user()->role === 'employee')
-                fetch(`{{ route("employee.analytics.weekly-attendance") }}?days=${currentAttendancePeriod}`)
+                fetch(`{{ route("employee.analytics.weekly-attendance") }}?days=${currentAttendancePeriod}&date=${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`)
             @else
-                fetch(`{{ route("analytics.weekly-attendance") }}?days=${currentAttendancePeriod}`)
+                fetch(`{{ route("analytics.weekly-attendance") }}?days=${currentAttendancePeriod}&date=${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`)
             @endif
                 .then(response => response.json())
                 .then(data => {

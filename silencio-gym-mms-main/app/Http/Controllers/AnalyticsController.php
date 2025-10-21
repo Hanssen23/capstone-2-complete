@@ -26,8 +26,15 @@ class AnalyticsController extends Controller
     public function getWeeklyAttendance(Request $request)
     {
         $days = $request->get('days', 7);
-        $startDate = Carbon::now()->subDays($days - 1)->startOfDay();
-        $endDate = Carbon::now()->endOfDay();
+
+        // If a specific date is provided, use it as the end date
+        if ($request->has('date')) {
+            $endDate = Carbon::parse($request->get('date'))->endOfDay();
+            $startDate = $endDate->copy()->subDays($days - 1)->startOfDay();
+        } else {
+            $startDate = Carbon::now()->subDays($days - 1)->startOfDay();
+            $endDate = Carbon::now()->endOfDay();
+        }
 
         // Get daily attendance counts (SQLite compatible)
         $attendanceData = Attendance::select(

@@ -85,8 +85,22 @@ class AnalyticsController extends Controller
     public function getWeeklyRevenue(Request $request)
     {
         $days = $request->get('days', 7);
-        $startDate = Carbon::now()->subDays($days - 1)->startOfDay();
-        $endDate = Carbon::now()->endOfDay();
+
+        // If a specific date is provided, use it as the end date
+        if ($request->has('date')) {
+            $endDate = Carbon::parse($request->get('date'))->endOfDay();
+            $startDate = $endDate->copy()->subDays($days - 1)->startOfDay();
+        } elseif ($request->has('month') && $request->has('year') && $request->has('day')) {
+            // Handle month/year/day format
+            $month = $request->get('month');
+            $year = $request->get('year');
+            $day = $request->get('day');
+            $endDate = Carbon::create($year, $month, $day)->endOfDay();
+            $startDate = $endDate->copy()->subDays($days - 1)->startOfDay();
+        } else {
+            $startDate = Carbon::now()->subDays($days - 1)->startOfDay();
+            $endDate = Carbon::now()->endOfDay();
+        }
 
         // Get daily revenue (SQLite compatible)
         $revenueData = Payment::select(

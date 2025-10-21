@@ -239,9 +239,9 @@
                                                 <!-- Quick Actions -->
                                                 <div class="mt-4 pt-4 border-t border-gray-200">
                                                     <div class="grid grid-cols-3 gap-2">
-                                                        <button onclick="selectRevenueQuickPeriod('current')" class="px-3 py-2 text-xs bg-green-100 text-green-700 rounded hover:bg-green-200">Current Month</button>
-                                                        <button onclick="selectRevenueQuickPeriod('previous')" class="px-3 py-2 text-xs bg-blue-100 text-blue-700 rounded hover:bg-blue-200">Previous Month</button>
-                                                        <button onclick="selectRevenueQuickPeriod('year')" class="px-3 py-2 text-xs bg-purple-100 text-purple-700 rounded hover:bg-purple-200">This Year</button>
+                                                        <button onclick="selectRevenueQuickPeriod(7)" class="px-3 py-2 text-xs bg-blue-100 text-blue-700 rounded hover:bg-blue-200">Last 7 days</button>
+                                                        <button onclick="selectRevenueQuickPeriod(14)" class="px-3 py-2 text-xs bg-green-100 text-green-700 rounded hover:bg-green-200">Last 14 days</button>
+                                                        <button onclick="selectRevenueQuickPeriod(30)" class="px-3 py-2 text-xs bg-purple-100 text-purple-700 rounded hover:bg-purple-200">Last 30 days</button>
                                                     </div>
                                                 </div>
                                             </div>
@@ -341,6 +341,7 @@
         // Calendar state
         let currentAttendancePeriod = 7;
         let currentAttendanceDate = new Date(); // Track selected attendance date
+        let currentRevenuePeriod = 7; // Track revenue period (7, 14, or 30 days)
         let currentRevenueDate = new Date();
         let selectedRevenueDay = null; // Track selected revenue day
         let attendanceCalendarVisible = false;
@@ -468,7 +469,11 @@
 
         function loadRealTimeData() {
             // Load weekly attendance data
-            fetch(`{{ route("employee.analytics.weekly-attendance") }}?days=${currentAttendancePeriod}`)
+            const month = currentAttendanceDate.getMonth() + 1;
+            const year = currentAttendanceDate.getFullYear();
+            const day = currentAttendanceDate.getDate();
+
+            fetch(`{{ route("employee.analytics.weekly-attendance") }}?days=${currentAttendancePeriod}&date=${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`)
                 .then(response => response.json())
                 .then(data => {
                     if (weeklyChart) {
@@ -481,10 +486,12 @@
                 })
                 .catch(error => console.error('Error loading weekly attendance:', error));
 
-            // Load monthly revenue data
+            // Load weekly revenue data
             const revenueMonth = currentRevenueDate.getMonth() + 1;
             const revenueYear = currentRevenueDate.getFullYear();
-            fetch(`{{ route("employee.analytics.monthly-revenue") }}?month=${revenueMonth}&year=${revenueYear}`)
+            const revenueDay = currentRevenueDate.getDate();
+
+            fetch(`{{ route("employee.analytics.weekly-revenue") }}?days=${currentRevenuePeriod}&date=${revenueYear}-${revenueMonth.toString().padStart(2, '0')}-${revenueDay.toString().padStart(2, '0')}`)
                 .then(response => response.json())
                 .then(data => {
                     if (revenueChart) {
@@ -495,7 +502,7 @@
                     // Update total
                     document.getElementById('revenueTotal').textContent = `Total: ₱${data.total.toLocaleString()}`;
                 })
-                .catch(error => console.error('Error loading monthly revenue:', error));
+                .catch(error => console.error('Error loading weekly revenue:', error));
 
             // Load dashboard stats
             fetch('{{ route("employee.analytics.dashboard-stats") }}')
@@ -693,6 +700,7 @@
             selectedRevenueDay = null; // Reset selected day when changing month
             generateRevenueCalendar();
             updateRevenueDateText();
+            refreshRevenueChart(); // Refresh chart when month changes
         }
 
         // Date selection functions
@@ -762,22 +770,10 @@
             refreshAttendanceChart();
         }
 
-        function selectRevenueQuickPeriod(period) {
-            const currentDate = new Date();
+        function selectRevenueQuickPeriod(days) {
+            currentRevenuePeriod = days;
+            currentRevenueDate = new Date(); // Reset to current date
             selectedRevenueDay = null; // Reset selected day
-
-            switch (period) {
-                case 'current':
-                    currentRevenueDate = new Date();
-                    break;
-                case 'previous':
-                    currentRevenueDate = new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1);
-                    break;
-                case 'year':
-                    currentRevenueDate = new Date(currentDate.getFullYear(), 0, 1);
-                    break;
-            }
-
             updateRevenueDateText();
             generateRevenueCalendar();
             document.getElementById('revenueCalendar').classList.add('hidden');
@@ -800,12 +796,16 @@
         }
 
         function updateRevenueDateText() {
-            const monthName = getMonthName(currentRevenueDate.getMonth());
-            const year = currentRevenueDate.getFullYear();
-            if (selectedRevenueDay) {
-                document.getElementById('revenueDateText').textContent = `${monthName} ${selectedRevenueDay}, ${year}`;
+            // Show period text if using quick period selection
+            if (!selectedRevenueDay && currentRevenueDate.toDateString() === new Date().toDateString()) {
+                const periodText = currentRevenuePeriod === 7 ? 'Last 7 days' :
+                                  currentRevenuePeriod === 14 ? 'Last 14 days' : 'Last 30 days';
+                document.getElementById('revenueDateText').textContent = periodText;
             } else {
-                document.getElementById('revenueDateText').textContent = `${monthName} ${year}`;
+                const monthName = getMonthName(currentRevenueDate.getMonth());
+                const day = currentRevenueDate.getDate();
+                const year = currentRevenueDate.getFullYear();
+                document.getElementById('revenueDateText').textContent = `${monthName} ${day}, ${year}`;
             }
         }
 
@@ -838,7 +838,9 @@
         function refreshRevenueChart() {
             const month = currentRevenueDate.getMonth() + 1;
             const year = currentRevenueDate.getFullYear();
-            fetch(`{{ route("employee.analytics.monthly-revenue") }}?month=${month}&year=${year}`)
+            const day = currentRevenueDate.getDate();
+
+            fetch(`{{ route("employee.analytics.weekly-revenue") }}?days=${currentRevenuePeriod}&date=${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`)
                 .then(response => response.json())
                 .then(data => {
                     if (revenueChart) {

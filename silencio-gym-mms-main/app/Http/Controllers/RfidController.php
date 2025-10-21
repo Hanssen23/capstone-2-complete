@@ -204,9 +204,6 @@ class RfidController extends Controller
             // Update member status to active (they're currently in the gym)
             $member->update(['status' => 'active']);
 
-            // Track member activity for auto-deletion system
-            $member->updateLastActivity();
-
             // Log successful check-in
             $this->logRfidEvent($member->uid, 'check_in', 'success',
                 "Member {$member->first_name} {$member->last_name} checked in successfully", $deviceId);
@@ -273,9 +270,6 @@ class RfidController extends Controller
 
             // Update member status to offline (they're no longer in the gym)
             $member->update(['status' => 'offline']);
-
-            // Track member activity for auto-deletion system
-            $member->updateLastActivity();
 
             // Log successful check-out
             $this->logRfidEvent($member->uid, 'check_out', 'success',

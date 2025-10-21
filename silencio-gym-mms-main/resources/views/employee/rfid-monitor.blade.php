@@ -78,6 +78,7 @@
                                 <option value="check_out">Check-outs</option>
                                 <option value="unknown_card">Unknown Cards</option>
                                 <option value="expired_membership">Expired Memberships</option>
+                                <option value="inactive_member">Inactive Members</option>
                             </select>
                         </div>
                     </div>
@@ -301,6 +302,15 @@
                     badgeColor: '#DC2626',
                     actionText: 'Expired Membership',
                     description: 'Membership has expired',
+                    memberName: null
+                },
+                'inactive_member': {
+                    icon: '⚠️',
+                    borderColor: '#F59E0B',
+                    bgColor: '#F59E0B',
+                    badgeColor: '#F59E0B',
+                    actionText: 'Inactive Member',
+                    description: 'Member account is inactive',
                     memberName: null
                 }
             };

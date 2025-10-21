@@ -93,6 +93,23 @@ class RfidController extends Controller
                 ], 404);
             }
 
+            // Check if member has inactive status
+            if ($member->status === 'inactive') {
+                $this->logRfidEvent($cardUid, 'inactive_member', 'failed',
+                    "Member {$member->first_name} {$member->last_name} has inactive status", $deviceId);
+
+                DB::commit();
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Account is inactive. Please contact staff.',
+                    'action' => 'inactive_member',
+                    'feedback' => [
+                        'message' => 'Inactive member',
+                        'sound' => 'error'
+                    ]
+                ], 403);
+            }
+
             // Check if member is a valid member (not expired)
             if ($member->membership_expires_at && $member->membership_expires_at < now()) {
                 $this->logRfidEvent($cardUid, 'expired_membership', 'failed',

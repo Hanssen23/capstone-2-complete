@@ -95,9 +95,9 @@ class RfidController extends Controller
 
             // Check if member is a valid member (not expired)
             if ($member->membership_expires_at && $member->membership_expires_at < now()) {
-                $this->logRfidEvent($cardUid, 'check_in', 'failed', 
+                $this->logRfidEvent($cardUid, 'expired_membership', 'failed',
                     "Member {$member->first_name} {$member->last_name} has expired membership", $deviceId);
-                
+
                 DB::commit();
                 return response()->json([
                     'success' => false,

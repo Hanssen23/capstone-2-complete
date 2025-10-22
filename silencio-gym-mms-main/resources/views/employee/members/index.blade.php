@@ -283,6 +283,32 @@
         </div>
     </div>
 
+    <!-- Active Membership Error Modal -->
+    <div id="activeMembershipErrorModal" class="fixed inset-0 flex items-center justify-center p-2 sm:p-4 hidden z-50" style="background-color: rgba(0, 0, 0, 0.5);">
+        <div class="bg-white rounded-xl shadow-lg max-w-md w-full transform transition-all duration-300 scale-95 opacity-0 border border-gray-200"
+             id="activeMembershipErrorModalContent"
+             style="box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);">
+            <div class="p-4 sm:p-6 text-center">
+                <div class="mb-4 sm:mb-6">
+                    <div class="w-12 h-12 sm:w-16 sm:h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4">
+                        <svg class="w-6 h-6 sm:w-8 sm:h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-base sm:text-lg font-semibold text-gray-900 mb-2">Cannot Delete Member</h3>
+                    <p id="activeMembershipErrorMessage" class="text-sm sm:text-base text-gray-700 leading-relaxed px-2">
+                        <!-- Error message will be inserted here -->
+                    </p>
+                </div>
+                <div class="flex justify-center pt-4">
+                    <button onclick="closeActiveMembershipErrorModal()" class="w-full sm:w-auto px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all duration-200 font-medium">
+                        OK
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <style>
         .members-table-container {
             width: 100%;
@@ -435,12 +461,25 @@
                 const now = new Date();
 
                 if (expiryDate > now) {
-                    // Member has active membership - show error and block deletion
+                    // Member has active membership - show error modal and block deletion
                     const options = { year: 'numeric', month: 'long', day: 'numeric' };
                     const formattedDate = expiryDate.toLocaleDateString('en-US', options);
                     const errorMessage = `Cannot delete "${name}" - member has an active membership that expires on ${formattedDate}. Please wait until the membership expires or cancel it first.`;
 
-                    alert(errorMessage);
+                    // Update modal message
+                    document.getElementById('activeMembershipErrorMessage').textContent = errorMessage;
+
+                    // Show error modal
+                    const modal = document.getElementById('activeMembershipErrorModal');
+                    const content = document.getElementById('activeMembershipErrorModalContent');
+
+                    modal.classList.remove('hidden');
+
+                    // Trigger animation
+                    setTimeout(function() {
+                        content.style.transform = 'scale(1)';
+                        content.style.opacity = '1';
+                    }, 10);
 
                     console.warn('Deletion blocked: Member has active membership', {
                         memberName: name,
@@ -460,10 +499,35 @@
             document.getElementById('deleteModal').classList.add('hidden');
         }
 
-        // Close modal when clicking outside
+        function closeActiveMembershipErrorModal() {
+            const modal = document.getElementById('activeMembershipErrorModal');
+            const content = document.getElementById('activeMembershipErrorModalContent');
+
+            // Trigger exit animation
+            content.style.transform = 'scale(0.95)';
+            content.style.opacity = '0';
+
+            // Hide modal after animation
+            setTimeout(function() {
+                modal.classList.add('hidden');
+            }, 300);
+        }
+
+        // Close modals when clicking outside
         document.getElementById('deleteModal').addEventListener('click', function(e) {
             if (e.target === this) {
                 closeDeleteModal();
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const errorModal = document.getElementById('activeMembershipErrorModal');
+            if (errorModal) {
+                errorModal.addEventListener('click', function(e) {
+                    if (e.target === errorModal) {
+                        closeActiveMembershipErrorModal();
+                    }
+                });
             }
         });
 

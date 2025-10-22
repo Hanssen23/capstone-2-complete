@@ -518,16 +518,16 @@
         // Real-time data refresh intervals
         function startDataRefresh() {
             console.log('🔄 Starting data refresh intervals...');
-            
+
             // Refresh dashboard stats every 1 second for near real-time updates
             setInterval(loadDashboardStats, 1000);
-            
-            // Refresh RFID logs every 1 second for near real-time updates
-            setInterval(loadRfidLogs, 1000);
-            
+
+            // Refresh RFID logs every 1 second for near real-time updates (maintain current page)
+            setInterval(() => loadRfidLogs(currentPage), 1000);
+
             // Refresh active members every 1 second for real-time updates
             setInterval(loadActiveMembers, 1000);
-            
+
             // Check RFID status every 10 seconds (reduced from 30 seconds)
             setInterval(checkRfidStatus, 10000);
         }

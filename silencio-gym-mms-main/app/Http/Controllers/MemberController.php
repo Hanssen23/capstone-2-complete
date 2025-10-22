@@ -272,13 +272,28 @@ class MemberController extends Controller
         try {
             $member = Member::findOrFail($id);
 
+            // VALIDATION: Check if member has active membership
+            if ($member->membership_expires_at && $member->membership_expires_at->isFuture()) {
+                \Log::warning('Attempted to delete member with active membership', [
+                    'member_id' => $member->id,
+                    'member_name' => $member->full_name,
+                    'membership_expires_at' => $member->membership_expires_at->toDateTimeString(),
+                    'attempted_by' => auth()->user()->id ?? 'unknown'
+                ]);
+
+                $redirectRoute = request()->is('employee/*') ? 'employee.members.index' : 'members.index';
+                return redirect()->route($redirectRoute)
+                    ->with('error', 'Cannot delete member with active membership. Please wait until membership expires or cancel it first.');
+            }
+
             // Store member info for logging before deletion
             $memberInfo = [
                 'id' => $member->id,
                 'member_number' => $member->member_number,
                 'email' => $member->email,
                 'full_name' => $member->full_name,
-                'uid' => $member->uid
+                'uid' => $member->uid,
+                'membership_expires_at' => $member->membership_expires_at ? $member->membership_expires_at->toDateTimeString() : null
             ];
 
             // Note: UID is automatically returned to pool via Member model's boot() method

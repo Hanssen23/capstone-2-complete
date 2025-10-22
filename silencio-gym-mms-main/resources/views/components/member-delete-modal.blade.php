@@ -28,7 +28,19 @@
 <script>
     let pendingMemberDelete = null;
 
-    function deleteMember(memberId, memberName) {
+    function deleteMember(memberId, memberName, membershipExpiresAt = '') {
+        // CLIENT-SIDE VALIDATION: Check if member has active membership
+        if (membershipExpiresAt) {
+            const expiryDate = new Date(membershipExpiresAt);
+            const now = new Date();
+
+            if (expiryDate > now) {
+                // Member has active membership - show error and block deletion
+                showActiveMembershipError(memberName, expiryDate);
+                return;
+            }
+        }
+
         const modal = document.getElementById('memberDeleteConfirmModal');
         const content = document.getElementById('memberDeleteConfirmModalContent');
 
@@ -37,18 +49,36 @@
             id: memberId,
             name: memberName
         };
-        
+
         // Update modal message
         document.getElementById('memberDeleteConfirmMessage').textContent = `Are you sure you want to delete "${memberName}"? This action cannot be undone.`;
-        
+
         // Show confirmation modal
         modal.classList.remove('hidden');
-        
+
         // Trigger animation
         setTimeout(function() {
             content.style.transform = 'scale(1)';
             content.style.opacity = '1';
         }, 10);
+    }
+
+    function showActiveMembershipError(memberName, expiryDate) {
+        // Format the expiry date
+        const options = { year: 'numeric', month: 'long', day: 'numeric' };
+        const formattedDate = expiryDate.toLocaleDateString('en-US', options);
+
+        // Create error message
+        const errorMessage = `Cannot delete "${memberName}" - member has an active membership that expires on ${formattedDate}. Please wait until the membership expires or cancel it first.`;
+
+        // Show error using browser alert (you can replace this with a custom modal if preferred)
+        alert(errorMessage);
+
+        // Log the attempt
+        console.warn('Deletion blocked: Member has active membership', {
+            memberName: memberName,
+            expiresAt: expiryDate.toISOString()
+        });
     }
 
     function cancelMemberDelete() {

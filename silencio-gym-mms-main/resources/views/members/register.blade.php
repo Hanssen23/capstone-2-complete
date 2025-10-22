@@ -99,13 +99,14 @@
                     <!-- Mobile Number -->
                     <div class="mb-3 sm:mb-4 lg:mb-5">
                         <label for="mobile_number" class="block mb-1 sm:mb-2 text-xs sm:text-sm font-medium text-gray-900">Mobile number</label>
-                        <div class="phone-input-container bg-white border-2 border-gray-300 text-gray-900 text-xs sm:text-sm rounded-lg focus-within:ring-blue-500 focus-within:border-blue-500 block w-full p-2 sm:p-3 lg:p-2.5 min-h-[40px] sm:min-h-[44px] shadow-sm">
+                        <div id="phone-input-wrapper" class="phone-input-container bg-white border-2 border-gray-300 text-gray-900 text-xs sm:text-sm rounded-lg focus-within:ring-blue-500 focus-within:border-blue-500 block w-full p-2 sm:p-3 lg:p-2.5 min-h-[40px] sm:min-h-[44px] shadow-sm">
                             <img src="https://flagcdn.com/w40/ph.png" alt="Philippines" class="flag-icon w-5 h-3 sm:w-6 sm:h-4">
                             <span class="country-code text-sm sm:text-base">+63</span>
                             <div class="separator-line"></div>
                             <input type="tel" name="mobile_number" id="mobile_number" value="{{ old('mobile_number') }}" class="phone-input" placeholder="912 345 6789" maxlength="13" required />
                         </div>
-                        <p class="mt-1 text-xs text-gray-500">Enter your 10-digit mobile number (e.g., 912 345 6789)</p>
+                        <p id="mobile-helper-text" class="mt-1 text-xs text-gray-500">Enter your 10-digit mobile number (e.g., 912 345 6789)</p>
+                        <p id="mobile-error-text" class="mt-1 text-xs text-red-600 hidden"></p>
                     </div>
                     
                     <!-- Password -->
@@ -249,27 +250,67 @@
                 }
             });
             
+            // Function to show mobile number error
+            function showMobileError(message) {
+                const wrapper = document.getElementById('phone-input-wrapper');
+                const helperText = document.getElementById('mobile-helper-text');
+                const errorText = document.getElementById('mobile-error-text');
+
+                // Add error styling to input wrapper
+                wrapper.classList.remove('border-gray-300', 'focus-within:ring-blue-500', 'focus-within:border-blue-500');
+                wrapper.classList.add('border-red-500', 'focus-within:ring-red-500', 'focus-within:border-red-500');
+
+                // Hide helper text and show error text
+                helperText.classList.add('hidden');
+                errorText.textContent = message;
+                errorText.classList.remove('hidden');
+
+                phoneInput.focus();
+            }
+
+            // Function to clear mobile number error
+            function clearMobileError() {
+                const wrapper = document.getElementById('phone-input-wrapper');
+                const helperText = document.getElementById('mobile-helper-text');
+                const errorText = document.getElementById('mobile-error-text');
+
+                // Remove error styling
+                wrapper.classList.remove('border-red-500', 'focus-within:ring-red-500', 'focus-within:border-red-500');
+                wrapper.classList.add('border-gray-300', 'focus-within:ring-blue-500', 'focus-within:border-blue-500');
+
+                // Show helper text and hide error text
+                helperText.classList.remove('hidden');
+                errorText.classList.add('hidden');
+                errorText.textContent = '';
+            }
+
+            // Clear error when user starts typing
+            phoneInput.addEventListener('input', function() {
+                clearMobileError();
+            });
+
             // Validate phone number on form submission
             document.querySelector('form').addEventListener('submit', function(e) {
                 console.log('Form submission started');
                 const phoneValue = phoneInput.value.replace(/\D/g, '');
                 console.log('Phone value:', phoneValue);
-                
+
+                // Clear any previous errors
+                clearMobileError();
+
                 if (phoneValue.length !== 10) {
                     e.preventDefault();
-                    alert('Please enter a valid 10-digit Philippine mobile number. Current length: ' + phoneValue.length);
-                    phoneInput.focus();
+                    showMobileError('Please enter a valid 10-digit Philippine mobile number. Current length: ' + phoneValue.length);
                     return false;
                 }
-                
+
                 // Check if it starts with 9 (Philippine mobile numbers start with 9)
                 if (!phoneValue.startsWith('9')) {
                     e.preventDefault();
-                    alert('Philippine mobile numbers must start with 9. Current value: ' + phoneValue);
-                    phoneInput.focus();
+                    showMobileError('Philippine mobile numbers must start with 9. Current value: ' + phoneValue);
                     return false;
                 }
-                
+
                 console.log('Phone validation passed, submitting form');
             });
 

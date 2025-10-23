@@ -63,19 +63,22 @@
 </div>
 
 <!-- Membership Period Information -->
-@if($payment->member && $payment->member->currentMembershipPeriod)
+@if($payment->membership_start_date || $payment->membership_expiration_date)
 <div class="mt-6 bg-gray-50 rounded-lg p-6">
     <h4 class="text-lg font-semibold text-gray-900 mb-4">Membership Period</h4>
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div class="flex justify-between">
             <span class="text-sm font-medium text-gray-500">Start Date:</span>
-            <span class="text-sm text-gray-900">{{ $payment->member->currentMembershipPeriod->start_date ? \Carbon\Carbon::parse($payment->member->currentMembershipPeriod->start_date)->format('M d, Y') : 'N/A' }}</span>
+            <span class="text-sm text-gray-900">{{ $payment->membership_start_date ? $payment->membership_start_date->format('M d, Y') : 'N/A' }}</span>
         </div>
         <div class="flex justify-between">
             <span class="text-sm font-medium text-gray-500">End Date:</span>
-            <span class="text-sm text-gray-900">{{ $payment->member->currentMembershipPeriod->end_date ? \Carbon\Carbon::parse($payment->member->currentMembershipPeriod->end_date)->format('M d, Y') : 'N/A' }}</span>
+            <span class="text-sm text-gray-900">{{ $payment->membership_expiration_date ? $payment->membership_expiration_date->format('M d, Y') : 'N/A' }}</span>
         </div>
-
+        <div class="flex justify-between">
+            <span class="text-sm font-medium text-gray-500">Duration:</span>
+            <span class="text-sm text-gray-900">{{ ucfirst($payment->duration_type ?? 'N/A') }}</span>
+        </div>
     </div>
 </div>
 @endif

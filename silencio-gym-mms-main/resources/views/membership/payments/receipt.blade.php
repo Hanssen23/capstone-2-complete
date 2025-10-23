@@ -459,12 +459,14 @@
                 <span class="label">Payment Method:</span>
                 <span class="value">Cash</span>
             </div>
-            @if($payment->tin)
             <div class="info-row">
                 <span class="label">TIN:</span>
-                <span class="value">{{ $payment->tin }}</span>
+                <span class="value">{{ $payment->tin ?? 'N/A' }}</span>
             </div>
-            @endif
+            <div class="info-row">
+                <span class="label">Registrar Name:</span>
+                <span class="value">{{ $payment->processed_by ?? auth()->user()->name }}</span>
+            </div>
         </div>
         
         <!-- Membership Details -->

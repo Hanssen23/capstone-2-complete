@@ -198,9 +198,24 @@
                             <!-- Start Date -->
                             <div class="mb-6 sm:mb-8">
                                 <label class="block text-sm font-medium mb-3" style="color: #6B7280;">Membership Start Date</label>
-                                <input type="date" id="startDate" name="start_date" 
-                                       class="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors min-h-[44px]" 
+                                <input type="date" id="startDate" name="start_date"
+                                       class="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors min-h-[44px]"
                                        style="border-color: #E5E7EB;" required>
+                            </div>
+
+                            <!-- TIN (Tax Identification Number) -->
+                            <div class="mb-6 sm:mb-8">
+                                <label class="block text-sm font-medium mb-3" style="color: #6B7280;">TIN (Tax Identification Number) <span class="text-red-500">*</span></label>
+                                <input type="text" id="tinNumber" name="tin"
+                                       class="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors min-h-[44px]"
+                                       style="border-color: #E5E7EB;"
+                                       placeholder="Enter 9-digit TIN"
+                                       maxlength="9"
+                                       pattern="[0-9]{9}"
+                                       title="TIN must be exactly 9 digits"
+                                       required>
+                                <p id="tin-helper-text" class="mt-1 text-xs text-gray-500">Enter exactly 9 digits (numbers only)</p>
+                                <p id="tin-error-text" class="mt-1 text-xs text-red-600 hidden"></p>
                             </div>
                         </div>
 
@@ -347,6 +362,60 @@
 
         // Set default start date to today
         document.getElementById('startDate').value = new Date().toISOString().split('T')[0];
+
+        // TIN Validation
+        const tinInput = document.getElementById('tinNumber');
+        const tinHelperText = document.getElementById('tin-helper-text');
+        const tinErrorText = document.getElementById('tin-error-text');
+
+        function showTinError(message) {
+            tinInput.classList.remove('border-gray-300');
+            tinInput.classList.add('border-red-500');
+            tinHelperText.classList.add('hidden');
+            tinErrorText.textContent = message;
+            tinErrorText.classList.remove('hidden');
+        }
+
+        function clearTinError() {
+            tinInput.classList.remove('border-red-500');
+            tinInput.classList.add('border-gray-300');
+            tinHelperText.classList.remove('hidden');
+            tinErrorText.classList.add('hidden');
+            tinErrorText.textContent = '';
+        }
+
+        // Only allow numbers in TIN input
+        tinInput.addEventListener('input', function(e) {
+            // Remove any non-digit characters
+            let value = e.target.value.replace(/\D/g, '');
+
+            // Limit to 9 digits
+            if (value.length > 9) {
+                value = value.substring(0, 9);
+            }
+
+            e.target.value = value;
+
+            // Clear error when user starts typing
+            if (value.length > 0) {
+                clearTinError();
+            }
+        });
+
+        // Validate TIN on blur
+        tinInput.addEventListener('blur', function() {
+            const value = this.value.trim();
+
+            if (value.length === 0) {
+                showTinError('TIN is required');
+            } else if (value.length !== 9) {
+                showTinError('TIN must be exactly 9 digits');
+            } else if (!/^\d{9}$/.test(value)) {
+                showTinError('TIN must contain only numbers');
+            } else {
+                clearTinError();
+            }
+        });
 
         // Member search functionality is now handled by updateMemberListDisplay()
 
@@ -833,6 +902,30 @@
         async function processPayment() {
             console.log('processPayment called');
 
+            // Validate TIN before proceeding
+            const tinValue = document.getElementById('tinNumber').value.trim();
+
+            if (!tinValue) {
+                showTinError('TIN is required');
+                document.getElementById('tinNumber').focus();
+                alert('Please enter the TIN (Tax Identification Number) before processing payment.');
+                return;
+            }
+
+            if (tinValue.length !== 9) {
+                showTinError('TIN must be exactly 9 digits');
+                document.getElementById('tinNumber').focus();
+                alert('TIN must be exactly 9 digits.');
+                return;
+            }
+
+            if (!/^\d{9}$/.test(tinValue)) {
+                showTinError('TIN must contain only numbers');
+                document.getElementById('tinNumber').focus();
+                alert('TIN must contain only numbers.');
+                return;
+            }
+
             // First, check for active membership
             console.log('Checking active membership for member ID:', selectedMember.id);
             const membershipCheck = await PaymentValidation.checkActiveMembership(selectedMember.id);
@@ -891,6 +984,7 @@
                 amount_tendered: document.getElementById('amountTendered').value || null,
                 change_amount: document.getElementById('changeAmount').value || 0,
                 start_date: document.getElementById('startDate').value,
+                tin: document.getElementById('tinNumber').value,
                 notes: document.querySelector('textarea[name="notes"]').value,
                 is_pwd: isPwd ? 1 : 0,
                 is_senior_citizen: isSeniorCitizen ? 1 : 0,

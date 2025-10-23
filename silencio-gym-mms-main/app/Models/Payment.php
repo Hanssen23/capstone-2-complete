@@ -22,6 +22,7 @@ class Payment extends Model
         'membership_expiration_date',
         'notes',
         'tin',
+        'processed_by',
         'is_pwd',
         'is_senior_citizen',
         'discount_amount',

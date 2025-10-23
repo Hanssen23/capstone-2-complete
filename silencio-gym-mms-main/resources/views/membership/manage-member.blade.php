@@ -653,7 +653,9 @@
             const isPwd = document.getElementById('isPwd').checked;
             const isSeniorCitizen = document.getElementById('isSeniorCitizen').checked;
             const startDate = document.getElementById('startDate').value;
+            const tinNumber = document.getElementById('tinNumber').value;
             const notes = document.querySelector('textarea[name="notes"]').value;
+            const registrarName = '{{ auth()->user()->name }}';
 
             // Calculate expiration date
             const start = new Date(startDate);
@@ -727,6 +729,14 @@
                                 <div>
                                     <p class="text-sm text-gray-600">Payment Method</p>
                                     <p class="font-semibold text-gray-900">Cash</p>
+                                </div>
+                                <div>
+                                    <p class="text-sm text-gray-600">TIN</p>
+                                    <p class="font-semibold text-gray-900">${tinNumber || 'N/A'}</p>
+                                </div>
+                                <div>
+                                    <p class="text-sm text-gray-600">Registrar Name</p>
+                                    <p class="font-semibold text-gray-900">${registrarName}</p>
                                 </div>
                             </div>
                         </div>
@@ -861,7 +871,15 @@
 
         function closeReceiptPreview() {
             console.log('closeReceiptPreview called');
-            const modal = document.querySelector('.fixed.inset-0.flex');
+
+            // Find modal by ID first (most reliable)
+            let modal = document.getElementById('receiptPreviewModal');
+
+            // Fallback to querySelector if ID not found
+            if (!modal) {
+                modal = document.querySelector('.fixed.inset-0.flex');
+            }
+
             const content = document.getElementById('receiptModalContent');
 
             console.log('Modal element:', modal);
@@ -876,13 +894,44 @@
                     if (modal) {
                         console.log('Removing modal from DOM');
                         modal.remove();
+
+                        // Extra cleanup: remove any orphaned modals
+                        document.querySelectorAll('.fixed.inset-0.flex').forEach(el => {
+                            if (el.id === 'receiptPreviewModal' || el.querySelector('#receiptModalContent')) {
+                                el.remove();
+                            }
+                        });
                     }
+
+                    // Re-enable body scroll if it was disabled
+                    document.body.style.overflow = '';
                 }, 300);
             } else if (modal) {
                 console.log('Removing modal immediately (no content element)');
                 modal.remove();
+
+                // Extra cleanup: remove any orphaned modals
+                document.querySelectorAll('.fixed.inset-0.flex').forEach(el => {
+                    if (el.id === 'receiptPreviewModal' || el.querySelector('#receiptModalContent')) {
+                        el.remove();
+                    }
+                });
+
+                // Re-enable body scroll if it was disabled
+                document.body.style.overflow = '';
             } else {
                 console.error('No modal found to close!');
+
+                // Emergency cleanup: remove ALL fixed overlay modals
+                document.querySelectorAll('.fixed.inset-0').forEach(el => {
+                    if (el.querySelector('#receiptModalContent') || el.id === 'receiptPreviewModal') {
+                        console.log('Emergency cleanup: removing orphaned modal');
+                        el.remove();
+                    }
+                });
+
+                // Re-enable body scroll
+                document.body.style.overflow = '';
             }
         }
 

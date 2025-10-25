@@ -69,14 +69,56 @@
                                 </div>
                             </div>
                         </div>
+
+                        <!-- Revenue Card with Tabs -->
                         <div class="bg-white border rounded-lg p-4 sm:p-6 hover:shadow-lg transition-shadow" style="border-color: #1E40AF; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                            <!-- Revenue Tabs -->
+                            <div class="flex gap-2 mb-3">
+                                <button onclick="switchRevenueTab('total')" id="tab-total" class="px-3 py-1 text-xs font-medium rounded transition-colors" style="background-color: #1E40AF; color: white;">Total</button>
+                                <button onclick="switchRevenueTab('monthly')" id="tab-monthly" class="px-3 py-1 text-xs font-medium rounded transition-colors" style="background-color: #E5E7EB; color: #6B7280;">Monthly</button>
+                                <button onclick="switchRevenueTab('yearly')" id="tab-yearly" class="px-3 py-1 text-xs font-medium rounded transition-colors" style="background-color: #E5E7EB; color: #6B7280;">Yearly</button>
+                            </div>
+
+                            <!-- Period Selectors -->
+                            <div id="period-selectors" class="mb-3 hidden">
+                                <!-- Monthly Selector -->
+                                <div id="monthly-selector" class="hidden flex gap-2 items-center">
+                                    <select id="revenue-month" onchange="updatePaymentsRevenue()" class="flex-1 px-2 py-1 text-xs border rounded" style="border-color: #E5E7EB;">
+                                        <option value="1">January</option>
+                                        <option value="2">February</option>
+                                        <option value="3">March</option>
+                                        <option value="4">April</option>
+                                        <option value="5">May</option>
+                                        <option value="6">June</option>
+                                        <option value="7">July</option>
+                                        <option value="8">August</option>
+                                        <option value="9">September</option>
+                                        <option value="10">October</option>
+                                        <option value="11">November</option>
+                                        <option value="12">December</option>
+                                    </select>
+                                    <div class="flex items-center gap-2">
+                                        <button onclick="changeMonthYear(-1)" class="px-2 py-1 text-xs font-bold rounded hover:bg-gray-200" style="background-color: #E5E7EB; color: #1E40AF;">&lt;</button>
+                                        <span id="revenue-month-year" class="text-xs font-medium" style="color: #1E40AF; min-width: 40px; text-align: center;">{{ date('Y') }}</span>
+                                        <button onclick="changeMonthYear(1)" class="px-2 py-1 text-xs font-bold rounded hover:bg-gray-200" style="background-color: #E5E7EB; color: #1E40AF;">&gt;</button>
+                                    </div>
+                                </div>
+                                <!-- Yearly Selector -->
+                                <div id="yearly-selector" class="hidden flex items-center justify-center gap-2">
+                                    <button onclick="changeYear(-1)" class="px-2 py-1 text-xs font-bold rounded hover:bg-gray-200" style="background-color: #E5E7EB; color: #1E40AF;">&lt;</button>
+                                    <span id="revenue-year" class="text-xs font-medium" style="color: #1E40AF; min-width: 40px; text-align: center;">{{ date('Y') }}</span>
+                                    <button onclick="changeYear(1)" class="px-2 py-1 text-xs font-bold rounded hover:bg-gray-200" style="background-color: #E5E7EB; color: #1E40AF;">&gt;</button>
+                                </div>
+                            </div>
+
+                            <!-- Revenue Display -->
                             <div class="flex items-center">
                                 <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-full flex items-center justify-center mr-3 sm:mr-4" style="background-color: #1E40AF;">
                                     <span class="text-xl sm:text-2xl font-bold" style="color: #FFFFFF;">₱</span>
                                 </div>
                                 <div>
-                                    <p class="text-xs sm:text-sm font-medium" style="color: #1E40AF;">Total Revenue</p>
-                                    <p class="text-2xl sm:text-3xl font-bold" style="color: #000000;">₱{{ number_format($totalRevenue, 2) }}</p>
+                                    <p class="text-xs sm:text-sm font-medium" style="color: #1E40AF;" id="revenue-label">Total Revenue</p>
+                                    <p class="text-2xl sm:text-3xl font-bold" style="color: #000000;" id="revenue-amount">₱{{ number_format($totalRevenue, 2) }}</p>
                                 </div>
                             </div>
                         </div>
@@ -769,4 +811,85 @@ document.addEventListener('DOMContentLoaded', function() {
         };
     }
 });
+
+// Revenue Tab Switching - Global scope for onclick handlers
+let currentRevenueTab = 'total';
+
+function switchRevenueTab(tab) {
+    currentRevenueTab = tab;
+
+    // Update tab buttons
+    document.getElementById('tab-total').style.backgroundColor = tab === 'total' ? '#1E40AF' : '#E5E7EB';
+    document.getElementById('tab-total').style.color = tab === 'total' ? 'white' : '#6B7280';
+    document.getElementById('tab-monthly').style.backgroundColor = tab === 'monthly' ? '#1E40AF' : '#E5E7EB';
+    document.getElementById('tab-monthly').style.color = tab === 'monthly' ? 'white' : '#6B7280';
+    document.getElementById('tab-yearly').style.backgroundColor = tab === 'yearly' ? '#1E40AF' : '#E5E7EB';
+    document.getElementById('tab-yearly').style.color = tab === 'yearly' ? 'white' : '#6B7280';
+
+    // Show/hide period selectors
+    const periodSelectors = document.getElementById('period-selectors');
+    const monthlySelector = document.getElementById('monthly-selector');
+    const yearlySelector = document.getElementById('yearly-selector');
+
+    if (tab === 'total') {
+        periodSelectors.classList.add('hidden');
+        monthlySelector.classList.add('hidden');
+        yearlySelector.classList.add('hidden');
+    } else if (tab === 'monthly') {
+        periodSelectors.classList.remove('hidden');
+        monthlySelector.classList.remove('hidden');
+        monthlySelector.classList.add('flex');
+        yearlySelector.classList.add('hidden');
+        // Set to current month/year
+        const now = new Date();
+        document.getElementById('revenue-month').value = now.getMonth() + 1;
+        document.getElementById('revenue-month-year').textContent = now.getFullYear();
+    } else if (tab === 'yearly') {
+        periodSelectors.classList.remove('hidden');
+        monthlySelector.classList.add('hidden');
+        yearlySelector.classList.remove('hidden');
+        // Set to current year
+        document.getElementById('revenue-year').textContent = new Date().getFullYear();
+    }
+
+    updatePaymentsRevenue();
+}
+
+function changeMonthYear(direction) {
+    const yearSpan = document.getElementById('revenue-month-year');
+    let currentYear = parseInt(yearSpan.textContent);
+    yearSpan.textContent = currentYear + direction;
+    updatePaymentsRevenue();
+}
+
+function changeYear(direction) {
+    const yearSpan = document.getElementById('revenue-year');
+    let currentYear = parseInt(yearSpan.textContent);
+    yearSpan.textContent = currentYear + direction;
+    updatePaymentsRevenue();
+}
+
+function updatePaymentsRevenue() {
+    let url = '{{ $isEmployee ? route("employee.payments.revenue") : route("membership.payments.revenue") }}';
+    let params = new URLSearchParams();
+
+    if (currentRevenueTab === 'monthly') {
+        params.append('period', 'monthly');
+        params.append('month', document.getElementById('revenue-month').value);
+        params.append('year', document.getElementById('revenue-month-year').textContent);
+    } else if (currentRevenueTab === 'yearly') {
+        params.append('period', 'yearly');
+        params.append('year', document.getElementById('revenue-year').textContent);
+    } else {
+        params.append('period', 'total');
+    }
+
+    fetch(url + '?' + params.toString())
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('revenue-amount').textContent = '₱' + parseFloat(data.revenue).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+            document.getElementById('revenue-label').textContent = data.label;
+        })
+        .catch(error => console.error('Error:', error));
+}
 </script>

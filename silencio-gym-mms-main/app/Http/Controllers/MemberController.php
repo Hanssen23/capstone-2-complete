@@ -17,6 +17,7 @@ class MemberController extends Controller
     {
         $selectedMembership = $request->query('membership');
         $search = $request->query('search');
+        $filter = $request->query('filter'); // New filter parameter
 
         $membersQuery = Member::query()
             ->with([
@@ -28,8 +29,19 @@ class MemberController extends Controller
             // Show all members to admin/employee users, including unverified ones
             ->where('status', '!=', 'deleted'); // Only exclude members marked as deleted
 
-        // Filter by membership type if provided and valid
-        if (in_array($selectedMembership, ['basic', 'premium', 'vip'])) {
+        // Filter by expired memberships
+        if ($filter === 'expired') {
+            $membersQuery->where('membership_expires_at', '<', now());
+
+            // If also filtering by membership type, check the current membership period plan type
+            if (in_array($selectedMembership, ['basic', 'premium', 'vip'])) {
+                $membersQuery->whereHas('currentMembershipPeriod', function ($query) use ($selectedMembership) {
+                    $query->where('plan_type', $selectedMembership);
+                });
+            }
+        }
+        // Filter by active membership type if provided and valid (not expired)
+        elseif (in_array($selectedMembership, ['basic', 'premium', 'vip'])) {
             $membersQuery->whereHas('currentMembershipPeriod', function ($query) use ($selectedMembership) {
                 $query->where('plan_type', $selectedMembership)
                       ->where('status', 'active')
@@ -56,10 +68,10 @@ class MemberController extends Controller
 
         // Check if this is an employee request
         if (request()->is('employee/*')) {
-            return view('employee.members', compact('members', 'selectedMembership', 'search'));
+            return view('employee.members', compact('members', 'selectedMembership', 'search', 'filter'));
         }
 
-        return view('members.list', compact('members', 'selectedMembership', 'search'));
+        return view('members.list', compact('members', 'selectedMembership', 'search', 'filter'));
     }
 
     /**
@@ -197,20 +209,28 @@ class MemberController extends Controller
         // Check if this is an employee request
         if (request()->is('employee/*')) {
             // Employee can only edit name and personal info fields
+            // Email and Member Number are NOT editable by employees
             $request->validate([
                 'first_name' => 'required|string|max:255|regex:/^[A-Z][a-zA-Z\s]*$/',
                 'middle_name' => 'nullable|string|max:255|regex:/^[A-Z][a-zA-Z\s]*$/',
                 'last_name' => 'required|string|max:255|regex:/^[A-Z][a-zA-Z\s]*$/',
                 'age' => 'required|integer|min:1|max:120',
                 'gender' => 'required|in:Male,Female,Other,Prefer not to say',
+                'mobile_number' => 'required|string|max:20|regex:/^[0-9]{10,11}$/',
             ], [
+                'first_name.required' => 'First name is required',
                 'first_name.regex' => 'First name must start with a capital letter and can only contain letters and spaces',
                 'middle_name.regex' => 'Middle name must start with a capital letter and can only contain letters and spaces',
+                'last_name.required' => 'Last name is required',
                 'last_name.regex' => 'Last name must start with a capital letter and can only contain letters and spaces',
+                'age.required' => 'Age is required',
                 'age.integer' => 'Age must be a valid number',
                 'age.min' => 'Age must be at least 1',
                 'age.max' => 'Age must not exceed 120',
+                'gender.required' => 'Gender is required',
                 'gender.in' => 'Please select a valid gender option',
+                'mobile_number.required' => 'Mobile number is required',
+                'mobile_number.regex' => 'Mobile number must be 10-11 digits',
             ]);
 
             $member->update([
@@ -219,40 +239,45 @@ class MemberController extends Controller
                 'last_name' => $request->last_name,
                 'age' => $request->age,
                 'gender' => $request->gender,
+                'mobile_number' => $request->mobile_number,
+                // Email and member_number are NOT updated by employees
             ]);
         } else {
-            // Admin can edit all fields
+            // Admin can edit all fields EXCEPT email and member_number
+            // These are system-generated and should not be changed
             $request->validate([
                 'uid' => 'required|string|unique:members,uid,' . $id,
-                'member_number' => 'required|string|unique:members,member_number,' . $id,
                 'first_name' => 'required|string|max:255|regex:/^[A-Z][a-zA-Z\s]*$/',
                 'middle_name' => 'nullable|string|max:255|regex:/^[A-Z][a-zA-Z\s]*$/',
                 'last_name' => 'required|string|max:255|regex:/^[A-Z][a-zA-Z\s]*$/',
                 'age' => 'required|integer|min:1|max:120',
                 'gender' => 'required|in:Male,Female,Other,Prefer not to say',
-                'email' => 'required|email|unique:members,email,' . $id . ',id,deleted_at,NULL|unique:users,email',
-                'mobile_number' => 'nullable|string|max:20',
-                // membership is not validated as it's automatically set during payment processing
+                'mobile_number' => 'required|string|max:20|regex:/^[0-9]{10,11}$/',
             ], [
+                'first_name.required' => 'First name is required',
                 'first_name.regex' => 'First name must start with a capital letter and can only contain letters and spaces',
                 'middle_name.regex' => 'Middle name must start with a capital letter and can only contain letters and spaces',
+                'last_name.required' => 'Last name is required',
                 'last_name.regex' => 'Last name must start with a capital letter and can only contain letters and spaces',
+                'age.required' => 'Age is required',
                 'age.integer' => 'Age must be a valid number',
                 'age.min' => 'Age must be at least 1',
                 'age.max' => 'Age must not exceed 120',
+                'gender.required' => 'Gender is required',
                 'gender.in' => 'Please select a valid gender option',
-                'email.unique' => 'This email is already registered',
+                'mobile_number.required' => 'Mobile number is required',
+                'mobile_number.regex' => 'Mobile number must be 10-11 digits',
             ]);
 
             $member->update([
                 'uid' => $request->uid,
-                'member_number' => $request->member_number,
+                // member_number is NOT updated (system-generated)
+                // email is NOT updated (system-generated)
                 'first_name' => $request->first_name,
                 'middle_name' => $request->middle_name,
                 'last_name' => $request->last_name,
                 'age' => $request->age,
                 'gender' => $request->gender,
-                'email' => $request->email,
                 'mobile_number' => $request->mobile_number,
                 // membership is not updated as it's automatically set during payment processing
             ]);

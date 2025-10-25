@@ -71,9 +71,6 @@ Route::get('/terms', function () {
 // Public Dashboard (accessible without authentication)
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 Route::get('/dashboard/stats', [DashboardController::class, 'getStats'])->name('dashboard.stats');
-Route::get('/dashboard/revenue', [DashboardController::class, 'getRevenueByPeriod'])->name('dashboard.revenue');
-Route::get('/dashboard/active-members', [DashboardController::class, 'getCurrentlyActiveMembers'])->name('dashboard.active-members');
-Route::get('/dashboard/today-attendance', [DashboardController::class, 'getTodayAttendance'])->name('dashboard.today-attendance');
 
 // Public Analytics Routes for Dashboard (accessible without authentication)
 Route::prefix('analytics')->name('analytics.')->group(function () {
@@ -113,7 +110,6 @@ Route::middleware(['auth'])->group(function () {
     // Payment Routes (shared between admin and employee)
     Route::prefix('membership/payments')->name('membership.payments.')->group(function () {
         Route::get('/', [PaymentController::class, 'index'])->name('index');
-        Route::get('/revenue', [PaymentController::class, 'getRevenueByPeriod'])->name('revenue');
         Route::get('/create', [PaymentController::class, 'create'])->name('create');
         Route::post('/', [PaymentController::class, 'store'])->name('store');
         Route::get('/{id}', [PaymentController::class, 'show'])->name('show');
@@ -188,7 +184,6 @@ Route::middleware(['auth', 'employee.only'])->group(function () {
         Route::delete('/members/{id}', [MemberController::class, 'destroy'])->name('members.destroy');
         Route::get('/members/{id}/profile', [MemberController::class, 'profile'])->name('members.profile');
         Route::get('/payments', [EmployeeController::class, 'payments'])->name('payments');
-        Route::get('/payments/revenue', [EmployeeController::class, 'getPaymentsRevenueByPeriod'])->name('payments.revenue');
 
         // Employee RFID Routes
         Route::prefix('rfid')->name('rfid.')->group(function () {
@@ -203,9 +198,6 @@ Route::middleware(['auth', 'employee.only'])->group(function () {
             Route::get('/weekly-revenue', [AnalyticsController::class, 'weeklyRevenue'])->name('weekly-revenue');
             Route::get('/monthly-revenue', [AnalyticsController::class, 'monthlyRevenue'])->name('monthly-revenue');
             Route::get('/dashboard-stats', [AnalyticsController::class, 'getDashboardStats'])->name('dashboard-stats');
-            Route::get('/revenue', [EmployeeDashboardController::class, 'getRevenueByPeriod'])->name('revenue');
-            Route::get('/active-members', [EmployeeDashboardController::class, 'getCurrentlyActiveMembers'])->name('active-members');
-            Route::get('/today-attendance', [EmployeeDashboardController::class, 'getTodayAttendance'])->name('today-attendance');
         });
 
         // Employee Membership Routes

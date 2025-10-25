@@ -65,4 +65,30 @@ class Attendance extends Model
     {
         return $query->whereMonth('check_in_time', now()->month);
     }
+
+    /**
+     * Scope for today's attendance with valid members only
+     * Excludes: unknown cards (null member_id), inactive members, expired members
+     */
+    public function scopeTodayWithValidMembers($query)
+    {
+        return $query->whereDate('check_in_time', today())
+            ->whereHas('member', function($q) {
+                $q->where('status', 'active');
+            });
+    }
+
+    /**
+     * Scope for this week's attendance with valid members only
+     */
+    public function scopeThisWeekWithValidMembers($query)
+    {
+        return $query->whereBetween('check_in_time', [
+                now()->startOfWeek(),
+                now()->endOfWeek()
+            ])
+            ->whereHas('member', function($q) {
+                $q->where('status', 'active');
+            });
+    }
 }

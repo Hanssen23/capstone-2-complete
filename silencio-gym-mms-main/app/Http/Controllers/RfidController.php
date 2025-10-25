@@ -6,11 +6,14 @@ use App\Models\Member;
 use App\Models\Attendance;
 use App\Models\ActiveSession;
 use App\Models\RfidLog;
+use App\Mail\CheckInNotification;
+use App\Mail\CheckOutNotification;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 
 class RfidController extends Controller
 {
@@ -208,6 +211,24 @@ class RfidController extends Controller
             $this->logRfidEvent($member->uid, 'check_in', 'success',
                 "Member {$member->first_name} {$member->last_name} checked in successfully", $deviceId);
 
+            // Send check-in email notification
+            try {
+                $checkInTime = now()->setTimezone('Asia/Manila')->format('h:i A');
+                $currentPlan = $member->membershipPlan?->name ?? 'No Active Plan';
+                $membershipExpiry = $member->membership_expires_at
+                    ? Carbon::parse($member->membership_expires_at)->setTimezone('Asia/Manila')->format('F d, Y')
+                    : 'N/A';
+
+                Mail::to($member->email)->send(new CheckInNotification(
+                    $member,
+                    $checkInTime,
+                    $currentPlan,
+                    $membershipExpiry
+                ));
+            } catch (\Exception $e) {
+                Log::error('Failed to send check-in email: ' . $e->getMessage());
+            }
+
             DB::commit();
 
             return response()->json([
@@ -274,6 +295,19 @@ class RfidController extends Controller
             // Log successful check-out
             $this->logRfidEvent($member->uid, 'check_out', 'success',
                 "Member {$member->first_name} {$member->last_name} checked out. Session duration: {$sessionDurationText}", $deviceId);
+
+            // Send check-out email notification
+            try {
+                $checkOutTime = now()->setTimezone('Asia/Manila')->format('h:i A');
+
+                Mail::to($member->email)->send(new CheckOutNotification(
+                    $member,
+                    $checkOutTime,
+                    $sessionDurationText
+                ));
+            } catch (\Exception $e) {
+                Log::error('Failed to send check-out email: ' . $e->getMessage());
+            }
 
             DB::commit();
 

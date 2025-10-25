@@ -31,33 +31,40 @@
                 <!-- Filter Pills -->
                 <div class="mt-4 sm:mt-6">
                     <div class="flex flex-wrap gap-2 sm:gap-3">
-                        <a href="{{ route('members.index') }}" 
-                           class="px-3 sm:px-4 py-2 rounded-full text-xs sm:text-sm font-medium transition-colors min-h-[44px] flex items-center justify-center {{ empty($selectedMembership) ? 'text-white' : 'text-gray-600' }}" 
-                           style="background-color: {{ empty($selectedMembership) ? '#1E40AF' : '#F3F4F6' }};"
-                           onmouseover="this.style.backgroundColor='{{ empty($selectedMembership) ? '#1E40AF' : '#E5E7EB' }}'" 
-                           onmouseout="this.style.backgroundColor='{{ empty($selectedMembership) ? '#1E40AF' : '#F3F4F6' }}'">
+                        <a href="{{ route('members.index') }}"
+                           class="px-3 sm:px-4 py-2 rounded-full text-xs sm:text-sm font-medium transition-colors min-h-[44px] flex items-center justify-center {{ empty($selectedMembership) && ($filter ?? '') !== 'expired' ? 'text-white' : 'text-gray-600' }}"
+                           style="background-color: {{ empty($selectedMembership) && ($filter ?? '') !== 'expired' ? '#1E40AF' : '#F3F4F6' }};"
+                           onmouseover="this.style.backgroundColor='{{ empty($selectedMembership) && ($filter ?? '') !== 'expired' ? '#1E40AF' : '#E5E7EB' }}'"
+                           onmouseout="this.style.backgroundColor='{{ empty($selectedMembership) && ($filter ?? '') !== 'expired' ? '#1E40AF' : '#F3F4F6' }}'">
                             All
                         </a>
-                        <a href="{{ route('members.index', ['membership' => 'basic']) }}" 
-                           class="px-3 sm:px-4 py-2 rounded-full text-xs sm:text-sm font-medium transition-colors min-h-[44px] flex items-center justify-center {{ ($selectedMembership ?? '') === 'basic' ? 'text-white' : 'text-gray-600' }}" 
+                        <a href="{{ route('members.index', array_filter(['membership' => 'basic', 'filter' => $filter ?? null])) }}"
+                           class="px-3 sm:px-4 py-2 rounded-full text-xs sm:text-sm font-medium transition-colors min-h-[44px] flex items-center justify-center {{ ($selectedMembership ?? '') === 'basic' ? 'text-white' : 'text-gray-600' }}"
                            style="background-color: {{ ($selectedMembership ?? '') === 'basic' ? '#1E40AF' : '#F3F4F6' }};"
-                           onmouseover="this.style.backgroundColor='{{ ($selectedMembership ?? '') === 'basic' ? '#1E40AF' : '#E5E7EB' }}'" 
+                           onmouseover="this.style.backgroundColor='{{ ($selectedMembership ?? '') === 'basic' ? '#1E40AF' : '#E5E7EB' }}'"
                            onmouseout="this.style.backgroundColor='{{ ($selectedMembership ?? '') === 'basic' ? '#1E40AF' : '#F3F4F6' }}'">
                             Basic
                         </a>
-                        <a href="{{ route('members.index', ['membership' => 'vip']) }}" 
-                           class="px-3 sm:px-4 py-2 rounded-full text-xs sm:text-sm font-medium transition-colors min-h-[44px] flex items-center justify-center {{ ($selectedMembership ?? '') === 'vip' ? 'text-white' : 'text-gray-600' }}" 
+                        <a href="{{ route('members.index', array_filter(['membership' => 'vip', 'filter' => $filter ?? null])) }}"
+                           class="px-3 sm:px-4 py-2 rounded-full text-xs sm:text-sm font-medium transition-colors min-h-[44px] flex items-center justify-center {{ ($selectedMembership ?? '') === 'vip' ? 'text-white' : 'text-gray-600' }}"
                            style="background-color: {{ ($selectedMembership ?? '') === 'vip' ? '#1E40AF' : '#F3F4F6' }};"
-                           onmouseover="this.style.backgroundColor='{{ ($selectedMembership ?? '') === 'vip' ? '#1E40AF' : '#E5E7EB' }}'" 
+                           onmouseover="this.style.backgroundColor='{{ ($selectedMembership ?? '') === 'vip' ? '#1E40AF' : '#E5E7EB' }}'"
                            onmouseout="this.style.backgroundColor='{{ ($selectedMembership ?? '') === 'vip' ? '#1E40AF' : '#F3F4F6' }}'">
                             VIP
                         </a>
-                        <a href="{{ route('members.index', ['membership' => 'premium']) }}" 
-                           class="px-3 sm:px-4 py-2 rounded-full text-xs sm:text-sm font-medium transition-colors min-h-[44px] flex items-center justify-center {{ ($selectedMembership ?? '') === 'premium' ? 'text-white' : 'text-gray-600' }}" 
+                        <a href="{{ route('members.index', array_filter(['membership' => 'premium', 'filter' => $filter ?? null])) }}"
+                           class="px-3 sm:px-4 py-2 rounded-full text-xs sm:text-sm font-medium transition-colors min-h-[44px] flex items-center justify-center {{ ($selectedMembership ?? '') === 'premium' ? 'text-white' : 'text-gray-600' }}"
                            style="background-color: {{ ($selectedMembership ?? '') === 'premium' ? '#1E40AF' : '#F3F4F6' }};"
-                           onmouseover="this.style.backgroundColor='{{ ($selectedMembership ?? '') === 'premium' ? '#1E40AF' : '#E5E7EB' }}'" 
+                           onmouseover="this.style.backgroundColor='{{ ($selectedMembership ?? '') === 'premium' ? '#1E40AF' : '#E5E7EB' }}'"
                            onmouseout="this.style.backgroundColor='{{ ($selectedMembership ?? '') === 'premium' ? '#1E40AF' : '#F3F4F6' }}'">
                             Premium
+                        </a>
+                        <a href="{{ ($filter ?? '') === 'expired' ? route('members.index', array_filter(['membership' => $selectedMembership ?? null])) : route('members.index', array_filter(['filter' => 'expired', 'membership' => $selectedMembership ?? null])) }}"
+                           class="px-3 sm:px-4 py-2 rounded-full text-xs sm:text-sm font-medium transition-colors min-h-[44px] flex items-center justify-center {{ ($filter ?? '') === 'expired' ? 'text-white' : 'text-gray-600' }}"
+                           style="background-color: {{ ($filter ?? '') === 'expired' ? '#DC2626' : '#F3F4F6' }};"
+                           onmouseover="this.style.backgroundColor='{{ ($filter ?? '') === 'expired' ? '#DC2626' : '#E5E7EB' }}'"
+                           onmouseout="this.style.backgroundColor='{{ ($filter ?? '') === 'expired' ? '#DC2626' : '#F3F4F6' }}'">
+                            Expired
                         </a>
                     </div>
                 </div>
@@ -99,27 +106,39 @@
                                     @php
                                         $currentPlan = $member->currentMembershipPeriod ? $member->currentMembershipPeriod->plan_type : null;
                                         $isActive = $member->currentMembershipPeriod && $member->currentMembershipPeriod->is_active;
+                                        $expirationDate = $member->currentMembershipPeriod ? $member->currentMembershipPeriod->expiration_date : null;
+                                        $isExpired = $expirationDate && now()->greaterThan($expirationDate);
                                         $hasPayments = $member->payments()->where('status', 'completed')->exists();
                                         $planFromPayments = $member->payments()->where('status', 'completed')->latest()->first();
                                     @endphp
-                                    
-                                    @if($currentPlan && $isActive)
+
+                                    @if($currentPlan && $isActive && !$isExpired)
                                         @php
                                             // Normalize plan type to lowercase for consistent color mapping
                                             $normalizedPlan = strtolower($currentPlan);
                                             $durationType = $member->currentMembershipPeriod ? $member->currentMembershipPeriod->duration_type : null;
                                             $planColors = [
                                                 'basic' => '#059669',
-                                                'vip' => '#F59E0B', 
+                                                'vip' => '#F59E0B',
                                                 'premium' => '#F59E0B'
                                             ];
                                             $planColor = $planColors[$normalizedPlan] ?? '#059669';
-                                            
+
                                             // Create combined text for the badge
                                             $badgeText = ucfirst($currentPlan);
                                         @endphp
-                                        <span class="inline-flex px-3 py-1 text-xs font-semibold rounded-full text-white" 
+                                        <span class="inline-flex px-3 py-1 text-xs font-semibold rounded-full text-white"
                                               style="background-color: {{ $planColor }};">
+                                            {{ $badgeText }}
+                                        </span>
+                                    @elseif($currentPlan && $isExpired)
+                                        @php
+                                            // Show expired status with the plan name
+                                            $normalizedPlan = strtolower($currentPlan);
+                                            $badgeText = ucfirst($currentPlan) . ' (Expired)';
+                                        @endphp
+                                        <span class="inline-flex px-3 py-1 text-xs font-semibold rounded-full text-white"
+                                              style="background-color: #DC2626;">
                                             {{ $badgeText }}
                                         </span>
                                     @elseif($hasPayments && $planFromPayments)
@@ -130,16 +149,16 @@
                                             $normalizedPlan = strtolower($paymentPlan);
                                             $planColors = [
                                                 'basic' => '#059669',
-                                                'vip' => '#F59E0B', 
+                                                'vip' => '#F59E0B',
                                                 'premium' => '#F59E0B'
                                             ];
                                             $planColor = $planColors[$normalizedPlan] ?? '#059669';
-                                            
+
                                             // Create combined text for the badge
-                                            $badgeText = ucfirst($paymentPlan);
+                                            $badgeText = ucfirst($paymentPlan) . ' (Expired)';
                                         @endphp
-                                        <span class="inline-flex px-3 py-1 text-xs font-semibold rounded-full text-white" 
-                                              style="background-color: {{ $planColor }};">
+                                        <span class="inline-flex px-3 py-1 text-xs font-semibold rounded-full text-white"
+                                              style="background-color: #DC2626;">
                                             {{ $badgeText }}
                                         </span>
                                     @else
@@ -205,7 +224,6 @@
                                     <div class="flex flex-col items-center">
                                         <div class="text-6xl mb-4">👥</div>
                                         <p class="text-lg font-medium mb-2" style="color: #000000;">No members found</p>
-                                        <p class="mb-4">Members can register through the public registration page.</p>
                                     </div>
                                 </td>
                             </tr>
@@ -599,28 +617,19 @@
             filterPills.forEach(pill => {
                 pill.addEventListener('click', function(e) {
                     e.preventDefault();
-                    const url = new URL(this.href);
-                    const membership = url.searchParams.get('membership');
-                    applyFilters(membership);
 
-                    // Update active pill styling
-                    filterPills.forEach(p => {
-                        p.classList.remove('text-white');
-                        p.classList.add('text-gray-600');
-                        p.style.backgroundColor = '#F3F4F6';
-                    });
-                    this.classList.remove('text-gray-600');
-                    this.classList.add('text-white');
-                    this.style.backgroundColor = '#1E40AF';
+                    // Navigate to the URL to ensure proper server-side filtering
+                    window.location.href = this.href;
                 });
             });
 
-            function applyFilters(membershipFilter = null) {
+            function applyFilters(membershipFilter = null, expiredFilter = null) {
                 const searchTerm = searchInput ? searchInput.value.toLowerCase().trim() : '';
 
-                // Get current membership filter from URL or parameter
+                // Get current filters from URL or parameters
                 const urlParams = new URLSearchParams(window.location.search);
                 const currentMembership = membershipFilter !== null ? membershipFilter : urlParams.get('membership');
+                const currentFilter = expiredFilter !== null ? expiredFilter : urlParams.get('filter');
 
                 let visibleCount = 0;
 
@@ -649,8 +658,8 @@
                         }
                     }
 
-                    // Membership filter
-                    if (currentMembership && currentMembership !== '') {
+                    // Membership filter (only if not filtering by expired)
+                    if (!currentFilter && currentMembership && currentMembership !== '') {
                         if (!membership.includes(currentMembership.toLowerCase())) {
                             showRow = false;
                         }

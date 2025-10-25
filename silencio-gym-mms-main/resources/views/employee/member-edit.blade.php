@@ -41,7 +41,7 @@
                         </div>
                     </div>
                 @endif
-                <form method="POST" action="{{ route('employee.members.update', $member->id) }}" class="space-y-8">
+                <form id="edit-member-form" method="POST" action="{{ route('employee.members.update', $member->id) }}" class="space-y-8">
                     @method('PUT')
                     @csrf
                     
@@ -144,10 +144,11 @@
 
                     <!-- Submit and Cancel Buttons -->
                     <div class="flex items-center gap-4 pt-8">
-                        <button type="submit" 
-                                class="px-6 py-3 text-white rounded-lg font-medium transition-colors duration-200 flex items-center gap-2" 
-                                style="background-color: #2563EB;" 
-                                onmouseover="this.style.backgroundColor='#1D4ED8'" 
+                        <button type="button"
+                                onclick="showConfirmationModal()"
+                                class="px-6 py-3 text-white rounded-lg font-medium transition-colors duration-200 flex items-center gap-2"
+                                style="background-color: #2563EB;"
+                                onmouseover="this.style.backgroundColor='#1D4ED8'"
                                 onmouseout="this.style.backgroundColor='#2563EB'">
                             Save
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -166,4 +167,77 @@
             </div>
         </div>
     </div>
+
+    <!-- Confirmation Modal -->
+    <div id="confirmation-modal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+        <div class="relative top-20 mx-auto p-5 border w-11/12 md:w-1/2 lg:w-1/3 shadow-lg rounded-md bg-white">
+            <div class="mt-3">
+                <div class="flex items-center justify-center w-12 h-12 mx-auto bg-yellow-100 rounded-full">
+                    <svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                    </svg>
+                </div>
+                <h3 class="text-lg font-semibold text-gray-900 text-center mt-4">Confirm Changes</h3>
+                <div class="mt-4 px-4">
+                    <p class="text-sm text-gray-600 text-center mb-4">Are you sure you want to save these changes to the member's information?</p>
+                    <div class="bg-gray-50 rounded-lg p-4 text-sm">
+                        <p class="font-semibold text-gray-700 mb-2">Changes Summary:</p>
+                        <ul class="space-y-1 text-gray-600">
+                            <li><strong>Name:</strong> <span id="confirm-name"></span></li>
+                            <li><strong>Age:</strong> <span id="confirm-age"></span></li>
+                            <li><strong>Gender:</strong> <span id="confirm-gender"></span></li>
+                            <li><strong>Mobile:</strong> <span id="confirm-mobile"></span></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="flex gap-4 mt-6 px-4 pb-4">
+                    <button onclick="closeConfirmationModal()"
+                            class="flex-1 px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors">
+                        Cancel
+                    </button>
+                    <button onclick="confirmSave()"
+                            class="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                        Confirm & Save
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showConfirmationModal() {
+            // Get form values
+            const firstName = document.getElementById('first_name').value;
+            const middleName = document.getElementById('middle_name').value;
+            const lastName = document.getElementById('last_name').value;
+            const age = document.getElementById('age').value;
+            const gender = document.getElementById('gender').value;
+            const mobile = document.getElementById('mobile_number').value;
+
+            // Validate required fields
+            if (!firstName || !lastName || !age || !gender || !mobile) {
+                alert('Please fill in all required fields before saving.');
+                return;
+            }
+
+            // Update confirmation modal
+            const fullName = `${firstName} ${middleName ? middleName + ' ' : ''}${lastName}`;
+            document.getElementById('confirm-name').textContent = fullName;
+            document.getElementById('confirm-age').textContent = age;
+            document.getElementById('confirm-gender').textContent = gender;
+            document.getElementById('confirm-mobile').textContent = mobile;
+
+            // Show modal
+            document.getElementById('confirmation-modal').classList.remove('hidden');
+        }
+
+        function closeConfirmationModal() {
+            document.getElementById('confirmation-modal').classList.add('hidden');
+        }
+
+        function confirmSave() {
+            // Submit the form
+            document.getElementById('edit-member-form').submit();
+        }
+    </script>
 </x-layout>

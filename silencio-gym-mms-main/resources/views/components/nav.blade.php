@@ -65,11 +65,11 @@
             
             <x-nav-item src="images/icons/members-icon.svg" href="/members">Members</x-nav-item>
             
-            <x-nav-item src="images/icons/members-icon.svg" href="/membership/plans">Membership Plans</x-nav-item>
-            
+            <x-nav-item src="images/icons/members-icon.svg" href="/membership/plans">Plan Management</x-nav-item>
+
             <x-nav-item src="images/icons/payments-icon.svg" href="/membership/payments">All Payments</x-nav-item>
-            
-            <x-nav-item src="images/icons/clipboard-icon.svg" href="/membership/manage-member">Member Plans</x-nav-item>
+
+            <x-nav-item src="images/icons/clipboard-icon.svg" href="/membership/manage-member">Set Plans</x-nav-item>
             
             <x-nav-item src="images/icons/card-icon.svg" href="/rfid-monitor">RFID Monitor</x-nav-item>
             

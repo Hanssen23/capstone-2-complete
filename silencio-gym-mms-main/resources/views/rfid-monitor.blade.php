@@ -8,8 +8,9 @@
             <div class="mb-6 sm:mb-8">
                 <div class="bg-white rounded-lg border p-4 sm:p-6 lg:p-8" style="border-color: #E5E7EB; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
                     <h2 class="text-xl sm:text-2xl font-bold mb-4 sm:mb-6" style="color: #1E40AF;">Today's Metrics</h2>
-                    
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+                        <!-- Recent Check-ins -->
                         <div class="bg-white border rounded-lg p-4 sm:p-6" style="border-color: #059669; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
                             <div class="flex items-center justify-between">
                                 <div>
@@ -21,27 +22,16 @@
                                 </div>
                             </div>
                         </div>
-                        
+
+                        <!-- Recent Check-outs -->
                         <div class="bg-white border rounded-lg p-4 sm:p-6" style="border-color: #DC2626; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
                             <div class="flex items-center justify-between">
                                 <div>
-                                    <p class="text-xs sm:text-sm font-medium mb-2" style="color: #6B7280;">Expired Memberships</p>
-                                    <p class="text-2xl sm:text-3xl font-bold" style="color: #DC2626;" id="expired-memberships">0</p>
+                                    <p class="text-xs sm:text-sm font-medium mb-2" style="color: #6B7280;">Recent Check-outs</p>
+                                    <p class="text-2xl sm:text-3xl font-bold" style="color: #DC2626;" id="todays-checkouts">0</p>
                                 </div>
                                 <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center" style="background-color: #DC2626;">
-                                    <span class="text-lg sm:text-2xl text-white">⏰</span>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="bg-white border rounded-lg p-4 sm:p-6 sm:col-span-2 lg:col-span-1" style="border-color: #8B5CF6; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
-                            <div class="flex items-center justify-between">
-                                <div>
-                                    <p class="text-xs sm:text-sm font-medium mb-2" style="color: #6B7280;">Unknown Cards</p>
-                                    <p class="text-2xl sm:text-3xl font-bold" style="color: #8B5CF6;" id="unknown-cards">0</p>
-                                </div>
-                                <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center" style="background-color: #8B5CF6;">
-                                    <span class="text-lg sm:text-2xl text-white">❓</span>
+                                    <span class="text-lg sm:text-2xl text-white">🚪</span>
                                 </div>
                             </div>
                         </div>
@@ -167,30 +157,26 @@
                 if (data.success) {
                     const stats = data.stats;
                     document.getElementById('todays-checkins').textContent = stats.today_checkins || '0';
-                    document.getElementById('expired-memberships').textContent = stats.expired_memberships || '0';
-                    document.getElementById('unknown-cards').textContent = stats.unknown_cards || '0';
+                    document.getElementById('todays-checkouts').textContent = stats.today_checkouts || '0';
                     console.log('✅ Dashboard stats updated:', stats);
                 } else {
                     console.log('❌ Dashboard stats failed:', data.message);
                     // Set to 0 if call fails
                     document.getElementById('todays-checkins').textContent = '0';
-                    document.getElementById('expired-memberships').textContent = '0';
-                    document.getElementById('unknown-cards').textContent = '0';
+                    document.getElementById('todays-checkouts').textContent = '0';
                 }
                 })
                 .catch(error => {
                 console.error('❌ Error loading dashboard stats:', error);
                 // Set to 0 on error
                 document.getElementById('todays-checkins').textContent = '0';
-                document.getElementById('expired-memberships').textContent = '0';
-                document.getElementById('unknown-cards').textContent = '0';
+                document.getElementById('todays-checkouts').textContent = '0';
             });
             } catch (error) {
                 console.error('❌ Error in loadDashboardStats function:', error);
                 // Set to 0 on error
                 document.getElementById('todays-checkins').textContent = '0';
-                document.getElementById('expired-memberships').textContent = '0';
-                document.getElementById('unknown-cards').textContent = '0';
+                document.getElementById('todays-checkouts').textContent = '0';
             }
         }
 

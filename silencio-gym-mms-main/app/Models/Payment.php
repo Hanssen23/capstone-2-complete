@@ -87,6 +87,23 @@ class Payment extends Model
     }
 
     /**
+     * Scope for specific month and year
+     */
+    public function scopeForMonth($query, $month, $year)
+    {
+        return $query->whereMonth('payment_date', $month)
+                    ->whereYear('payment_date', $year);
+    }
+
+    /**
+     * Scope for specific year
+     */
+    public function scopeForYear($query, $year)
+    {
+        return $query->whereYear('payment_date', $year);
+    }
+
+    /**
      * Scope a query to only include payments whose memberships expire within the next 7 days.
      */
     public function scopeExpiringThisWeek($query)

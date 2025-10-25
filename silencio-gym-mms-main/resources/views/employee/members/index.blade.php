@@ -187,7 +187,6 @@
                                     <div class="flex flex-col items-center">
                                         <div class="text-6xl mb-4">👥</div>
                                         <p class="text-lg font-medium mb-2" style="color: #000000;">No members found</p>
-                                        <p class="mb-4">Members can register through the public registration page.</p>
                                     </div>
                                 </td>
                             </tr>
@@ -591,28 +590,19 @@
             filterPills.forEach(pill => {
                 pill.addEventListener('click', function(e) {
                     e.preventDefault();
-                    const url = new URL(this.href);
-                    const membership = url.searchParams.get('membership');
-                    applyFilters(membership);
 
-                    // Update active pill styling
-                    filterPills.forEach(p => {
-                        p.classList.remove('text-white');
-                        p.classList.add('text-gray-600');
-                        p.style.backgroundColor = '#F3F4F6';
-                    });
-                    this.classList.remove('text-gray-600');
-                    this.classList.add('text-white');
-                    this.style.backgroundColor = '#1E40AF';
+                    // Navigate to the URL to ensure proper server-side filtering
+                    window.location.href = this.href;
                 });
             });
 
-            function applyFilters(membershipFilter = null) {
+            function applyFilters(membershipFilter = null, expiredFilter = null) {
                 const searchTerm = searchInput ? searchInput.value.toLowerCase().trim() : '';
 
-                // Get current membership filter from URL or parameter
+                // Get current filters from URL or parameters
                 const urlParams = new URLSearchParams(window.location.search);
                 const currentMembership = membershipFilter !== null ? membershipFilter : urlParams.get('membership');
+                const currentFilter = expiredFilter !== null ? expiredFilter : urlParams.get('filter');
 
                 let visibleCount = 0;
 
@@ -641,8 +631,8 @@
                         }
                     }
 
-                    // Membership filter
-                    if (currentMembership && currentMembership !== '') {
+                    // Membership filter (only if not filtering by expired)
+                    if (!currentFilter && currentMembership && currentMembership !== '') {
                         if (!membership.includes(currentMembership.toLowerCase())) {
                             showRow = false;
                         }

@@ -49,6 +49,22 @@ class ActiveSession extends Model
     }
 
     /**
+     * Scope for active sessions with valid members only
+     * Excludes: unknown cards (null member_id), inactive members, expired members
+     */
+    public function scopeActiveWithValidMembers($query)
+    {
+        return $query->where('status', 'active')
+            ->whereHas('member', function($q) {
+                $q->where('status', 'active')
+                  ->where(function($subQ) {
+                      $subQ->whereNull('membership_expires_at')
+                           ->orWhere('membership_expires_at', '>=', now());
+                  });
+            });
+    }
+
+    /**
      * Get current session duration
      */
     public function getCurrentDurationAttribute()

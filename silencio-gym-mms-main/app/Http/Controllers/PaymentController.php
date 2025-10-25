@@ -271,12 +271,45 @@ class PaymentController extends Controller
     public function details($id)
     {
         $payment = Payment::with('member')->findOrFail($id);
-        
+
         $html = view('membership.payments.details', compact('payment'))->render();
-        
+
         return response()->json([
             'success' => true,
             'html' => $html
+        ]);
+    }
+
+    /**
+     * Get revenue data by period for payments page
+     */
+    public function getRevenueByPeriod(Request $request)
+    {
+        $period = $request->input('period', 'total');
+        $month = $request->input('month', now()->month);
+        $year = $request->input('year', now()->year);
+
+        $revenue = 0;
+        $label = 'Total Revenue';
+
+        switch ($period) {
+            case 'monthly':
+                $revenue = Payment::completed()->forMonth($month, $year)->sum('amount') ?? 0;
+                $monthName = date('F', mktime(0, 0, 0, $month, 1));
+                $label = "{$monthName} {$year} Revenue";
+                break;
+            case 'yearly':
+                $revenue = Payment::completed()->forYear($year)->sum('amount') ?? 0;
+                $label = "{$year} Revenue";
+                break;
+            default:
+                $revenue = Payment::completed()->sum('amount') ?? 0;
+                $label = 'Total Revenue';
+        }
+
+        return response()->json([
+            'revenue' => $revenue,
+            'label' => $label
         ]);
     }
 }

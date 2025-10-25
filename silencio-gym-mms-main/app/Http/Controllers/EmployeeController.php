@@ -413,4 +413,37 @@ class EmployeeController extends Controller
         $durationTypes = config('membership.duration_types');
         return response()->json(['duration_types' => $durationTypes]);
     }
+
+    /**
+     * Get revenue data by period for employee payments page
+     */
+    public function getPaymentsRevenueByPeriod(Request $request)
+    {
+        $period = $request->input('period', 'total');
+        $month = $request->input('month', now()->month);
+        $year = $request->input('year', now()->year);
+
+        $revenue = 0;
+        $label = 'Total Revenue';
+
+        switch ($period) {
+            case 'monthly':
+                $revenue = Payment::completed()->forMonth($month, $year)->sum('amount') ?? 0;
+                $monthName = date('F', mktime(0, 0, 0, $month, 1));
+                $label = "{$monthName} {$year} Revenue";
+                break;
+            case 'yearly':
+                $revenue = Payment::completed()->forYear($year)->sum('amount') ?? 0;
+                $label = "{$year} Revenue";
+                break;
+            default:
+                $revenue = Payment::completed()->sum('amount') ?? 0;
+                $label = 'Total Revenue';
+        }
+
+        return response()->json([
+            'revenue' => $revenue,
+            'label' => $label
+        ]);
+    }
 }

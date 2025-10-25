@@ -11,13 +11,13 @@
                 <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
                     <h2 class="text-2xl font-bold text-gray-900 mb-6">Overview</h2>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                        <!-- Current Active Members -->
-                        <div class="bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-200 rounded-xl p-6">
+                        <!-- Current Active Members (Clickable) -->
+                        <div onclick="showActiveMembers()" class="bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-200 rounded-xl p-6 cursor-pointer hover:shadow-lg transition-shadow">
                             <div class="flex items-center justify-between">
                                 <div>
                                     <p class="text-sm font-medium text-blue-700 mb-1">Currently Active</p>
                                     <p id="current-active-members-count" class="text-3xl font-bold text-blue-900">{{ $currentActiveMembersCount }}</p>
-                                    <p class="text-xs text-blue-600 mt-1">Members logged in</p>
+                                    <p class="text-xs text-blue-600 mt-1">Members logged in • Click to view</p>
                                 </div>
                                 <div class="w-16 h-16 bg-blue-200 rounded-full flex items-center justify-center">
                                     <svg class="w-8 h-8 text-blue-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -26,14 +26,14 @@
                                 </div>
                             </div>
                         </div>
-                        
-                        <!-- Today's Attendance -->
-                        <div class="bg-gradient-to-br from-green-50 to-green-100 border border-green-200 rounded-xl p-6">
+
+                        <!-- Today's Attendance (Clickable) -->
+                        <div onclick="showTodayAttendance()" class="bg-gradient-to-br from-green-50 to-green-100 border border-green-200 rounded-xl p-6 cursor-pointer hover:shadow-lg transition-shadow">
                             <div class="flex items-center justify-between">
                                 <div>
                                     <p class="text-sm font-medium text-green-700 mb-1">Today's Attendance</p>
                                     <p id="today-attendance-count" class="text-3xl font-bold text-green-900">{{ $todayAttendance }}</p>
-                                    <p class="text-xs text-green-600 mt-1">Check-ins today</p>
+                                    <p class="text-xs text-green-600 mt-1">Check-ins today • Click to view</p>
                                 </div>
                                 <div class="w-16 h-16 bg-green-200 rounded-full flex items-center justify-center">
                                     <svg class="w-8 h-8 text-green-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -42,14 +42,44 @@
                                 </div>
                             </div>
                         </div>
-                        
-                        <!-- Monthly Revenue -->
+
+                        <!-- Revenue Card with Tabs -->
                         <div class="bg-gradient-to-br from-yellow-50 to-yellow-100 border border-yellow-200 rounded-xl p-6">
+                            <!-- Revenue Tabs -->
+                            <div class="flex gap-2 mb-3 border-b border-yellow-300 pb-2">
+                                <button onclick="switchRevenuePeriod('weekly')" id="tab-weekly" class="revenue-tab px-3 py-1 text-xs font-medium rounded-md text-yellow-700 hover:bg-yellow-100">Weekly</button>
+                                <button onclick="switchRevenuePeriod('monthly')" id="tab-monthly" class="revenue-tab px-3 py-1 text-xs font-medium rounded-md bg-yellow-200 text-yellow-900">Monthly</button>
+                                <button onclick="switchRevenuePeriod('yearly')" id="tab-yearly" class="revenue-tab px-3 py-1 text-xs font-medium rounded-md text-yellow-700 hover:bg-yellow-100">Yearly</button>
+                            </div>
+
+                            <!-- Month Selector -->
+                            <div id="month-selector" class="mb-3">
+                                <select id="revenue-month" onchange="updateRevenue()" class="text-xs border border-yellow-300 rounded-md px-2 py-1 bg-white">
+                                    <option value="1">January</option>
+                                    <option value="2">February</option>
+                                    <option value="3">March</option>
+                                    <option value="4">April</option>
+                                    <option value="5">May</option>
+                                    <option value="6">June</option>
+                                    <option value="7">July</option>
+                                    <option value="8">August</option>
+                                    <option value="9">September</option>
+                                    <option value="10">October</option>
+                                    <option value="11">November</option>
+                                    <option value="12">December</option>
+                                </select>
+                                <select id="revenue-year" onchange="updateRevenue()" class="text-xs border border-yellow-300 rounded-md px-2 py-1 bg-white ml-2">
+                                    @for($y = now()->year; $y >= 2020; $y--)
+                                        <option value="{{ $y }}">{{ $y }}</option>
+                                    @endfor
+                                </select>
+                            </div>
+
                             <div class="flex items-center justify-between">
                                 <div>
-                                    <p class="text-sm font-medium text-yellow-700 mb-1">Monthly Revenue</p>
-                                    <p class="text-3xl font-bold text-yellow-900">₱{{ number_format($thisMonthRevenue, 0) }}</p>
-                                    <p class="text-xs text-yellow-600 mt-1">This month</p>
+                                    <p class="text-sm font-medium text-yellow-700 mb-1" id="revenue-label">Monthly Revenue</p>
+                                    <p class="text-3xl font-bold text-yellow-900" id="revenue-amount">₱{{ number_format($thisWeekRevenue ?? 0, 0) }}</p>
+                                    <p class="text-xs text-yellow-600 mt-1" id="revenue-period">This month</p>
                                 </div>
                                 <div class="w-16 h-16 bg-yellow-200 rounded-full flex items-center justify-center">
                                     <span class="text-2xl font-bold text-yellow-700">₱</span>
@@ -864,18 +894,212 @@
         document.addEventListener('click', function(event) {
             const attendanceCalendar = document.getElementById('attendanceCalendar');
             const revenueCalendar = document.getElementById('revenueCalendar');
-            
+
             if (!event.target.closest('#attendanceCalendar') && !event.target.closest('button[onclick="toggleAttendanceCalendar()"]')) {
                 attendanceCalendar.classList.add('hidden');
                 attendanceCalendarVisible = false;
             }
-            
+
             if (!event.target.closest('#revenueCalendar') && !event.target.closest('button[onclick="toggleRevenueCalendar()"]')) {
                 revenueCalendar.classList.add('hidden');
                 revenueCalendarVisible = false;
             }
         });
 
+        // Revenue Period Management
+        let currentRevenuePeriodType = 'monthly';
+
+        function switchRevenuePeriod(period) {
+            currentRevenuePeriodType = period;
+
+            // Update tab styles
+            document.querySelectorAll('.revenue-tab').forEach(tab => {
+                tab.classList.remove('bg-yellow-200', 'text-yellow-900');
+                tab.classList.add('text-yellow-700', 'hover:bg-yellow-100');
+            });
+            document.getElementById(`tab-${period}`).classList.add('bg-yellow-200', 'text-yellow-900');
+            document.getElementById(`tab-${period}`).classList.remove('text-yellow-700', 'hover:bg-yellow-100');
+
+            // Show/hide month selector
+            const monthSelector = document.getElementById('month-selector');
+            if (period === 'monthly') {
+                monthSelector.classList.remove('hidden');
+                // Set current month
+                document.getElementById('revenue-month').value = new Date().getMonth() + 1;
+                document.getElementById('revenue-year').value = new Date().getFullYear();
+            } else {
+                monthSelector.classList.add('hidden');
+            }
+
+            updateRevenue();
+        }
+
+        function updateRevenue() {
+            const period = currentRevenuePeriodType;
+            const month = document.getElementById('revenue-month').value;
+            const year = document.getElementById('revenue-year').value;
+
+            const url = `{{ route("employee.analytics.revenue") }}?period=${period}&month=${month}&year=${year}`;
+
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('revenue-amount').textContent = '₱' + data.revenue.toLocaleString();
+
+                    // Update label and period text
+                    if (period === 'weekly') {
+                        document.getElementById('revenue-label').textContent = 'Weekly Revenue';
+                        document.getElementById('revenue-period').textContent = 'This week';
+                    } else if (period === 'monthly') {
+                        const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+                        document.getElementById('revenue-label').textContent = 'Monthly Revenue';
+                        document.getElementById('revenue-period').textContent = monthNames[month - 1] + ' ' + year;
+                    } else if (period === 'yearly') {
+                        document.getElementById('revenue-label').textContent = 'Yearly Revenue';
+                        document.getElementById('revenue-period').textContent = 'Year ' + year;
+                    }
+                })
+                .catch(error => console.error('Error loading revenue:', error));
+        }
+
+        // Show Active Members Modal
+        function showActiveMembers() {
+            fetch('{{ route("employee.analytics.active-members") }}')
+                .then(response => response.json())
+                .then(data => {
+                    const modal = document.getElementById('active-members-modal');
+                    const tbody = document.getElementById('active-members-tbody');
+
+                    tbody.innerHTML = '';
+
+                    if (data.members.length === 0) {
+                        tbody.innerHTML = '<tr><td colspan="4" class="px-4 py-8 text-center text-gray-500 italic">No active members currently</td></tr>';
+                    } else {
+                        data.members.forEach(member => {
+                            tbody.innerHTML += `
+                                <tr class="hover:bg-gray-50 transition-colors">
+                                    <td class="px-4 py-3 text-sm text-gray-900 font-medium">${member.name}</td>
+                                    <td class="px-4 py-3 text-sm text-gray-600">${member.member_number}</td>
+                                    <td class="px-4 py-3 text-sm text-gray-600">${member.check_in_time}</td>
+                                    <td class="px-4 py-3 text-sm text-gray-600">${member.duration}</td>
+                                </tr>
+                            `;
+                        });
+                    }
+
+                    modal.classList.remove('hidden');
+                })
+                .catch(error => console.error('Error loading active members:', error));
+        }
+
+        // Show Today's Attendance Modal
+        function showTodayAttendance() {
+            fetch('{{ route("employee.analytics.today-attendance") }}')
+                .then(response => response.json())
+                .then(data => {
+                    const modal = document.getElementById('today-attendance-modal');
+                    const tbody = document.getElementById('today-attendance-tbody');
+
+                    tbody.innerHTML = '';
+
+                    if (data.attendance.length === 0) {
+                        tbody.innerHTML = '<tr><td colspan="5" class="px-4 py-8 text-center text-gray-500 italic">No attendance records today</td></tr>';
+                    } else {
+                        data.attendance.forEach(record => {
+                            const statusBadge = record.status === 'active'
+                                ? '<span class="px-3 py-1 text-xs font-medium rounded-full bg-green-100 text-green-800">Active</span>'
+                                : '<span class="px-3 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-800">Completed</span>';
+
+                            tbody.innerHTML += `
+                                <tr class="hover:bg-gray-50 transition-colors">
+                                    <td class="px-4 py-3 text-sm text-gray-900 font-medium">${record.name}</td>
+                                    <td class="px-4 py-3 text-sm text-gray-600">${record.member_number}</td>
+                                    <td class="px-4 py-3 text-sm text-gray-600">${record.check_in_time}</td>
+                                    <td class="px-4 py-3 text-sm text-gray-600">${record.check_out_time || '-'}</td>
+                                    <td class="px-4 py-3 text-sm">${statusBadge}</td>
+                                </tr>
+                            `;
+                        });
+                    }
+
+                    modal.classList.remove('hidden');
+                })
+                .catch(error => console.error('Error loading today attendance:', error));
+        }
+
+        // Close Modal Functions
+        function closeActiveMembers() {
+            document.getElementById('active-members-modal').classList.add('hidden');
+        }
+
+        function closeTodayAttendance() {
+            document.getElementById('today-attendance-modal').classList.add('hidden');
+        }
+
+        // Initialize with monthly revenue on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            updateRevenue();
+        });
 
     </script>
+
+    <!-- Active Members Modal -->
+    <div id="active-members-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 overflow-y-auto h-full w-full z-50">
+        <div class="relative top-10 mx-auto p-6 border w-11/12 md:w-3/4 lg:w-2/3 shadow-2xl rounded-lg bg-white" style="max-height: 90vh;">
+            <div class="flex justify-between items-center mb-6 pb-4 border-b">
+                <h3 class="text-xl font-bold text-gray-800">Currently Active Members</h3>
+                <button onclick="closeActiveMembers()" class="text-gray-400 hover:text-gray-600 transition-colors">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            <div class="overflow-x-auto" style="max-height: calc(90vh - 120px);">
+                <table class="min-w-full border-collapse">
+                    <thead class="bg-gray-100 sticky top-0">
+                        <tr>
+                            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b-2 border-gray-300">Name</th>
+                            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b-2 border-gray-300">Member #</th>
+                            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b-2 border-gray-300">Check-in Time</th>
+                            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b-2 border-gray-300">Duration</th>
+                        </tr>
+                    </thead>
+                    <tbody id="active-members-tbody" class="bg-white divide-y divide-gray-200">
+                        <!-- Populated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Today's Attendance Modal -->
+    <div id="today-attendance-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 overflow-y-auto h-full w-full z-50">
+        <div class="relative top-10 mx-auto p-6 border w-11/12 md:w-4/5 lg:w-3/4 shadow-2xl rounded-lg bg-white" style="max-height: 90vh;">
+            <div class="flex justify-between items-center mb-6 pb-4 border-b">
+                <h3 class="text-xl font-bold text-gray-800">Today's Attendance</h3>
+                <button onclick="closeTodayAttendance()" class="text-gray-400 hover:text-gray-600 transition-colors">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            <div class="overflow-x-auto" style="max-height: calc(90vh - 120px);">
+                <table class="min-w-full border-collapse">
+                    <thead class="bg-gray-100 sticky top-0">
+                        <tr>
+                            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b-2 border-gray-300">Name</th>
+                            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b-2 border-gray-300">Member #</th>
+                            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b-2 border-gray-300">Check-in</th>
+                            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b-2 border-gray-300">Check-out</th>
+                            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider border-b-2 border-gray-300">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="today-attendance-tbody" class="bg-white divide-y divide-gray-200">
+                        <!-- Populated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
 </x-layout>

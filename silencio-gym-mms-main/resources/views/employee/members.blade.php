@@ -38,33 +38,40 @@
                 <!-- Filter Pills -->
                 <div class="mt-6">
                     <div class="flex flex-wrap gap-3">
-                        <a href="/employee/members" 
-                           class="px-4 py-2 rounded-full text-sm font-medium transition-colors {{ empty($selectedMembership) ? 'text-white' : 'text-gray-600' }}" 
-                           style="background-color: {{ empty($selectedMembership) ? '#1E40AF' : '#F3F4F6' }};"
-                           onmouseover="this.style.backgroundColor='{{ empty($selectedMembership) ? '#1E40AF' : '#E5E7EB' }}'" 
-                           onmouseout="this.style.backgroundColor='{{ empty($selectedMembership) ? '#1E40AF' : '#F3F4F6' }}'">
+                        <a href="/employee/members"
+                           class="px-4 py-2 rounded-full text-sm font-medium transition-colors {{ empty($selectedMembership) && empty($filter) ? 'text-white' : 'text-gray-600' }}"
+                           style="background-color: {{ empty($selectedMembership) && empty($filter) ? '#1E40AF' : '#F3F4F6' }};"
+                           onmouseover="this.style.backgroundColor='{{ empty($selectedMembership) && empty($filter) ? '#1E40AF' : '#E5E7EB' }}'"
+                           onmouseout="this.style.backgroundColor='{{ empty($selectedMembership) && empty($filter) ? '#1E40AF' : '#F3F4F6' }}'">
                             All
                         </a>
-                        <a href="/employee/members?membership=basic" 
-                           class="px-4 py-2 rounded-full text-sm font-medium transition-colors {{ ($selectedMembership ?? '') === 'basic' ? 'text-white' : 'text-gray-600' }}" 
+                        <a href="/employee/members?{{ http_build_query(array_filter(['membership' => 'basic', 'filter' => $filter ?? null])) }}"
+                           class="px-4 py-2 rounded-full text-sm font-medium transition-colors {{ ($selectedMembership ?? '') === 'basic' ? 'text-white' : 'text-gray-600' }}"
                            style="background-color: {{ ($selectedMembership ?? '') === 'basic' ? '#1E40AF' : '#F3F4F6' }};"
-                           onmouseover="this.style.backgroundColor='{{ ($selectedMembership ?? '') === 'basic' ? '#1E40AF' : '#E5E7EB' }}'" 
+                           onmouseover="this.style.backgroundColor='{{ ($selectedMembership ?? '') === 'basic' ? '#1E40AF' : '#E5E7EB' }}'"
                            onmouseout="this.style.backgroundColor='{{ ($selectedMembership ?? '') === 'basic' ? '#1E40AF' : '#F3F4F6' }}'">
                             Basic
                         </a>
-                        <a href="/employee/members?membership=vip" 
-                           class="px-4 py-2 rounded-full text-sm font-medium transition-colors {{ ($selectedMembership ?? '') === 'vip' ? 'text-white' : 'text-gray-600' }}" 
+                        <a href="/employee/members?{{ http_build_query(array_filter(['membership' => 'vip', 'filter' => $filter ?? null])) }}"
+                           class="px-4 py-2 rounded-full text-sm font-medium transition-colors {{ ($selectedMembership ?? '') === 'vip' ? 'text-white' : 'text-gray-600' }}"
                            style="background-color: {{ ($selectedMembership ?? '') === 'vip' ? '#1E40AF' : '#F3F4F6' }};"
-                           onmouseover="this.style.backgroundColor='{{ ($selectedMembership ?? '') === 'vip' ? '#1E40AF' : '#E5E7EB' }}'" 
+                           onmouseover="this.style.backgroundColor='{{ ($selectedMembership ?? '') === 'vip' ? '#1E40AF' : '#E5E7EB' }}'"
                            onmouseout="this.style.backgroundColor='{{ ($selectedMembership ?? '') === 'vip' ? '#1E40AF' : '#F3F4F6' }}'">
                             VIP
                         </a>
-                        <a href="/employee/members?membership=premium" 
-                           class="px-4 py-2 rounded-full text-sm font-medium transition-colors {{ ($selectedMembership ?? '') === 'premium' ? 'text-white' : 'text-gray-600' }}" 
+                        <a href="/employee/members?{{ http_build_query(array_filter(['membership' => 'premium', 'filter' => $filter ?? null])) }}"
+                           class="px-4 py-2 rounded-full text-sm font-medium transition-colors {{ ($selectedMembership ?? '') === 'premium' ? 'text-white' : 'text-gray-600' }}"
                            style="background-color: {{ ($selectedMembership ?? '') === 'premium' ? '#1E40AF' : '#F3F4F6' }};"
-                           onmouseover="this.style.backgroundColor='{{ ($selectedMembership ?? '') === 'premium' ? '#1E40AF' : '#E5E7EB' }}'" 
+                           onmouseover="this.style.backgroundColor='{{ ($selectedMembership ?? '') === 'premium' ? '#1E40AF' : '#E5E7EB' }}'"
                            onmouseout="this.style.backgroundColor='{{ ($selectedMembership ?? '') === 'premium' ? '#1E40AF' : '#F3F4F6' }}'">
                             Premium
+                        </a>
+                        <a href="/employee/members?{{ ($filter ?? '') === 'expired' ? http_build_query(array_filter(['membership' => $selectedMembership ?? null])) : http_build_query(array_filter(['filter' => 'expired', 'membership' => $selectedMembership ?? null])) }}"
+                           class="px-4 py-2 rounded-full text-sm font-medium transition-colors {{ ($filter ?? '') === 'expired' ? 'text-white' : 'text-gray-600' }}"
+                           style="background-color: {{ ($filter ?? '') === 'expired' ? '#DC2626' : '#F3F4F6' }};"
+                           onmouseover="this.style.backgroundColor='{{ ($filter ?? '') === 'expired' ? '#DC2626' : '#E5E7EB' }}'"
+                           onmouseout="this.style.backgroundColor='{{ ($filter ?? '') === 'expired' ? '#DC2626' : '#F3F4F6' }}'">
+                            Expired
                         </a>
                     </div>
                 </div>

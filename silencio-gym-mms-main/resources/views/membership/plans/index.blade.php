@@ -1,7 +1,7 @@
 <x-layout>
     <x-nav></x-nav>
     <div class="flex-1 bg-white">
-        <x-topbar>Membership Plans Configuration</x-topbar>
+        <x-topbar>Plan Management</x-topbar>
 
         <div class="bg-white min-h-screen p-4 sm:p-6">
             <!-- Plan Types Section -->
@@ -25,48 +25,88 @@
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
                         @foreach($plans as $plan)
-                        <div class="bg-white border rounded-lg p-4 sm:p-6 hover:shadow-lg transition-shadow" style="border-color: #E5E7EB; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-                            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 sm:mb-6 gap-2">
-                                <h3 class="text-xl sm:text-2xl font-bold text-gray-900">{{ $plan->name }}</h3>
-                                @if($plan->name === 'VIP' || $plan->name === 'Premium')
-                                <span class="px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium rounded-full bg-amber-500 text-white">
-                                    {{ $plan->currency ?? '₱' }}{{ number_format($plan->price, 2) }}/month
-                                </span>
-                                @else
-                                <span class="px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium rounded-full bg-green-600 text-white">
-                                    {{ $plan->currency ?? '₱' }}{{ number_format($plan->price, 2) }}/month
-                                </span>
-                                @endif
-                            </div>
-                            <p class="mb-4 sm:mb-6 leading-relaxed text-sm sm:text-base text-gray-600">{{ $plan->description }}</p>
-                            <div class="space-y-2 sm:space-y-3 mb-4 sm:mb-6">
-                                <div class="flex items-center justify-between py-2 px-3 bg-gray-50 rounded border border-gray-200">
-                                    <span class="text-xs sm:text-sm text-gray-700">Monthly:</span>
-                                    <span class="font-semibold text-xs sm:text-sm text-gray-900">{{ $plan->currency ?? '₱' }}{{ number_format($plan->price, 2) }}</span>
+                        <!-- Flip Card Container -->
+                        <div class="flip-card" style="perspective: 1000px; height: 500px;">
+                            <div class="flip-card-inner" id="flip-card-{{ $plan->id }}" style="position: relative; width: 100%; height: 100%; transition: transform 0.6s; transform-style: preserve-3d;">
+
+                                <!-- Front Side - Plan Details -->
+                                <div class="flip-card-front" style="position: absolute; width: 100%; height: 100%; backface-visibility: hidden; -webkit-backface-visibility: hidden;">
+                                    <div class="bg-white border rounded-lg p-4 sm:p-6 hover:shadow-lg transition-shadow h-full flex flex-col" style="border-color: #E5E7EB; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                                        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 gap-2">
+                                            <h3 class="text-xl sm:text-2xl font-bold text-gray-900">{{ $plan->name }}</h3>
+                                            @if($plan->name === 'VIP' || $plan->name === 'Premium')
+                                            <span class="px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium rounded-full bg-amber-500 text-white">
+                                                {{ $plan->currency ?? '₱' }}{{ number_format($plan->price, 2) }}/month
+                                            </span>
+                                            @else
+                                            <span class="px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium rounded-full bg-green-600 text-white">
+                                                {{ $plan->currency ?? '₱' }}{{ number_format($plan->price, 2) }}/month
+                                            </span>
+                                            @endif
+                                        </div>
+                                        <p class="mb-4 leading-relaxed text-sm sm:text-base text-gray-600">{{ $plan->description }}</p>
+                                        <div class="space-y-2 mb-4 flex-grow">
+                                            <div class="flex items-center justify-between py-2 px-3 bg-gray-50 rounded border border-gray-200">
+                                                <span class="text-xs sm:text-sm text-gray-700">Monthly:</span>
+                                                <span class="font-semibold text-xs sm:text-sm text-gray-900">{{ $plan->currency ?? '₱' }}{{ number_format($plan->price, 2) }}</span>
+                                            </div>
+                                            <div class="flex items-center justify-between py-2 px-3 bg-gray-50 rounded border border-gray-200">
+                                                <span class="text-xs sm:text-sm text-gray-700">Quarterly:</span>
+                                                <span class="font-semibold text-xs sm:text-sm text-gray-900">{{ $plan->currency ?? '₱' }}{{ number_format($plan->price * 3, 2) }}</span>
+                                            </div>
+                                            <div class="flex items-center justify-between py-2 px-3 bg-gray-50 rounded border border-gray-200">
+                                                <span class="text-xs sm:text-sm text-gray-700">Biannually:</span>
+                                                <span class="font-semibold text-xs sm:text-sm text-gray-900">{{ $plan->currency ?? '₱' }}{{ number_format($plan->price * 6, 2) }}</span>
+                                            </div>
+                                            <div class="flex items-center justify-between py-2 px-3 bg-gray-50 rounded border border-gray-200">
+                                                <span class="text-xs sm:text-sm text-gray-700">Annually:</span>
+                                                <span class="font-semibold text-xs sm:text-sm text-gray-900">{{ $plan->currency ?? '₱' }}{{ number_format($plan->price * 12, 2) }}</span>
+                                            </div>
+                                        </div>
+                                        <button onclick="flipCard('{{ $plan->id }}')" class="w-full px-4 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-colors mb-3">
+                                            View Benefits
+                                        </button>
+                                        <div class="flex gap-2">
+                                            <button onclick="editPlanType('{{ $plan->id }}')" class="flex-1 px-3 py-2 text-white text-xs sm:text-sm rounded-lg transition-colors" style="background-color: #059669;" onmouseover="this.style.backgroundColor='#047857'" onmouseout="this.style.backgroundColor='#059669'">
+                                                Edit
+                                            </button>
+                                            <button onclick="deletePlanType('{{ $plan->id }}')" class="flex-1 px-3 py-2 text-white text-xs sm:text-sm rounded-lg transition-colors"
+                                                    style="background-color: #DC2626;"
+                                                    onmouseover="this.style.backgroundColor='#B91C1C'"
+                                                    onmouseout="this.style.backgroundColor='#DC2626'">
+                                                Delete
+                                            </button>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="flex items-center justify-between py-2 px-3 bg-gray-50 rounded border border-gray-200">
-                                    <span class="text-xs sm:text-sm text-gray-700">Quarterly:</span>
-                                    <span class="font-semibold text-xs sm:text-sm text-gray-900">{{ $plan->currency ?? '₱' }}{{ number_format($plan->price * 3, 2) }}</span>
+
+                                <!-- Back Side - Benefits -->
+                                <div class="flip-card-back" style="position: absolute; width: 100%; height: 100%; backface-visibility: hidden; -webkit-backface-visibility: hidden; transform: rotateY(180deg);">
+                                    <div class="bg-white border rounded-lg p-4 sm:p-6 h-full flex flex-col" style="box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                                        <div class="flex items-center justify-between mb-4">
+                                            <h3 class="text-xl sm:text-2xl font-bold text-gray-900">{{ $plan->name }} Benefits</h3>
+                                            <button onclick="flipCard('{{ $plan->id }}')" class="text-gray-600 hover:text-gray-800">
+                                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                                </svg>
+                                            </button>
+                                        </div>
+                                        <div class="flex-grow overflow-y-auto">
+                                            @if($plan->features && count($plan->features) > 0)
+                                                <ul class="space-y-2 list-disc list-inside">
+                                                    @foreach($plan->features as $benefit)
+                                                    <li class="text-black text-sm font-medium">{{ $benefit }}</li>
+                                                    @endforeach
+                                                </ul>
+                                            @else
+                                                <p class="text-gray-600 text-sm italic">No benefits added yet. Click "Edit" to add benefits.</p>
+                                            @endif
+                                        </div>
+                                        <button onclick="flipCard('{{ $plan->id }}')" class="w-full px-4 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-colors mt-4">
+                                            Back to Details
+                                        </button>
+                                    </div>
                                 </div>
-                                <div class="flex items-center justify-between py-2 px-3 bg-gray-50 rounded border border-gray-200">
-                                    <span class="text-xs sm:text-sm text-gray-700">Biannually:</span>
-                                    <span class="font-semibold text-xs sm:text-sm text-gray-900">{{ $plan->currency ?? '₱' }}{{ number_format($plan->price * 6, 2) }}</span>
-                                </div>
-                                <div class="flex items-center justify-between py-2 px-3 bg-gray-50 rounded border border-gray-200">
-                                    <span class="text-xs sm:text-sm text-gray-700">Annually:</span>
-                                    <span class="font-semibold text-xs sm:text-sm text-gray-900">{{ $plan->currency ?? '₱' }}{{ number_format($plan->price * 12, 2) }}</span>
-                                </div>
-                            </div>
-                            <div class="flex flex-col sm:flex-row gap-2 sm:gap-3">
-                                <button onclick="editPlanType('{{ $plan->id }}')" class="flex-1 px-3 sm:px-4 py-2 text-white text-xs sm:text-sm rounded-lg transition-colors min-h-[44px]" style="background-color: #059669;" onmouseover="this.style.backgroundColor='#047857'" onmouseout="this.style.backgroundColor='#059669'">
-                                    Edit
-                                </button>
-                                <button onclick="deletePlanType('{{ $plan->id }}')" class="flex-1 px-3 sm:px-4 py-2 text-white text-xs sm:text-sm rounded-lg transition-colors min-h-[44px]" 
-                                        style="background-color: #DC2626; border: 2px solid #E5E7EB; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);" 
-                                        onmouseover="this.style.backgroundColor='#B91C1C'" 
-                                        onmouseout="this.style.backgroundColor='#DC2626'">
-                                    Delete
-                                </button>
                             </div>
                         </div>
                         @endforeach
@@ -212,9 +252,19 @@
                             <option value="360">360 days (Annually)</option>
                         </select>
                     </div>
-                    <div class="mb-6">
+                    <div class="mb-4">
                         <label class="block text-sm font-semibold mb-2" style="color: #374151;">Description</label>
-                        <textarea name="description" rows="3" class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 resize-none" style="border-color: #E5E7EB;" placeholder="Describe the plan features and benefits" required></textarea>
+                        <textarea name="description" rows="2" class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 resize-none" style="border-color: #E5E7EB;" placeholder="Describe the plan features and benefits" required></textarea>
+                    </div>
+                    <div class="mb-6">
+                        <label class="block text-sm font-semibold mb-2" style="color: #374151;">Benefits</label>
+                        <div id="addBenefitsList" class="space-y-2 mb-2">
+                            <!-- Benefits will be added here dynamically -->
+                        </div>
+                        <button type="button" onclick="addBenefitFieldToAdd()" class="w-full px-3 py-2 bg-gray-100 text-gray-700 text-sm rounded border border-gray-300 hover:bg-gray-200 transition-colors">
+                            + Add Benefit
+                        </button>
+                        <p class="text-xs text-gray-500 mt-1">Add benefits that will be displayed on the flip card</p>
                     </div>
                     <div class="flex justify-end space-x-3 pt-4" style="background-color: #F9FAFB;">
                         <button type="button" onclick="closeAddPlanModal()" class="px-6 py-2 bg-gray-100 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-200 transition-all duration-200 font-medium">
@@ -266,6 +316,16 @@
                     <div class="mb-4">
                         <label class="block text-sm font-semibold mb-2" style="color: #374151;">Description</label>
                         <textarea name="description" id="editPlanDescription" rows="2" class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 resize-none" style="border-color: #E5E7EB;" required></textarea>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-sm font-semibold mb-2" style="color: #374151;">Benefits</label>
+                        <div id="benefitsList" class="space-y-2 mb-2">
+                            <!-- Benefits will be added here dynamically -->
+                        </div>
+                        <button type="button" onclick="addBenefitField()" class="w-full px-3 py-2 bg-gray-100 text-gray-700 text-sm rounded border border-gray-300 hover:bg-gray-200 transition-colors">
+                            + Add Benefit
+                        </button>
+                        <p class="text-xs text-gray-500 mt-1">Add benefits that will be displayed on the flip card</p>
                     </div>
                     <div class="mb-6">
                         <label class="flex items-center p-2 bg-gray-50 rounded border hover:border-blue-300 transition-all duration-200" style="border-color: #E5E7EB;">
@@ -481,7 +541,7 @@
                         if (data.success && data.plans) {
                             plans = data.plans;
                             renderPlans(plans);
-                            showNotification('Plans updated in real-time', 'success');
+                            // Removed notification - no need to show on every update
                         }
                     })
                     .catch(error => {
@@ -497,47 +557,87 @@
             if (!plansContainer) return;
 
             const plansHTML = plansData.map(plan => `
-                <div class="bg-white border rounded-lg p-4 sm:p-6 hover:shadow-lg transition-shadow" style="border-color: #E5E7EB; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 sm:mb-6 gap-2">
-                        <h3 class="text-xl sm:text-2xl font-bold text-gray-900">${plan.name}</h3>
-                        ${plan.name === 'VIP' || plan.name === 'Premium' ? 
-                            `<span class="px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium rounded-full bg-amber-500 text-white">
-                                ₱${parseFloat(plan.price).toFixed(2)}/month
-                            </span>` :
-                            `<span class="px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium rounded-full bg-green-600 text-white">
-                                ₱${parseFloat(plan.price).toFixed(2)}/month
-                            </span>`
-                        }
-                    </div>
-                    <p class="mb-4 sm:mb-6 leading-relaxed text-sm sm:text-base text-gray-600">${plan.description}</p>
-                    <div class="space-y-2 sm:space-y-3 mb-4 sm:mb-6">
-                        <div class="flex items-center justify-between py-2 px-3 bg-gray-50 rounded border border-gray-200">
-                            <span class="text-xs sm:text-sm text-gray-700">Monthly:</span>
-                            <span class="font-semibold text-xs sm:text-sm text-gray-900">₱${parseFloat(plan.price).toFixed(2)}</span>
+                <!-- Flip Card Container -->
+                <div class="flip-card" style="perspective: 1000px; height: 500px;">
+                    <div class="flip-card-inner" id="flip-card-${plan.id}" style="position: relative; width: 100%; height: 100%; transition: transform 0.6s; transform-style: preserve-3d;">
+
+                        <!-- Front Side - Plan Details -->
+                        <div class="flip-card-front" style="position: absolute; width: 100%; height: 100%; backface-visibility: hidden; -webkit-backface-visibility: hidden;">
+                            <div class="bg-white border rounded-lg p-4 sm:p-6 hover:shadow-lg transition-shadow h-full flex flex-col" style="border-color: #E5E7EB; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 gap-2">
+                                    <h3 class="text-xl sm:text-2xl font-bold text-gray-900">${plan.name}</h3>
+                                    ${plan.name === 'VIP' || plan.name === 'Premium' ?
+                                        `<span class="px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium rounded-full bg-amber-500 text-white">
+                                            ₱${parseFloat(plan.price).toFixed(2)}/month
+                                        </span>` :
+                                        `<span class="px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium rounded-full bg-green-600 text-white">
+                                            ₱${parseFloat(plan.price).toFixed(2)}/month
+                                        </span>`
+                                    }
+                                </div>
+                                <p class="mb-4 leading-relaxed text-sm text-gray-600">${plan.description}</p>
+                                <div class="space-y-2 mb-4">
+                                    <div class="flex items-center justify-between py-2 px-3 bg-gray-50 rounded border border-gray-200">
+                                        <span class="text-xs sm:text-sm text-gray-700">Monthly:</span>
+                                        <span class="font-semibold text-xs sm:text-sm text-gray-900">₱${parseFloat(plan.price).toFixed(2)}</span>
+                                    </div>
+                                    <div class="flex items-center justify-between py-2 px-3 bg-gray-50 rounded border border-gray-200">
+                                        <span class="text-xs sm:text-sm text-gray-700">Quarterly:</span>
+                                        <span class="font-semibold text-xs sm:text-sm text-gray-900">₱${(parseFloat(plan.price) * 3).toFixed(2)}</span>
+                                    </div>
+                                    <div class="flex items-center justify-between py-2 px-3 bg-gray-50 rounded border border-gray-200">
+                                        <span class="text-xs sm:text-sm text-gray-700">Biannually:</span>
+                                        <span class="font-semibold text-xs sm:text-sm text-gray-900">₱${(parseFloat(plan.price) * 6).toFixed(2)}</span>
+                                    </div>
+                                    <div class="flex items-center justify-between py-2 px-3 bg-gray-50 rounded border border-gray-200">
+                                        <span class="text-xs sm:text-sm text-gray-700">Annually:</span>
+                                        <span class="font-semibold text-xs sm:text-sm text-gray-900">₱${(parseFloat(plan.price) * 12).toFixed(2)}</span>
+                                    </div>
+                                </div>
+                                <button onclick="flipCard('${plan.id}')" class="w-full px-4 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-colors mb-3">
+                                    View Benefits
+                                </button>
+                                <div class="flex gap-2">
+                                    <button onclick="editPlanType('${plan.id}')" class="flex-1 px-3 py-2 text-white text-xs sm:text-sm rounded-lg transition-colors" style="background-color: #059669;" onmouseover="this.style.backgroundColor='#047857'" onmouseout="this.style.backgroundColor='#059669'">
+                                        Edit
+                                    </button>
+                                    <button onclick="deletePlanType('${plan.id}')" class="flex-1 px-3 py-2 text-white text-xs sm:text-sm rounded-lg transition-colors"
+                                            style="background-color: #DC2626; border: 2px solid #E5E7EB; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);"
+                                            onmouseover="this.style.backgroundColor='#B91C1C'"
+                                            onmouseout="this.style.backgroundColor='#DC2626'">
+                                        Delete
+                                    </button>
+                                </div>
+                            </div>
                         </div>
-                        <div class="flex items-center justify-between py-2 px-3 bg-gray-50 rounded border border-gray-200">
-                            <span class="text-xs sm:text-sm text-gray-700">Quarterly:</span>
-                            <span class="font-semibold text-xs sm:text-sm text-gray-900">₱${(parseFloat(plan.price) * 3).toFixed(2)}</span>
+
+                        <!-- Back Side - Benefits -->
+                        <div class="flip-card-back" style="position: absolute; width: 100%; height: 100%; backface-visibility: hidden; -webkit-backface-visibility: hidden; transform: rotateY(180deg);">
+                            <div class="bg-white border rounded-lg p-4 sm:p-6 h-full flex flex-col" style="box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                                <div class="flex items-center justify-between mb-4">
+                                    <h3 class="text-xl sm:text-2xl font-bold text-gray-900">${plan.name} Benefits</h3>
+                                    <button onclick="flipCard('${plan.id}')" class="text-gray-600 hover:text-gray-800">
+                                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                        </svg>
+                                    </button>
+                                </div>
+                                <div class="flex-grow overflow-y-auto">
+                                    ${plan.features && plan.features.length > 0 ?
+                                        `<ul class="space-y-2 list-disc list-inside">
+                                            ${plan.features.map(benefit => `
+                                                <li class="text-black text-sm font-medium">${benefit}</li>
+                                            `).join('')}
+                                        </ul>` :
+                                        `<p class="text-gray-600 text-sm italic">No benefits added yet. Click "Edit" to add benefits.</p>`
+                                    }
+                                </div>
+                                <button onclick="flipCard('${plan.id}')" class="w-full px-4 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-colors mt-4">
+                                    Back to Details
+                                </button>
+                            </div>
                         </div>
-                        <div class="flex items-center justify-between py-2 px-3 bg-gray-50 rounded border border-gray-200">
-                            <span class="text-xs sm:text-sm text-gray-700">Biannually:</span>
-                            <span class="font-semibold text-xs sm:text-sm text-gray-900">₱${(parseFloat(plan.price) * 6).toFixed(2)}</span>
-                        </div>
-                        <div class="flex items-center justify-between py-2 px-3 bg-gray-50 rounded border border-gray-200">
-                            <span class="text-xs sm:text-sm text-gray-700">Annually:</span>
-                            <span class="font-semibold text-xs sm:text-sm text-gray-900">₱${(parseFloat(plan.price) * 12).toFixed(2)}</span>
-                        </div>
-                    </div>
-                    <div class="flex flex-col sm:flex-row gap-2 sm:gap-3">
-                        <button onclick="editPlanType('${plan.id}')" class="flex-1 px-3 sm:px-4 py-2 text-white text-xs sm:text-sm rounded-lg transition-colors min-h-[44px]" style="background-color: #059669;" onmouseover="this.style.backgroundColor='#047857'" onmouseout="this.style.backgroundColor='#059669'">
-                            Edit
-                        </button>
-                        <button onclick="deletePlanType('${plan.id}')" class="flex-1 px-3 sm:px-4 py-2 text-white text-xs sm:text-sm rounded-lg transition-colors min-h-[44px]" 
-                                style="background-color: #DC2626; border: 2px solid #E5E7EB; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);" 
-                                onmouseover="this.style.backgroundColor='#B91C1C'" 
-                                onmouseout="this.style.backgroundColor='#DC2626'">
-                            Delete
-                        </button>
+
                     </div>
                 </div>
             `).join('');
@@ -643,19 +743,64 @@
             document.getElementById('editPlanPrice').value = plan.price;
             document.getElementById('editPlanDuration').value = plan.duration_days;
             document.getElementById('editPlanActive').checked = plan.is_active;
-            
-            // Features field removed - no longer needed
+
+            // Populate benefits
+            const benefitsList = document.getElementById('benefitsList');
+            benefitsList.innerHTML = '';
+            if (plan.features && plan.features.length > 0) {
+                plan.features.forEach((benefit, index) => {
+                    addBenefitField(benefit);
+                });
+            }
 
             const modal = document.getElementById('editPlanModal');
             const content = document.getElementById('editPlanModalContent');
-            
+
             modal.classList.remove('hidden');
-            
+
             // Trigger animation
             setTimeout(() => {
                 content.classList.remove('scale-95', 'opacity-0');
                 content.classList.add('scale-100', 'opacity-100');
             }, 10);
+        }
+
+        function addBenefitField(value = '') {
+            const benefitsList = document.getElementById('benefitsList');
+            const benefitDiv = document.createElement('div');
+            benefitDiv.className = 'flex gap-2';
+            benefitDiv.innerHTML = `
+                <input type="text" name="benefits[]" value="${value}"
+                       class="flex-1 px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+                       style="border-color: #E5E7EB;"
+                       placeholder="Enter benefit">
+                <button type="button" onclick="this.parentElement.remove()"
+                        class="px-3 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            `;
+            benefitsList.appendChild(benefitDiv);
+        }
+
+        function addBenefitFieldToAdd(value = '') {
+            const benefitsList = document.getElementById('addBenefitsList');
+            const benefitDiv = document.createElement('div');
+            benefitDiv.className = 'flex gap-2';
+            benefitDiv.innerHTML = `
+                <input type="text" name="add_benefits[]" value="${value}"
+                       class="flex-1 px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+                       style="border-color: #E5E7EB;"
+                       placeholder="Enter benefit">
+                <button type="button" onclick="this.parentElement.remove()"
+                        class="px-3 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            `;
+            benefitsList.appendChild(benefitDiv);
         }
 
         function deletePlanType(planId) {
@@ -784,15 +929,25 @@
         // Form submissions
         document.getElementById('addPlanForm').addEventListener('submit', function(e) {
             e.preventDefault();
-            
+
             const formData = new FormData(this);
-            
+
+            // Collect benefits from add form
+            const benefits = [];
+            const benefitInputs = document.querySelectorAll('input[name="add_benefits[]"]');
+            benefitInputs.forEach(input => {
+                if (input.value.trim()) {
+                    benefits.push(input.value.trim());
+                }
+            });
+
             const data = {
                 name: formData.get('name'),
                 description: formData.get('description'),
                 price: parseFloat(formData.get('price')),
                 duration_days: parseInt(formData.get('duration_days')),
-                is_active: true
+                is_active: true,
+                features: benefits  // Send as 'features' to match database column
             };
 
             fetch('{{ route("membership-plans.store") }}', {
@@ -822,16 +977,26 @@
 
         document.getElementById('editPlanForm').addEventListener('submit', function(e) {
             e.preventDefault();
-            
+
             const formData = new FormData(this);
             const planId = formData.get('plan_id');
-            
+
+            // Collect benefits
+            const benefits = [];
+            const benefitInputs = document.querySelectorAll('input[name="benefits[]"]');
+            benefitInputs.forEach(input => {
+                if (input.value.trim()) {
+                    benefits.push(input.value.trim());
+                }
+            });
+
             const data = {
                 name: formData.get('name'),
                 description: formData.get('description'),
                 price: parseFloat(formData.get('price')),
                 duration_days: parseInt(formData.get('duration_days')),
-                is_active: formData.get('is_active') === 'on'
+                is_active: formData.get('is_active') === 'on',
+                features: benefits  // Send as 'features' to match database column
             };
 
             fetch(`{{ route("membership-plans.update", ":id") }}`.replace(':id', planId), {
@@ -885,21 +1050,7 @@
             }, 300);
         }
 
-        function showNotification(message, type) {
-            // Create notification element
-            const notification = document.createElement('div');
-            notification.className = `fixed top-4 right-4 p-4 rounded-lg shadow-lg z-50 ${
-                type === 'success' ? 'bg-green-500 text-white' : 'bg-red-500 text-white'
-            }`;
-            notification.textContent = message;
-            
-            document.body.appendChild(notification);
-            
-            // Remove after 3 seconds
-            setTimeout(() => {
-                notification.remove();
-            }, 3000);
-        }
+
 
         // Close modals when clicking outside
         document.getElementById('addPlanModal').addEventListener('click', function(e) {
@@ -1044,7 +1195,7 @@
 
             // Create notification element
             const notification = document.createElement('div');
-            notification.className = `notification fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg max-w-sm transform transition-all duration-300 translate-x-full`;
+            notification.className = `notification fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg max-w-md transform transition-all duration-300 translate-x-full`;
             
             // Set colors based on type
             switch (type) {
@@ -1095,6 +1246,16 @@
                     }
                 }, 300);
             }, 5000);
+        }
+
+        // Flip card function
+        function flipCard(planId) {
+            const card = document.getElementById('flip-card-' + planId);
+            if (card.style.transform === 'rotateY(180deg)') {
+                card.style.transform = 'rotateY(0deg)';
+            } else {
+                card.style.transform = 'rotateY(180deg)';
+            }
         }
 
         document.addEventListener('DOMContentLoaded', function() {

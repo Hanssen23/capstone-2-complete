@@ -1,7 +1,7 @@
 <x-layout>
     <x-nav-employee></x-nav-employee>
     <div class="flex-1 bg-white">
-        <x-topbar>Membership Plans Configuration</x-topbar>
+        <x-topbar>Plan Management</x-topbar>
 
         <div class="bg-white min-h-screen p-4 sm:p-6">
             <!-- Plan Types Section -->

@@ -687,7 +687,10 @@ class MembershipController extends Controller
     public function getAllPlans()
     {
         $plans = \App\Models\MembershipPlan::orderBy('price')->get();
-        return response()->json(['plans' => $plans]);
+        return response()->json([
+            'success' => true,
+            'plans' => $plans
+        ]);
     }
 
     /**

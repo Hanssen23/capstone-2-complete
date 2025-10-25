@@ -1,7 +1,7 @@
 <x-layout>
     <x-nav-employee></x-nav-employee>
     <div class="flex-1 bg-white">
-        <x-topbar>Member Plan Management</x-topbar>
+        <x-topbar>Set Plans</x-topbar>
 
         <div class="bg-white min-h-screen p-6">
             <!-- Member Selection -->

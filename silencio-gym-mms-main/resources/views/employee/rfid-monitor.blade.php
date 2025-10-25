@@ -8,8 +8,9 @@
             <div class="mb-8">
                 <div class="bg-white rounded-lg border p-8" style="border-color: #E5E7EB; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
                     <h2 class="text-2xl font-bold mb-6" style="color: #1E40AF;">Today's Metrics</h2>
-                    
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        <!-- Today's Check-ins -->
                         <div class="bg-white border rounded-lg p-6" style="border-color: #059669; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
                             <div class="flex items-center justify-between">
                                 <div>
@@ -21,27 +22,16 @@
                                 </div>
                             </div>
                         </div>
-                        
+
+                        <!-- Today's Check-outs -->
                         <div class="bg-white border rounded-lg p-6" style="border-color: #DC2626; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
                             <div class="flex items-center justify-between">
                                 <div>
-                                    <p class="text-sm font-medium mb-2" style="color: #6B7280;">Failed Attempts</p>
-                                    <p class="text-3xl font-bold" style="color: #DC2626;" id="failed-attempts">-</p>
+                                    <p class="text-sm font-medium mb-2" style="color: #6B7280;">Today's Check-outs</p>
+                                    <p class="text-3xl font-bold" style="color: #DC2626;" id="today-checkouts">-</p>
                                 </div>
                                 <div class="w-12 h-12 rounded-full flex items-center justify-center" style="background-color: #DC2626;">
-                                    <span class="text-2xl text-white">❌</span>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="bg-white border rounded-lg p-6" style="border-color: #8B5CF6; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
-                            <div class="flex items-center justify-between">
-                                <div>
-                                    <p class="text-sm font-medium mb-2" style="color: #6B7280;">Unknown Cards</p>
-                                    <p class="text-3xl font-bold" style="color: #8B5CF6;" id="unknown-cards">-</p>
-                                </div>
-                                <div class="w-12 h-12 rounded-full flex items-center justify-center" style="background-color: #8B5CF6;">
-                                    <span class="text-2xl text-white">❓</span>
+                                    <span class="text-2xl text-white">🚪</span>
                                 </div>
                             </div>
                         </div>
@@ -166,6 +156,7 @@
                     console.log('📊 Dashboard stats loaded:', data);
                     document.getElementById('current-active-count').textContent = data.current_active_members;
                     document.getElementById('today-checkins').textContent = data.today_attendance;
+                    document.getElementById('today-checkouts').textContent = data.today_checkouts || '0';
                     document.getElementById('failed-attempts').textContent = data.failed_rfid_today;
                 })
                 .catch(error => {
@@ -173,6 +164,7 @@
                     // Show error indicator
                     document.getElementById('current-active-count').textContent = 'Error';
                     document.getElementById('today-checkins').textContent = 'Error';
+                    document.getElementById('today-checkouts').textContent = 'Error';
                     document.getElementById('failed-attempts').textContent = 'Error';
                 });
         }
@@ -847,6 +839,7 @@
                 .then(data => {
                     if (data.success) {
                         document.getElementById('today-checkins').textContent = data.stats.today_checkins;
+                        document.getElementById('today-checkouts').textContent = data.stats.today_checkouts || '0';
                         document.getElementById('failed-attempts').textContent = data.stats.expired_memberships;
                         document.getElementById('unknown-cards').textContent = data.stats.unknown_cards;
                     }

@@ -134,6 +134,22 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Guard-Specific Session Cookies (Multi-Session Support)
+    |--------------------------------------------------------------------------
+    |
+    | This allows different authentication guards to use separate session cookies,
+    | enabling multiple users to be logged in simultaneously in different tabs.
+    | Useful for testing purposes.
+    |
+    */
+
+    'guard_cookies' => [
+        'web' => env('SESSION_COOKIE', Str::snake((string) env('APP_NAME', 'laravel')).'_session').'_web',
+        'member' => env('SESSION_COOKIE', Str::snake((string) env('APP_NAME', 'laravel')).'_session').'_member',
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | Session Cookie Path
     |--------------------------------------------------------------------------
     |

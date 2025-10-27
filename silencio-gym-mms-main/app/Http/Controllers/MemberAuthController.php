@@ -130,7 +130,7 @@ class MemberAuthController extends Controller
 
             // Do NOT auto-login after registration for security
             // Redirect back to registration page with success message to trigger modal
-            return redirect()->route('member.register.show')->with('success', 'Registration successful! Please check your email to verify your account and complete the process.');
+            return redirect()->route('member.register')->with('success', 'Registration successful! Please check your email to verify your account and complete the process.');
             
         } catch (\Illuminate\Validation\ValidationException $e) {
             // Return back with validation errors

@@ -35,7 +35,7 @@ class CheckInNotification extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Check-in Confirmation - RBA GYM',
+            subject: 'Check-in Confirmation - Silencio Gym',
         );
     }
 

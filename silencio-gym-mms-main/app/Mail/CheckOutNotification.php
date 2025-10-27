@@ -33,7 +33,7 @@ class CheckOutNotification extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Check-out Confirmation - RBA GYM',
+            subject: 'Check-out Confirmation - Silencio Gym',
         );
     }
 

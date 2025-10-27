@@ -12,16 +12,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('members', function (Blueprint $table) {
-            // Remove soft delete related columns
-            $table->dropColumn([
-                'deleted_at',
-                'deletion_reason',
-                'deleted_by_admin_id',
-                'deletion_warning_sent_at',
-                'final_warning_sent_at'
-            ]);
-        });
+        // Simply skip this migration as the columns don't exist
+        // This migration was meant to remove soft delete columns that were never added
     }
 
     /**

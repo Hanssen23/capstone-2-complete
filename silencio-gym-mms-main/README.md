@@ -44,6 +44,9 @@ A comprehensive gym management system with RFID integration, member management, 
 ```bash
 git clone <repository-url>
 cd silencio-gym-mms-main
+
+# Checkout the latest development branch with fixes
+git checkout fix/member-dashboard-navigation
 ```
 
 ### 2. Install PHP Dependencies

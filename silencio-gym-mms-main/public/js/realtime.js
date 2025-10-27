@@ -106,7 +106,12 @@ class RealtimeManager {
     // Update Active Members
     async updateActiveMembers() {
         try {
-            const response = await fetch('/rfid/active-members');
+            const response = await fetch('/api/rfid/active-members', {
+                credentials: 'same-origin',
+                headers: {
+                    'Accept': 'application/json',
+                }
+            });
             if (response.ok) {
                 const data = await response.json();
                 const container = document.getElementById('active-members-list');
@@ -151,7 +156,12 @@ class RealtimeManager {
     // Update Tap History
     async updateTapHistory() {
         try {
-            const response = await fetch('/rfid/logs');
+            const response = await fetch('/api/rfid/logs', {
+                credentials: 'same-origin',
+                headers: {
+                    'Accept': 'application/json',
+                }
+            });
             if (response.ok) {
                 const data = await response.json();
                 const container = document.getElementById('rfid-logs-list');
@@ -188,7 +198,12 @@ class RealtimeManager {
     // Update Dashboard Stats
     async updateDashboardStats() {
         try {
-            const response = await fetch('/rfid/dashboard-stats');
+            const response = await fetch('/api/rfid/dashboard-stats', {
+                credentials: 'same-origin',
+                headers: {
+                    'Accept': 'application/json',
+                }
+            });
             if (response.ok) {
                 const data = await response.json();
                 

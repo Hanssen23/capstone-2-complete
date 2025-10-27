@@ -13,19 +13,9 @@ class AuthController extends Controller
 {
     public function showLogin()
     {
-        // Only redirect if user is already authenticated and not already on login page
-        if (Auth::guard('web')->check()) {
-            $user = Auth::guard('web')->user();
-            if ($user->isAdmin()) {
-                return redirect()->route('dashboard');
-            } elseif ($user->isEmployee()) {
-                return redirect()->route('employee.dashboard');
-            }
-        }
-        
-        if (Auth::guard('member')->check()) {
-            return redirect()->route('member.dashboard');
-        }
+        // MULTI-SESSION MODE: Always show login page
+        // This allows testing with multiple user types in different browser tabs
+        // Users can login with different accounts simultaneously
 
         return view('login');
     }
@@ -48,9 +38,18 @@ class AuthController extends Controller
 
         \Log::info('User existence check', ['userExists' => $userExists, 'memberExists' => $memberExists]);
 
+        // MULTI-SESSION MODE: Logout from the opposite guard before logging in
+        // This prevents session conflicts when switching between user types
+
         // Attempt user login (admin/employee)
         if (Auth::guard('web')->attempt($credentials, $request->boolean('remember'))) {
             \Log::info('Web guard authentication successful');
+
+            // Logout from member guard if logged in (to prevent conflicts)
+            if (Auth::guard('member')->check()) {
+                Auth::guard('member')->logout();
+            }
+
             $user = Auth::guard('web')->user();
 
             // Check if account is activated
@@ -82,6 +81,13 @@ class AuthController extends Controller
 
         // Attempt member login
         if (Auth::guard('member')->attempt($credentials, $request->boolean('remember'))) {
+            \Log::info('Member guard authentication successful');
+
+            // Logout from web guard if logged in (to prevent conflicts)
+            if (Auth::guard('web')->check()) {
+                Auth::guard('web')->logout();
+            }
+
             $member = Auth::guard('member')->user();
 
             // Check if email is verified

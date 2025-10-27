@@ -1,9 +1,10 @@
 <x-layout>
-    <!-- FORCE RECOMPILE: {{ time() }} -->
+    <!-- FORCE RECOMPILE: {{ time() }} - Session Fix Applied -->
     <!-- Force browser cache refresh -->
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <div class="flex items-center justify-center min-h-screen w-full p-2 sm:p-4 relative">
         <!-- Background Image -->

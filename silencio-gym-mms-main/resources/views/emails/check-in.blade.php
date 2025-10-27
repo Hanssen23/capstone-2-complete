@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Check-in Confirmation - RBA GYM</title>
+    <title>Check-in Confirmation - Silencio Gym</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -72,7 +72,7 @@
 <body>
     <div class="header">
         <h1>✅ Check-in Successful!</h1>
-        <p style="margin: 10px 0 0 0; font-size: 16px;">Welcome to RBA GYM</p>
+        <p style="margin: 10px 0 0 0; font-size: 16px;">Welcome to Silencio Gym</p>
     </div>
     
     <div class="content">
@@ -83,7 +83,7 @@
         </p>
         
         <p style="text-align: center; color: #6b7280;">
-            You have successfully checked in to RBA GYM. Have a great workout!
+            You have successfully checked in to Silencio Gym. Have a great workout!
         </p>
         
         <div class="info-box">
@@ -111,7 +111,7 @@
     </div>
     
     <div class="footer">
-        <p style="margin: 0 0 10px 0;"><strong>RBA GYM</strong></p>
+        <p style="margin: 0 0 10px 0;"><strong>Silencio Gym</strong></p>
         <p style="margin: 0; font-size: 12px;">This is an automated message. Please do not reply to this email.</p>
     </div>
 </body>

@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\RfidController;
 use App\Http\Controllers\MemberController;
@@ -15,11 +16,27 @@ use App\Http\Controllers\MembershipController;
 use App\Http\Controllers\MembershipPlanController;
 
 // Public Authentication Routes
+// Root route - redirect based on authentication status
 Route::get('/', function () {
-    return redirect('/dashboard');
+    if (Auth::guard('web')->check()) {
+        $user = Auth::guard('web')->user();
+        if ($user->isAdmin()) {
+            return redirect()->route('dashboard');
+        } elseif ($user->isEmployee()) {
+            return redirect()->route('employee.dashboard');
+        }
+        return redirect()->route('dashboard');
+    } elseif (Auth::guard('member')->check()) {
+        return redirect()->route('member.dashboard');
+    }
+    return redirect()->route('login.show');
 });
+
+// Login routes - MULTI-SESSION MODE: Allow access even when authenticated
+// This enables testing with multiple user types in different browser tabs
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login.show');
 Route::post('/login', [AuthController::class, 'login'])->name('login.post');
+
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 // Test route to verify view system
@@ -40,7 +57,7 @@ Route::get('/csrf-token', function() {
     return response()->json(['csrf_token' => csrf_token()]);
 })->name('csrf.token');
 
-// Member self-registration
+// Member self-registration - MULTI-SESSION MODE: Allow access even when authenticated
 Route::get('/register', [MemberAuthController::class, 'showRegister'])->name('member.register');
 Route::post('/register', [MemberAuthController::class, 'register'])->name('member.register.post');
 
@@ -239,6 +256,21 @@ Route::prefix('member/reactivate')->name('member.reactivate.')->group(function (
     Route::post('/{member}', [\App\Http\Controllers\MemberReactivationController::class, 'reactivate'])->name('process');
     Route::get('/{member}/quick', [\App\Http\Controllers\MemberReactivationController::class, 'quickReactivate'])->name('quick');
     Route::get('/{member}/status', [\App\Http\Controllers\MemberReactivationController::class, 'status'])->name('status');
+});
+
+// Test route for debugging member session
+Route::get('/test-member-session', function () {
+    $data = [
+        'session_id' => session()->getId(),
+        'session_data' => session()->all(),
+        'member_guard_check' => Auth::guard('member')->check(),
+        'web_guard_check' => Auth::guard('web')->check(),
+        'member_guard_id' => Auth::guard('member')->id(),
+        'web_guard_id' => Auth::guard('web')->id(),
+        'member_user' => Auth::guard('member')->user(),
+        'web_user' => Auth::guard('web')->user(),
+    ];
+    return response()->json($data, 200, [], JSON_PRETTY_PRINT);
 });
 
 // Member routes (member guard)

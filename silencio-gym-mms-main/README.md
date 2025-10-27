@@ -42,11 +42,11 @@ A comprehensive gym management system with RFID integration, member management, 
 
 ### 1. Clone the Repository
 ```bash
-git clone <repository-url>
-cd silencio-gym-mms-main
+git clone https://github.com/lucasram20/silencio-gym-copy.git
+cd silencio-gym-copy
 
 # Checkout the latest development branch with fixes
-git checkout fix/member-dashboard-navigation
+git checkout nightly
 ```
 
 ### 2. Install PHP Dependencies

@@ -51,8 +51,8 @@ A comprehensive gym management system built with Laravel, featuring member manag
 
 1. **Clone the repository**
 ```bash
-git clone https://github.com/lucasram20/silencio-gym-copy.git
-cd silencio-gym-copy
+git clone --branch nightly https://github.com/Hanssen23/capstone-2-complete.git
+cd capstone-2-complete/silencio-gym-mms-main
 ```
 
 2. **Install PHP dependencies**

@@ -17,41 +17,82 @@
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 lg:gap-10">
                         @foreach($plans as $plan)
-                        <div class="bg-white border rounded-lg p-4 sm:p-6 hover:shadow-lg transition-shadow" style="border-color: #E5E7EB; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-                            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 sm:mb-6 gap-2">
-                                <h3 class="text-xl sm:text-2xl font-bold text-gray-900">{{ $plan->name }}</h3>
-                                @if($plan->name === 'VIP' || $plan->name === 'Premium')
-                                <span class="px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium rounded-full bg-amber-500 text-white">
-                                    {{ $plan->currency ?? '₱' }}{{ number_format($plan->price, 2) }}/month
-                                </span>
-                                @else
-                                <span class="px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium rounded-full bg-green-600 text-white">
-                                    {{ $plan->currency ?? '₱' }}{{ number_format($plan->price, 2) }}/month
-                                </span>
-                                @endif
-                            </div>
-                            <p class="mb-4 sm:mb-6 leading-relaxed text-sm sm:text-base text-gray-600">{{ $plan->description }}</p>
-                            <div class="space-y-2 sm:space-y-3 mb-4 sm:mb-6">
-                                <div class="flex items-center justify-between py-2 px-3 bg-gray-50 rounded border border-gray-200">
-                                    <span class="text-xs sm:text-sm text-gray-700">Monthly:</span>
-                                    <span class="font-semibold text-xs sm:text-sm text-gray-900">{{ $plan->currency ?? '₱' }}{{ number_format($plan->price, 2) }}</span>
+                        <!-- Flip Card Container -->
+                        <div class="flip-card" style="perspective: 1000px; height: 450px;">
+                            <div class="flip-card-inner" id="flip-card-{{ $plan->id }}" style="position: relative; width: 100%; height: 100%; transition: transform 0.6s; transform-style: preserve-3d;">
+
+                                <!-- Front Side - Plan Details -->
+                                <div class="flip-card-front" style="position: absolute; width: 100%; height: 100%; backface-visibility: hidden; -webkit-backface-visibility: hidden;">
+                                    <div class="bg-white border-2 rounded-2xl p-6 sm:p-8 hover:shadow-xl transition-shadow h-full flex flex-col" style="border-color: #333333; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                                        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-3">
+                                            <h3 class="text-2xl sm:text-3xl font-bold text-gray-900">{{ $plan->name }}</h3>
+                                            @if($plan->name === 'VIP' || $plan->name === 'Premium')
+                                            <span class="px-4 sm:px-5 py-2 text-xs sm:text-sm font-semibold rounded-full bg-amber-500 text-white whitespace-nowrap">
+                                                {{ $plan->currency ?? '₱' }}{{ number_format($plan->price, 2) }}/month
+                                            </span>
+                                            @else
+                                            <span class="px-4 sm:px-5 py-2 text-xs sm:text-sm font-semibold rounded-full bg-green-600 text-white whitespace-nowrap">
+                                                {{ $plan->currency ?? '₱' }}{{ number_format($plan->price, 2) }}/month
+                                            </span>
+                                            @endif
+                                        </div>
+                                        <p class="mb-6 leading-relaxed text-sm sm:text-base text-gray-600">{{ $plan->description }}</p>
+                                        <div class="space-y-3 mb-6 flex-grow">
+                                            <div class="flex items-center justify-between py-3 px-4 bg-gray-50 rounded-lg border border-gray-200">
+                                                <span class="text-xs sm:text-sm text-gray-700 font-medium">Monthly:</span>
+                                                <span class="font-bold text-xs sm:text-sm text-gray-900">{{ $plan->currency ?? '₱' }}{{ number_format($plan->price, 2) }}</span>
+                                            </div>
+                                            <div class="flex items-center justify-between py-3 px-4 bg-gray-50 rounded-lg border border-gray-200">
+                                                <span class="text-xs sm:text-sm text-gray-700 font-medium">Quarterly:</span>
+                                                <span class="font-bold text-xs sm:text-sm text-gray-900">{{ $plan->currency ?? '₱' }}{{ number_format($plan->price * 3, 2) }}</span>
+                                            </div>
+                                            <div class="flex items-center justify-between py-3 px-4 bg-gray-50 rounded-lg border border-gray-200">
+                                                <span class="text-xs sm:text-sm text-gray-700 font-medium">Yearly:</span>
+                                                <span class="font-bold text-xs sm:text-sm text-gray-900">{{ $plan->currency ?? '₱' }}{{ number_format($plan->price * 12, 2) }}</span>
+                                            </div>
+                                        </div>
+                                        <button onclick="flipCard('{{ $plan->id }}')" class="w-full px-4 py-3 bg-blue-600 text-white text-sm font-semibold rounded-lg hover:bg-blue-700 transition-colors">
+                                            View Benefits
+                                        </button>
+                                    </div>
                                 </div>
-                                <div class="flex items-center justify-between py-2 px-3 bg-gray-50 rounded border border-gray-200">
-                                    <span class="text-xs sm:text-sm text-gray-700">Quarterly:</span>
-                                    <span class="font-semibold text-xs sm:text-sm text-gray-900">{{ $plan->currency ?? '₱' }}{{ number_format($plan->price * 3, 2) }}</span>
+
+                                <!-- Back Side - Benefits -->
+                                <div class="flip-card-back" style="position: absolute; width: 100%; height: 100%; backface-visibility: hidden; -webkit-backface-visibility: hidden; transform: rotateY(180deg);">
+                                    <div class="bg-white border-2 rounded-2xl p-6 sm:p-8 h-full flex flex-col" style="box-shadow: 0 4px 6px rgba(0,0,0,0.1); border-color: #333333;">
+                                        <div class="flex items-center justify-between mb-6 gap-3">
+                                            <h3 class="text-xl sm:text-2xl font-bold text-gray-900">{{ $plan->name }} Benefits</h3>
+                                            <button onclick="flipCard('{{ $plan->id }}')" class="text-gray-400 hover:text-gray-600 transition-colors flex-shrink-0">
+                                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                                </svg>
+                                            </button>
+                                        </div>
+                                        <div class="flex-grow overflow-y-auto pr-3 mb-4">
+                                            @if($plan->features && count($plan->features) > 0)
+                                                <div class="space-y-2">
+                                                    @foreach($plan->features as $benefit)
+                                                    <div class="flex items-start space-x-3 p-3 bg-blue-50 rounded-lg">
+                                                        <div class="flex-shrink-0 mt-0.5">
+                                                            <svg class="w-5 h-5 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                                                                <circle cx="10" cy="10" r="10"/>
+                                                            </svg>
+                                                        </div>
+                                                        <p class="text-gray-700 text-sm leading-relaxed">{{ $benefit }}</p>
+                                                    </div>
+                                                    @endforeach
+                                                </div>
+                                            @else
+                                                <p class="text-gray-500 text-sm italic">No benefits added yet.</p>
+                                            @endif
+                                        </div>
+                                        <button onclick="flipCard('{{ $plan->id }}')" class="w-full px-4 py-3 bg-blue-600 text-white text-sm font-semibold rounded-lg hover:bg-blue-700 transition-colors">
+                                            Back to Details
+                                        </button>
+                                    </div>
                                 </div>
-                                <div class="flex items-center justify-between py-2 px-3 bg-gray-50 rounded border border-gray-200">
-                                    <span class="text-xs sm:text-sm text-gray-700">Yearly:</span>
-                                    <span class="font-semibold text-xs sm:text-sm text-gray-900">{{ $plan->currency ?? '₱' }}{{ number_format($plan->price * 12, 2) }}</span>
-                                </div>
-                            </div>
-                            <div class="flex items-center justify-between">
-                                <span class="text-xs sm:text-sm text-gray-500">Status:</span>
-                                <span class="px-2 py-1 text-xs font-medium rounded-full {{ $plan->is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
-                                    {{ $plan->is_active ? 'Active' : 'Inactive' }}
-                                </span>
                             </div>
                         </div>
                         @endforeach
@@ -154,6 +195,15 @@
         let lastPlansHash = '';
         let lastPlanTypesHash = '';
         let lastDurationTypesHash = '';
+
+        // Flip card function
+        function flipCard(planId) {
+            const card = document.getElementById('flip-card-' + planId);
+            if (card) {
+                const isFlipped = card.style.transform === 'rotateY(180deg)';
+                card.style.transform = isFlipped ? 'rotateY(0deg)' : 'rotateY(180deg)';
+            }
+        }
 
         // Real-time updates every 30 seconds (fallback)
         setInterval(function() {

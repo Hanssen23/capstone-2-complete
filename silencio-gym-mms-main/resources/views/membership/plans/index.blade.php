@@ -23,54 +23,54 @@
                         </button>
                     </div>
 
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 lg:gap-10">
                         @foreach($plans as $plan)
                         <!-- Flip Card Container -->
-                        <div class="flip-card" style="perspective: 1000px; height: 500px;">
+                        <div class="flip-card" style="perspective: 1000px; height: 550px;">
                             <div class="flip-card-inner" id="flip-card-{{ $plan->id }}" style="position: relative; width: 100%; height: 100%; transition: transform 0.6s; transform-style: preserve-3d;">
 
                                 <!-- Front Side - Plan Details -->
                                 <div class="flip-card-front" style="position: absolute; width: 100%; height: 100%; backface-visibility: hidden; -webkit-backface-visibility: hidden;">
-                                    <div class="bg-white border rounded-lg p-4 sm:p-6 hover:shadow-lg transition-shadow h-full flex flex-col" style="border-color: #E5E7EB; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-                                        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 gap-2">
-                                            <h3 class="text-xl sm:text-2xl font-bold text-gray-900">{{ $plan->name }}</h3>
+                                    <div class="bg-white border rounded-xl p-6 sm:p-8 hover:shadow-xl transition-shadow h-full flex flex-col" style="border-color: #D1D5DB; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                                        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-3">
+                                            <h3 class="text-2xl sm:text-3xl font-bold text-gray-900">{{ $plan->name }}</h3>
                                             @if($plan->name === 'VIP' || $plan->name === 'Premium')
-                                            <span class="px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium rounded-full bg-amber-500 text-white">
+                                            <span class="px-4 sm:px-5 py-2 text-xs sm:text-sm font-semibold rounded-full bg-amber-500 text-white whitespace-nowrap">
                                                 {{ $plan->currency ?? '₱' }}{{ number_format($plan->price, 2) }}/month
                                             </span>
                                             @else
-                                            <span class="px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium rounded-full bg-green-600 text-white">
+                                            <span class="px-4 sm:px-5 py-2 text-xs sm:text-sm font-semibold rounded-full bg-green-600 text-white whitespace-nowrap">
                                                 {{ $plan->currency ?? '₱' }}{{ number_format($plan->price, 2) }}/month
                                             </span>
                                             @endif
                                         </div>
-                                        <p class="mb-4 leading-relaxed text-sm sm:text-base text-gray-600">{{ $plan->description }}</p>
-                                        <div class="space-y-2 mb-4 flex-grow">
-                                            <div class="flex items-center justify-between py-2 px-3 bg-gray-50 rounded border border-gray-200">
-                                                <span class="text-xs sm:text-sm text-gray-700">Monthly:</span>
-                                                <span class="font-semibold text-xs sm:text-sm text-gray-900">{{ $plan->currency ?? '₱' }}{{ number_format($plan->price, 2) }}</span>
+                                        <p class="mb-6 leading-relaxed text-sm sm:text-base text-gray-600">{{ $plan->description }}</p>
+                                        <div class="space-y-3 mb-6 flex-grow">
+                                            <div class="flex items-center justify-between py-3 px-4 bg-gray-50 rounded-lg border border-gray-200">
+                                                <span class="text-xs sm:text-sm text-gray-700 font-medium">Monthly:</span>
+                                                <span class="font-bold text-xs sm:text-sm text-gray-900">{{ $plan->currency ?? '₱' }}{{ number_format($plan->price, 2) }}</span>
                                             </div>
-                                            <div class="flex items-center justify-between py-2 px-3 bg-gray-50 rounded border border-gray-200">
-                                                <span class="text-xs sm:text-sm text-gray-700">Quarterly:</span>
-                                                <span class="font-semibold text-xs sm:text-sm text-gray-900">{{ $plan->currency ?? '₱' }}{{ number_format($plan->price * 3, 2) }}</span>
+                                            <div class="flex items-center justify-between py-3 px-4 bg-gray-50 rounded-lg border border-gray-200">
+                                                <span class="text-xs sm:text-sm text-gray-700 font-medium">Quarterly:</span>
+                                                <span class="font-bold text-xs sm:text-sm text-gray-900">{{ $plan->currency ?? '₱' }}{{ number_format($plan->price * 3, 2) }}</span>
                                             </div>
-                                            <div class="flex items-center justify-between py-2 px-3 bg-gray-50 rounded border border-gray-200">
-                                                <span class="text-xs sm:text-sm text-gray-700">Biannually:</span>
-                                                <span class="font-semibold text-xs sm:text-sm text-gray-900">{{ $plan->currency ?? '₱' }}{{ number_format($plan->price * 6, 2) }}</span>
+                                            <div class="flex items-center justify-between py-3 px-4 bg-gray-50 rounded-lg border border-gray-200">
+                                                <span class="text-xs sm:text-sm text-gray-700 font-medium">Biannually:</span>
+                                                <span class="font-bold text-xs sm:text-sm text-gray-900">{{ $plan->currency ?? '₱' }}{{ number_format($plan->price * 6, 2) }}</span>
                                             </div>
-                                            <div class="flex items-center justify-between py-2 px-3 bg-gray-50 rounded border border-gray-200">
-                                                <span class="text-xs sm:text-sm text-gray-700">Annually:</span>
-                                                <span class="font-semibold text-xs sm:text-sm text-gray-900">{{ $plan->currency ?? '₱' }}{{ number_format($plan->price * 12, 2) }}</span>
+                                            <div class="flex items-center justify-between py-3 px-4 bg-gray-50 rounded-lg border border-gray-200">
+                                                <span class="text-xs sm:text-sm text-gray-700 font-medium">Annually:</span>
+                                                <span class="font-bold text-xs sm:text-sm text-gray-900">{{ $plan->currency ?? '₱' }}{{ number_format($plan->price * 12, 2) }}</span>
                                             </div>
                                         </div>
-                                        <button onclick="flipCard('{{ $plan->id }}')" class="w-full px-4 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-colors mb-3">
+                                        <button onclick="flipCard('{{ $plan->id }}')" class="w-full px-4 py-3 bg-blue-600 text-white text-sm font-semibold rounded-lg hover:bg-blue-700 transition-colors mb-3">
                                             View Benefits
                                         </button>
-                                        <div class="flex gap-2">
-                                            <button onclick="editPlanType('{{ $plan->id }}')" class="flex-1 px-3 py-2 text-white text-xs sm:text-sm rounded-lg transition-colors" style="background-color: #059669;" onmouseover="this.style.backgroundColor='#047857'" onmouseout="this.style.backgroundColor='#059669'">
+                                        <div class="flex gap-3">
+                                            <button onclick="editPlanType('{{ $plan->id }}')" class="flex-1 px-4 py-3 text-white text-xs sm:text-sm font-semibold rounded-lg transition-colors" style="background-color: #059669;" onmouseover="this.style.backgroundColor='#047857'" onmouseout="this.style.backgroundColor='#059669'">
                                                 Edit
                                             </button>
-                                            <button onclick="deletePlanType('{{ $plan->id }}')" class="flex-1 px-3 py-2 text-white text-xs sm:text-sm rounded-lg transition-colors"
+                                            <button onclick="deletePlanType('{{ $plan->id }}')" class="flex-1 px-4 py-3 text-white text-xs sm:text-sm font-semibold rounded-lg transition-colors"
                                                     style="background-color: #DC2626;"
                                                     onmouseover="this.style.backgroundColor='#B91C1C'"
                                                     onmouseout="this.style.backgroundColor='#DC2626'">
@@ -82,27 +82,34 @@
 
                                 <!-- Back Side - Benefits -->
                                 <div class="flip-card-back" style="position: absolute; width: 100%; height: 100%; backface-visibility: hidden; -webkit-backface-visibility: hidden; transform: rotateY(180deg);">
-                                    <div class="bg-white border rounded-lg p-4 sm:p-6 h-full flex flex-col" style="box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-                                        <div class="flex items-center justify-between mb-4">
-                                            <h3 class="text-xl sm:text-2xl font-bold text-gray-900">{{ $plan->name }} Benefits</h3>
-                                            <button onclick="flipCard('{{ $plan->id }}')" class="text-gray-600 hover:text-gray-800">
+                                    <div class="bg-white border rounded-xl p-8 h-full flex flex-col" style="box-shadow: 0 4px 6px rgba(0,0,0,0.1); border-color: #D1D5DB;">
+                                        <div class="flex items-center justify-between mb-6">
+                                            <h3 class="text-3xl font-bold" style="color: #000000;">{{ $plan->name }} Benefits</h3>
+                                            <button onclick="flipCard('{{ $plan->id }}')" class="text-gray-400 hover:text-gray-600 transition-colors">
                                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                                                 </svg>
                                             </button>
                                         </div>
-                                        <div class="flex-grow overflow-y-auto">
+                                        <div class="flex-grow overflow-y-auto pr-3">
                                             @if($plan->features && count($plan->features) > 0)
-                                                <ul class="space-y-2 list-disc list-inside">
+                                                <div class="space-y-2">
                                                     @foreach($plan->features as $benefit)
-                                                    <li class="text-black text-sm font-medium">{{ $benefit }}</li>
+                                                    <div class="flex items-start space-x-3 p-3 bg-blue-50 rounded-lg">
+                                                        <div class="flex-shrink-0 mt-0.5">
+                                                            <svg class="w-5 h-5 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                                                                <circle cx="10" cy="10" r="10"/>
+                                                            </svg>
+                                                        </div>
+                                                        <p class="text-gray-700 text-sm leading-relaxed">{{ $benefit }}</p>
+                                                    </div>
                                                     @endforeach
-                                                </ul>
+                                                </div>
                                             @else
-                                                <p class="text-gray-600 text-sm italic">No benefits added yet. Click "Edit" to add benefits.</p>
+                                                <p class="text-gray-500 text-sm italic">No benefits added yet. Click "Edit" to add benefits.</p>
                                             @endif
                                         </div>
-                                        <button onclick="flipCard('{{ $plan->id }}')" class="w-full px-4 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-colors mt-4">
+                                        <button onclick="flipCard('{{ $plan->id }}')" class="w-full px-4 py-3 bg-blue-600 text-white text-sm font-semibold rounded-lg hover:bg-blue-700 transition-colors mt-6">
                                             Back to Details
                                         </button>
                                     </div>
@@ -546,8 +553,7 @@
                     })
                     .catch(error => {
                         console.error('Error updating plans:', error);
-                        // Fallback to page reload
-                        setTimeout(() => window.location.reload(), 1000);
+                        // No fallback reload - just log the error
                     });
             }
         }
@@ -555,6 +561,12 @@
         function renderPlans(plansData) {
             const plansContainer = document.querySelector('.grid.grid-cols-1.sm\\:grid-cols-2.lg\\:grid-cols-3');
             if (!plansContainer) return;
+
+            // Store current flip states before updating
+            const flipStates = {};
+            document.querySelectorAll('[id^="flip-card-"]').forEach(card => {
+                flipStates[card.id] = card.style.transform;
+            });
 
             const plansHTML = plansData.map(plan => `
                 <!-- Flip Card Container -->
@@ -613,26 +625,34 @@
 
                         <!-- Back Side - Benefits -->
                         <div class="flip-card-back" style="position: absolute; width: 100%; height: 100%; backface-visibility: hidden; -webkit-backface-visibility: hidden; transform: rotateY(180deg);">
-                            <div class="bg-white border rounded-lg p-4 sm:p-6 h-full flex flex-col" style="box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-                                <div class="flex items-center justify-between mb-4">
-                                    <h3 class="text-xl sm:text-2xl font-bold text-gray-900">${plan.name} Benefits</h3>
-                                    <button onclick="flipCard('${plan.id}')" class="text-gray-600 hover:text-gray-800">
+                            <div class="bg-white border rounded-xl p-8 h-full flex flex-col" style="box-shadow: 0 4px 6px rgba(0,0,0,0.1); border-color: #D1D5DB;">
+                                <div class="flex items-center justify-between mb-6">
+                                    <h3 class="text-3xl font-bold" style="color: #000000;">${plan.name} Benefits</h3>
+                                    <button onclick="flipCard('${plan.id}')" class="text-gray-400 hover:text-gray-600 transition-colors">
                                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                                         </svg>
                                     </button>
                                 </div>
-                                <div class="flex-grow overflow-y-auto">
+                                <div class="flex-grow overflow-y-auto pr-3">
                                     ${plan.features && plan.features.length > 0 ?
-                                        `<ul class="space-y-2 list-disc list-inside">
+                                        `<div class="space-y-3">
                                             ${plan.features.map(benefit => `
-                                                <li class="text-black text-sm font-medium">${benefit}</li>
+                                                <div class="flex items-start space-x-3 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                                                    <div class="flex-shrink-0 mt-0.5">
+                                                        <svg class="w-5 h-5 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                                                            <circle cx="10" cy="10" r="10"/>
+                                                            <path d="M14.5 6.5L8.5 12.5L5.5 9.5" stroke="white" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                                                        </svg>
+                                                    </div>
+                                                    <p class="text-gray-700 text-sm font-medium leading-relaxed">${benefit}</p>
+                                                </div>
                                             `).join('')}
-                                        </ul>` :
-                                        `<p class="text-gray-600 text-sm italic">No benefits added yet. Click "Edit" to add benefits.</p>`
+                                        </div>` :
+                                        `<p class="text-gray-500 text-sm italic">No benefits added yet. Click "Edit" to add benefits.</p>`
                                     }
                                 </div>
-                                <button onclick="flipCard('${plan.id}')" class="w-full px-4 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-colors mt-4">
+                                <button onclick="flipCard('${plan.id}')" class="w-full px-4 py-3 bg-blue-600 text-white text-sm font-semibold rounded-lg hover:bg-blue-700 transition-colors mt-6">
                                     Back to Details
                                 </button>
                             </div>
@@ -643,6 +663,16 @@
             `).join('');
 
             plansContainer.innerHTML = plansHTML;
+
+            // Restore flip states after updating
+            setTimeout(() => {
+                Object.keys(flipStates).forEach(cardId => {
+                    const card = document.getElementById(cardId);
+                    if (card && flipStates[cardId]) {
+                        card.style.transform = flipStates[cardId];
+                    }
+                });
+            }, 0);
         }
 
         function updateDurationTypesDisplay() {
@@ -661,8 +691,7 @@
                     })
                     .catch(error => {
                         console.error('Error updating duration types:', error);
-                        // Fallback to page reload
-                        setTimeout(() => window.location.reload(), 1000);
+                        // No fallback reload - just log the error
                     });
             }
         }
@@ -1259,7 +1288,8 @@
         }
 
         document.addEventListener('DOMContentLoaded', function() {
-            initializeSSE();
+            // Disabled SSE to prevent auto-refresh
+            // initializeSSE();
         });
     </script>
 </x-layout>
